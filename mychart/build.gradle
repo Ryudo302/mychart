@@ -1,0 +1,46 @@
+description = "Gerenciamento e manutenção de sua parada musical pessoal."
+
+allprojects {
+}
+
+subprojects {
+	apply plugin: 'java'
+
+	group = 'br.com.colbert'
+	version = '1.0.0-SNAPSHOT'
+
+	buildDir = 'target'
+	sourceCompatibility = 1.8
+
+	repositories {
+		mavenLocal()
+		maven {
+			name "Repositório Nexus Local"
+			url "http://localhost:8081/nexus/content/groups/public"
+		}
+	}
+
+	compileJava {
+		options.fork = false
+		options.incremental = true
+	}
+
+	task sourcesJar(type: Jar, dependsOn: classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+
+	task javadocJar(type: Jar, dependsOn: javadoc) {
+		classifier = 'javadoc'
+		from javadoc.destinationDir
+	}
+
+	artifacts {
+		archives sourcesJar
+		archives javadocJar
+	}
+
+	dependencies { 
+		testCompile 'junit:junit:4+' 
+	}
+}

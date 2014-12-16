@@ -1,0 +1,20 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0">
+	<persistence-unit name="MyChartPU">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<properties>
+			<property name="hibernate.connection.datasource" value="myChartDS" />
+			<property name="hibernate.connection.release_mode" value="after_statement" />
+			<!-- TODO <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" /> -->
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
+			<property name="hibernate.current_session_context_class" value="jta" />
+			<property name="hibernate.transaction.factory_class" value="org.hibernate.transaction.JTATransactionFactory" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="false" />
+
+			<!-- TODO <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" /> -->
+			<property name="javax.persistence.validation.mode" value="ddl, callback" />
+		</properties>
+	</persistence-unit>
+</persistence>

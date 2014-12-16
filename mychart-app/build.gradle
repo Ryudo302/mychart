@@ -1,0 +1,17 @@
+dependencies {
+	compile 'org.slf4j:slf4j-log4j12:1.7+',
+			'org.apache.commons:commons-lang3:3+',
+			'org.jboss.weld.se:weld-se-core:2+'
+	testCompile 'org.jglue.cdi-unit:cdi-unit:3+'
+}
+
+test.doFirst {
+	copy {
+		from 'target/resources/main/META-INF/beans.xml'
+		into 'target/classes/main/META-INF/'
+	}
+	copy {
+		from 'target/resources/test/log4j.properties'
+		into 'target/classes/test/'
+	}
+}
