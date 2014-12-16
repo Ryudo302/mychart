@@ -25,6 +25,7 @@ import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
 public class ArtistaLastFmRepository implements ArtistaRepositoryRemoto {
 
 	private static final String API_KEY = "6747f6d7194dfd2edcea226c96e395cb";
+	// secret aa672af27375b77bc074d4f1b55d1f07
 
 	@Inject
 	private transient Logger logger;
