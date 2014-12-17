@@ -141,11 +141,11 @@ public class TopMusical extends AbstractEntidade<Integer> {
 	}
 
 	public Optional<TopMusical> getAnterior() {
-		return Optional.of(anterior);
+		return Optional.ofNullable(anterior);
 	}
 
 	public Optional<TopMusical> getProximo() {
-		return Optional.of(proximo);
+		return Optional.ofNullable(proximo);
 	}
 
 	public Map<Integer, Posicao> getPosicoes() {

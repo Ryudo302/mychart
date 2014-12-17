@@ -7,7 +7,6 @@ import java.util.*;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 
 import com.google.gson.*;
@@ -23,6 +22,8 @@ import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
  * @since 08/12/2014
  */
 public class ArtistaLastFmRepository implements ArtistaRepositoryRemoto {
+
+	private static final int HTTP_STATUS_OK = 200;
 
 	private static final String API_KEY = "6747f6d7194dfd2edcea226c96e395cb";
 	// secret aa672af27375b77bc074d4f1b55d1f07
@@ -41,7 +42,7 @@ public class ArtistaLastFmRepository implements ArtistaRepositoryRemoto {
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			int responseCode = connection.getResponseCode();
-			if (responseCode == HttpStatus.SC_OK) {
+			if (responseCode == HTTP_STATUS_OK) {
 				return readArtistas(connection.getInputStream());
 			} else {
 				throw new RepositoryException("Erro ao consultar artistas da LastFM pelo nome: '" + nome
