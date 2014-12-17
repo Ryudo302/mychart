@@ -4,7 +4,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyCollectionOf;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
 
 import java.util.Collection;
 
@@ -65,11 +67,29 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 
 		assertThat(artistas, is(notNullValue(Collection.class)));
 		assertThat(artistas.size() > 0, is(true));
-		
+
 		System.out.println(artistas);
 	}
 
 	private void setArtistas(Collection<Artista> artistas) {
 		this.artistas = artistas;
+	}
+
+	@Test
+	public void testAdicionarNovaComArtistaExistente() {
+		Artista artista = new Artista("Rihanna", TipoArtista.FEMININO_SOLO);
+
+		controller.adicionarNova(artista);
+
+		verify(messages).adicionarMensagemAlerta(anyString());
+	}
+	
+	@Test
+	public void testAdicionarNovaComArtistaNovo() {
+		Artista artista = new Artista("Fulano", TipoArtista.MASCULINO_SOLO);
+
+		controller.adicionarNova(artista);
+
+		verify(messages).adicionarMensagemSucesso(anyString());
 	}
 }

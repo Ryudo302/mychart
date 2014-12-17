@@ -53,7 +53,7 @@ public abstract class AbstractEntidadeCrudController<T extends Entidade<ID>, ID 
 		try {
 			view.setEntidades(doConsultar(exemplo));
 		} catch (Exception exception) {
-			logger.error("Erro ao consultar canções a partir do exemplo: " + exemplo, exception);
+			logger.error("Erro ao consultar entidades a partir do exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar entidades: " + exception.getLocalizedMessage());
 		}
 	}
@@ -69,11 +69,12 @@ public abstract class AbstractEntidadeCrudController<T extends Entidade<ID>, ID 
 		try {
 			validar(entidade);
 			repositorio.adicionar(entidade);
+			messagesView.adicionarMensagemSucesso("Entidade incluída com sucesso!");
 		} catch (ValidacaoException exception) {
 			logger.debug("Erros de validação", exception);
 			messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
 		} catch (ElementoJaExistenteException exception) {
-			logger.debug("T já existente", exception);
+			logger.debug("Elemento já existente", exception);
 			messagesView.adicionarMensagemAlerta("A entidade informada já existe! Utilizar atualização ao invés de inclusão.");
 		} catch (RepositoryException exception) {
 			logger.error("Erro ao adicionar entidade: " + entidade, exception);
@@ -88,11 +89,12 @@ public abstract class AbstractEntidadeCrudController<T extends Entidade<ID>, ID 
 		try {
 			validar(entidade);
 			repositorio.atualizar(entidade);
+			messagesView.adicionarMensagemSucesso("Entidade atualizada com sucesso!");
 		} catch (ValidacaoException exception) {
 			logger.debug("Erros de validação", exception);
 			messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
 		} catch (ElementoNaoExistenteException exception) {
-			logger.debug("T inexistente", exception);
+			logger.debug("Elemento inexistente", exception);
 			messagesView.adicionarMensagemAlerta("A entidade informada não existe! Utilizar inclusão ao invés de atualização.");
 		} catch (RepositoryException exception) {
 			logger.error("Erro ao atualizar entidade: " + entidade, exception);
@@ -107,6 +109,7 @@ public abstract class AbstractEntidadeCrudController<T extends Entidade<ID>, ID 
 		try {
 			validar(entidade);
 			repositorio.remover(entidade);
+			messagesView.adicionarMensagemSucesso("Entidade removida com sucesso!");
 		} catch (ValidacaoException exception) {
 			logger.debug("Erros de validação", exception);
 			messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());

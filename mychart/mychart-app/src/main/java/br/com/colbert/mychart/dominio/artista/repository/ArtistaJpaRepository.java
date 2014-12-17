@@ -4,11 +4,13 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 import javax.persistence.*;
+import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaQuery;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
 
-import br.com.colbert.mychart.dominio.artista.Artista;
+import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapper;
 
@@ -24,6 +26,16 @@ public class ArtistaJpaRepository implements ArtistaRepositoryLocal {
 	private EntityManager entityManager;
 
 	@Override
+	@ExceptionWrapper(para = RepositoryException.class, mensagem = "Erro ao consultar artistas pelo nome: '{0}'")
+	public Collection<Artista> consultarPorNomeExato(String nome) throws RepositoryException {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Artista> query = criteriaBuilder.createQuery(Artista.class);
+		Root<Artista> root = query.from(Artista.class);
+		query.where(criteriaBuilder.equal(criteriaBuilder.lower(root.get(Artista_.nome)), nome.toLowerCase()));
+		return entityManager.createQuery(query).getResultList();
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
 	@ExceptionWrapper(para = RepositoryException.class, mensagem = "Erro ao consultar artistas")
 	public Collection<Artista> consultarPor(Artista exemplo) throws RepositoryException {
@@ -34,6 +46,10 @@ public class ArtistaJpaRepository implements ArtistaRepositoryLocal {
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao adicionar artista: {0}")
 	public void adicionar(Artista entidade) throws ElementoJaExistenteException, RepositoryException {
+		if (!consultarPorNomeExato(entidade.getNome()).isEmpty()) {
+			throw new ElementoJaExistenteException(entidade);
+		}
+
 		try {
 			entityManager.persist(entidade);
 		} catch (EntityExistsException exception) {

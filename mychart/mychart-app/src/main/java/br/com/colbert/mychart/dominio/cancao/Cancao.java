@@ -48,7 +48,7 @@ public class Cancao extends AbstractEntidade<Integer> {
 	 * Construtor <code>default</code> sem argumentos utilizado pelo framework ORM.
 	 */
 	Cancao() {
-		this(null, null);
+		this(null, Collections.emptyList());
 	}
 
 	@Override
