@@ -58,12 +58,6 @@ public class ArtistaJpaRepository implements ArtistaRepositoryLocal {
 	}
 
 	@Override
-	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao atualizar artista: {0}")
-	public Artista atualizar(Artista entidade) throws ElementoNaoExistenteException, RepositoryException {
-		return entityManager.merge(entidade);
-	}
-
-	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao remover artista: {0}")
 	public boolean remover(Artista entidade) throws RepositoryException {
 		if (entityManager.contains(entidade)) {

@@ -30,8 +30,8 @@ public class ArtistaPanelTest {
 			CdiUtils.init();
 			ArtistaPanel artistaPanel = CdiUtils.getBean(ArtistaPanel.class);
 
-			artistaPanel.setEntidadeAtual(artista1);
-			artistaPanel.setEntidades(Arrays.asList(artista1, artista2, artista3));
+			artistaPanel.setArtistaAtual(artista1);
+			artistaPanel.setArtistas(Arrays.asList(artista1, artista2, artista3));
 
 			JFrame frame = new JFrame();
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,8 +51,8 @@ public class ArtistaPanelTest {
 		Artista artista3 = new Artista("Fulano 3", TipoArtista.MASCULINO_SOLO);
 
 		ArtistaPanel artistaPanel = new ArtistaPanel();
-		artistaPanel.setEntidadeAtual(artista1);
-		artistaPanel.setEntidades(Arrays.asList(artista1, artista2, artista3));
+		artistaPanel.setArtistaAtual(artista1);
+		artistaPanel.setArtistas(Arrays.asList(artista1, artista2, artista3));
 
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

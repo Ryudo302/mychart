@@ -1,5 +1,7 @@
 package br.com.colbert.mychart.aplicacao;
 
+import java.io.Serializable;
+
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -18,12 +20,14 @@ import br.com.colbert.mychart.ui.topmusical.TopMusicalView;
  * @author Thiago Colbert
  * @since 09/12/2014
  */
-public class TopMusicalController {
+public class TopMusicalController implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private Logger logger;
 
-	//@Inject
+	// @Inject
 	private TopMusicalView topMusicalView;
 	@Inject
 	private MessagesView messagesView;

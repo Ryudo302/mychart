@@ -1,6 +1,8 @@
 package br.com.colbert.mychart.ui.artista;
 
-import br.com.colbert.base.ui.EntidadeView;
+import java.util.Collection;
+
+import br.com.colbert.base.ui.View;
 import br.com.colbert.mychart.dominio.artista.Artista;
 
 /**
@@ -9,6 +11,19 @@ import br.com.colbert.mychart.dominio.artista.Artista;
  * @author Thiago Colbert
  * @since 08/12/2014
  */
-public interface ArtistaView extends EntidadeView<Artista> {
+public interface ArtistaView extends View {
 
+	/**
+	 * Define o artista atualmente sendo exibida em detalhes na visão.
+	 * 
+	 * @param artista
+	 */
+	void setArtistaAtual(Artista artista);
+
+	/**
+	 * Define os artistas a serem listadas na visão.
+	 * 
+	 * @param artistas
+	 */
+	void setArtistas(Collection<Artista> artistas);
 }

@@ -59,7 +59,7 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 		doAnswer(invocation -> {
 			setArtistas(invocation.getArgumentAt(0, Collection.class));
 			return null;
-		}).when(view).setEntidades(anyCollectionOf(Artista.class));
+		}).when(view).setArtistas(anyCollectionOf(Artista.class));
 
 		Artista exemplo = new Artista("rihanna", TipoArtista.FEMININO_SOLO);
 

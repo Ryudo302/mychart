@@ -143,7 +143,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		artistasTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent event) {
-				setEntidadeAtual(artistasTableModel.getElement(artistasTable.convertRowIndexToModel(artistasTable.getSelectedRow())));
+				setArtistaAtual(artistasTableModel.getElement(artistasTable.convertRowIndexToModel(artistasTable.getSelectedRow())));
 				setEstadoAtual(EstadoTelaCrud.INCLUSAO_OU_ALTERACAO);
 			}
 		});
@@ -170,13 +170,13 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 	}
 
 	@Override
-	public void setEntidadeAtual(Artista artista) {
+	public void setArtistaAtual(Artista artista) {
 		this.nomeTextField.setText(artista.getNome());
 		this.tipoComboBox.setSelectedItem(artista.getTipo());
 	}
 
 	@Override
-	public void setEntidades(Collection<Artista> artistas) {
+	public void setArtistas(Collection<Artista> artistas) {
 		this.artistasTableModel.setElements(artistas);
 	}
 
@@ -196,7 +196,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 	}
 
 	public void limparTela() {
-		setEntidadeAtual(novoArtista());
+		setArtistaAtual(novoArtista());
 		setEstadoAtual(EstadoTelaCrud.CONSULTA);
 	}
 

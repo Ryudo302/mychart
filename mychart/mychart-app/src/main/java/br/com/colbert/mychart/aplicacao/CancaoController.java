@@ -1,9 +1,6 @@
 package br.com.colbert.mychart.aplicacao;
 
-import javax.inject.Inject;
-
-import br.com.colbert.mychart.dominio.cancao.*;
-import br.com.colbert.mychart.ui.cancao.CancaoView;
+import java.io.Serializable;
 
 /**
  * Controlador de ações referentes a canções.
@@ -11,10 +8,9 @@ import br.com.colbert.mychart.ui.cancao.CancaoView;
  * @author Thiago Colbert
  * @since 13/12/2014
  */
-public class CancaoController extends AbstractEntidadeCrudController<Cancao, Integer> {
+public class CancaoController implements Serializable {
 
-	//@Inject
-	public CancaoController(CancaoView view, CancaoRepository repositorio) {
-		super(view, repositorio);
-	}
+	private static final long serialVersionUID = -444876850735933938L;
+
+	
 }
