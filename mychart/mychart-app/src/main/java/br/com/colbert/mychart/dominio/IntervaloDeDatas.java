@@ -15,12 +15,12 @@ import org.apache.commons.lang3.builder.*;
  * @since 08/12/2014
  */
 @Embeddable
-public final class IntervaloDeDatas implements Comparable<IntervaloDeDatas>, Serializable {
+public class IntervaloDeDatas implements Comparable<IntervaloDeDatas>, Serializable {
 
 	private static final long serialVersionUID = 9056254908844013277L;
 
-	private final LocalDate dataInicial;
-	private final LocalDate dataFinal;
+	private LocalDate dataInicial;
+	private LocalDate dataFinal;
 
 	private IntervaloDeDatas(LocalDate dataInicial, LocalDate dataFinal) {
 		this.dataInicial = dataInicial;

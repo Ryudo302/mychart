@@ -17,7 +17,8 @@ import br.com.colbert.mychart.infraestrutura.exception.*;
 public interface ArtistaRepositoryLocal extends Repository<Artista, Integer> {
 
 	/**
-	 * Consulta por artistas que tenham o nome exatamente igual ao informado. A consulta não é <em>case-sensitive</em>.
+	 * Consulta por artistas que tenham o nome exatamente igual ao informado. A consulta não é <em>case-sensitive</em> (uma
+	 * consulta por "FULANO" retorna os mesmos resultados que "Fulano" e "fulano").
 	 * 
 	 * @param nome
 	 *            a ser utilizado na consulta

@@ -47,7 +47,7 @@ public class ArtistaController implements Serializable {
 	private Instance<Validador<Artista>> validadores;
 
 	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) Artista exemplo) {
-		logger.info("Consultando com base em exemplo: {}", exemplo);
+		logger.info("Consultando artistas com base em exemplo: {}", exemplo);
 
 		try {
 			view.setArtistas(consultaArtistaService.consultarPor(exemplo));
@@ -64,13 +64,13 @@ public class ArtistaController implements Serializable {
 		try {
 			validar(artista);
 			repositorio.adicionar(artista);
-			messagesView.adicionarMensagemSucesso("Artista incluída com sucesso!");
+			messagesView.adicionarMensagemSucesso("Artista incluído com sucesso!");
 		} catch (ValidacaoException exception) {
 			logger.debug("Erros de validação", exception);
 			messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
 		} catch (ElementoJaExistenteException exception) {
-			logger.debug("Elemento já existente", exception);
-			messagesView.adicionarMensagemAlerta("A artista informada já existe! Utilizar atualização ao invés de inclusão.");
+			logger.debug("Artista já existente", exception);
+			messagesView.adicionarMensagemAlerta("Já existe um artista com o nome informado.");
 		} catch (RepositoryException exception) {
 			logger.error("Erro ao adicionar artista: " + artista, exception);
 			messagesView.adicionarMensagemErro("Erro ao adicionar artista: " + exception.getLocalizedMessage());
@@ -84,7 +84,7 @@ public class ArtistaController implements Serializable {
 		try {
 			validar(artista);
 			repositorio.remover(artista);
-			messagesView.adicionarMensagemSucesso("Artista removida com sucesso!");
+			messagesView.adicionarMensagemSucesso("Artista removido com sucesso!");
 		} catch (ValidacaoException exception) {
 			logger.debug("Erros de validação", exception);
 			messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
@@ -96,7 +96,7 @@ public class ArtistaController implements Serializable {
 
 	private void validar(Artista artista) throws ValidacaoException {
 		logger.debug("Validando: {}", artista);
-		Objects.requireNonNull(artista, "A artista não foi informada");
+		Objects.requireNonNull(artista, "O artista não foi informado");
 
 		for (Validador<Artista> validador : validadores) {
 			validador.validar(artista);

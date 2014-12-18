@@ -12,14 +12,14 @@ import br.com.colbert.base.dominio.AbstractCompositeId;
  * @since 09/12/2014
  */
 @Embeddable
-public final class PosicaoId extends AbstractCompositeId {
+public class PosicaoId extends AbstractCompositeId {
 
 	private static final long serialVersionUID = -6392568981419837077L;
 
 	@NotNull
-	private final Integer numeroTopMusical;
+	private Integer numeroTopMusical;
 	@NotNull
-	private final Integer idCancao;
+	private Integer idCancao;
 
 	public PosicaoId(Integer numeroTopMusical, Integer idCancao) {
 		this.numeroTopMusical = numeroTopMusical;
