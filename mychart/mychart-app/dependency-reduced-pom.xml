@@ -9,7 +9,23 @@
   <artifactId>mychart-app</artifactId>
   <name>MyChart - App</name>
   <description>Módulo principal da aplicação.</description>
+  <scm>
+    <connection>${project.scm.url}</connection>
+    <developerConnection>${project.scm.url}</developerConnection>
+    <url>scm:git:git://github.com/Ryudo302/mychart.git</url>
+  </scm>
   <build>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
     <finalName>MyChart</finalName>
     <pluginManagement>
       <plugins>
@@ -34,6 +50,29 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.3</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>true</doUpdate>
+          <shortRevisionLength>5</shortRevisionLength>
+          <format>{0} - {1,date,dd/MM/yyyy HH:mm}</format>
+          <items>
+            <item>scmVersion</item>
+            <item>timestamp</item>
+          </items>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.bsc.maven</groupId>
         <artifactId>maven-processor-plugin</artifactId>

@@ -14,6 +14,10 @@
 	<name>MyChart</name>
 	<description>Gerenciamento e manutenção de sua parada musical pessoal.</description>
 
+	<properties>
+		<aplicacao.nome>MyChart</aplicacao.nome>
+	</properties>
+
 	<modules>
 		<module>mychart-app</module>
 	</modules>

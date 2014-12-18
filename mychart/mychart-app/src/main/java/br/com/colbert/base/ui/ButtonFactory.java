@@ -21,8 +21,6 @@ public final class ButtonFactory {
 
 	/**
 	 * @wbp.factory
-	 * @wbp.factory.parameter.source text "Consultar"
-	 * @wbp.factory.parameter.source toolTipText "Procura por artistas que atendam aos critérios informados acima"
 	 */
 	public static JButton createJButton(String text, String toolTipText) {
 		JButton button = new JButton(text);

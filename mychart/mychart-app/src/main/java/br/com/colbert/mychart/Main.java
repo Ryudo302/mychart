@@ -1,8 +1,6 @@
 package br.com.colbert.mychart;
 
-import javax.validation.Validator;
-
-import br.com.colbert.mychart.infraestrutura.CdiUtils;
+import br.com.colbert.mychart.aplicacao.MainController;
 
 /**
  * Classe principal da aplicação, responsável pelo <em>bootstrap</em>.
@@ -13,11 +11,6 @@ import br.com.colbert.mychart.infraestrutura.CdiUtils;
 public class Main {
 
 	public static void main(String[] args) {
-		try {
-			CdiUtils.init();
-			CdiUtils.getBean(Validator.class);
-		} finally {
-			CdiUtils.shutdown();
-		}
+		new MainController().iniciar();
 	}
 }

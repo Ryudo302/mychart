@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.ui;
+package br.com.colbert.mychart.ui.comum.messages;
 
 /**
  * EntidadeView que exibe mensagens geradas pela aplicação.

@@ -11,7 +11,7 @@ import br.com.colbert.mychart.dominio.topmusical.TopMusical;
 import br.com.colbert.mychart.infraestrutura.eventos.topmusical.*;
 import br.com.colbert.mychart.infraestrutura.exception.ElementoJaExistenteException;
 import br.com.colbert.mychart.infraestrutura.formatter.CancaoFormatter;
-import br.com.colbert.mychart.ui.MessagesView;
+import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.mychart.ui.topmusical.TopMusicalView;
 
 /**

@@ -20,8 +20,8 @@ import org.mockito.Mock;
 import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.dominio.artista.repository.ArtistaJpaRepository;
 import br.com.colbert.mychart.infraestrutura.lastfm.ArtistaLastFmRepository;
-import br.com.colbert.mychart.ui.MessagesView;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
+import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.tests.support.AbstractDbUnitTest;
 
 /**

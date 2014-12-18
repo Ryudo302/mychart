@@ -16,8 +16,8 @@ import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepositoryLocal;
 import br.com.colbert.mychart.dominio.artista.service.ConsultaArtistaService;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
 import br.com.colbert.mychart.infraestrutura.exception.*;
-import br.com.colbert.mychart.ui.MessagesView;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
+import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 
 /**
  * Controlador de ações referentes a artistas.
