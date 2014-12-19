@@ -12,4 +12,9 @@ public interface MainWindow {
 	 * Torna a janela visivel.
 	 */
 	void show();
+
+	/**
+	 * Fecha a janela.
+	 */
+	void close();
 }

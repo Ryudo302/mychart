@@ -1,8 +1,10 @@
 package br.com.colbert.mychart.aplicacao;
 
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
-import br.com.colbert.mychart.infraestrutura.CdiUtils;
+import org.slf4j.Logger;
+
 import br.com.colbert.mychart.infraestrutura.eventos.app.*;
 import br.com.colbert.mychart.ui.MainWindow;
 
@@ -14,12 +16,18 @@ import br.com.colbert.mychart.ui.MainWindow;
  */
 public class MainController {
 
+	@Inject
+	private Logger logger;
+
+	@Inject
+	private MainWindow mainWindow;
+
 	/**
 	 * Inicia a aplicação.
 	 */
 	public void iniciar() {
-		CdiUtils.init();
-		CdiUtils.getBean(MainWindow.class).show();
+		logger.info("Iniciando");
+		mainWindow.show();
 	}
 
 	/**
@@ -29,7 +37,7 @@ public class MainController {
 	 *            a janela principal da aplicação
 	 */
 	public void sair(@Observes @StatusAplicacao(TipoStatusAplicacao.ENCERRADA) MainWindow window) {
-		// TODO
-		CdiUtils.shutdown();
+		logger.info("Encerrando...");
+		mainWindow.close();
 	}
 }

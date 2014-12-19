@@ -89,6 +89,11 @@ public class MainFrame extends JFrame implements MainWindow {
 		setTitle(tituloAplicacao);
 	}
 
+	@Override
+	public void close() {
+		dispose();
+	}
+
 	private class SairAction extends AbstractAction {
 
 		private static final long serialVersionUID = -5817088900948179469L;
