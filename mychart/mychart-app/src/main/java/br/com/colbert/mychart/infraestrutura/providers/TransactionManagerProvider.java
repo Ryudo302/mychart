@@ -45,6 +45,7 @@ public class TransactionManagerProvider implements Serializable {
 	 * @return a instância criada
 	 */
 	@Produces
+	@ApplicationScoped
 	public UserTransaction userTransaction() {
 		logger.trace("Obtendo Transaction Manager");
 		return TransactionManagerServices.getTransactionManager();

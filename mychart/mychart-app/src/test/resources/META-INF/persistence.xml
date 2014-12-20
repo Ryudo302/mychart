@@ -18,7 +18,6 @@
 		
 		<properties>
 			<property name="hibernate.connection.datasource" value="myChartDS" />
-			<property name="hibernate.connection.release_mode" value="after_statement" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
 			<property name="hibernate.current_session_context_class" value="jta" />

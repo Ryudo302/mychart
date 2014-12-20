@@ -26,19 +26,17 @@ public class EntityManagerProvider implements Serializable {
 	@Inject
 	private transient Logger logger;
 
-	// TODO Está aqui para garantir que o gerenciador de transações seja iniciado antes da EMF
-	@SuppressWarnings("unused")
-	@Inject
-	private transient UserTransaction transaction;
-
 	/**
 	 * Obtém uma instância de {@link EntityManagerFactory}.
 	 * 
+	 * @param transaction
+	 *            o gerenciador de transações a ser utilizado
 	 * @return a instância criada
 	 */
 	@Produces
 	@ApplicationScoped
-	public EntityManagerFactory entityManagerFactory() {
+	public EntityManagerFactory entityManagerFactory(UserTransaction transaction) {
+		transaction.toString();
 		logger.trace("Criando EMF a partir da persistence-unit '{}'", PERSISTENCE_UNIT_NAME);
 		return Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 	}
