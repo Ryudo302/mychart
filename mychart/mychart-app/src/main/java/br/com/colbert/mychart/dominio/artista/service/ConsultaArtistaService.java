@@ -4,6 +4,8 @@ import java.util.*;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import br.com.colbert.mychart.dominio.artista.Artista;
@@ -43,31 +45,64 @@ public class ConsultaArtistaService {
 	 *
 	 * @param exemplo
 	 *            a ser utilizado na consulta
+	 * @param somenteJaIncluidos
+	 *            indica se devem ser consultados somente artistas já incluídos no repositório (local)
 	 * @return os artistas encontrados (pode ser uma lista vazia)
 	 * @throws NullPointerException
 	 *             caso o exemplo seja <code>null</code>
 	 * @throws ServiceException
 	 *             caso ocorra algum erro durante a operação
 	 */
-	public Set<Artista> consultarPor(Artista exemplo) throws ServiceException {
+	public Set<Artista> consultarPor(Artista exemplo, boolean somenteJaIncluidos) throws ServiceException {
 		Objects.requireNonNull(exemplo, "O exemplo a ser utilizado na consulta é obrigatório");
 
 		Set<Artista> resultadoTotal = new HashSet<>();
 
-		logger.info("Consultando por artistas com nome '{}' no repositório local", exemplo);
-		try {
-			resultadoTotal.addAll(repositorioLocal.consultarPor(exemplo));
-		} catch (RepositoryException exception) {
-			throw new ServiceException("Erro ao consultar repositório local", exception);
-		}
+		logger.debug("Consultando por artistas no repositório local com base em exemplo: {}", exemplo);
+		resultadoTotal.addAll(consultarRepositorioLocalPor(exemplo));
 
-		logger.info("Consultando por artistas com nome '{}' no repositório remoto", exemplo);
-		try {
-			resultadoTotal.addAll(repositorioRemoto.consultarPor(exemplo.getNome()));
-		} catch (RepositoryException exception) {
-			throw new ServiceException("Erro ao consultar repositório remoto", exception);
+		if (!somenteJaIncluidos) {
+			logger.debug("Consultando por artistas no repositório remoto com base em exemplo: {}", exemplo);
+			resultadoTotal.addAll(consultarRepositorioRemotoPor(exemplo));
 		}
 
 		return resultadoTotal;
+	}
+
+	/**
+	 * Faz uma consulta por artistas a partir de um artista de exemplo. Serão retornados artistas já incluídos e também artistas
+	 * que só existam no repositório remoto.
+	 * 
+	 * @param exemplo
+	 *            a ser utilizado na consulta
+	 * @return os artistas encontrados (pode ser uma lista vazia)
+	 * @throws ServiceException
+	 *             caso ocorra algum erro durante a operação
+	 */
+	public Set<Artista> consultarPor(Artista exemplo) throws ServiceException {
+		return consultarPor(exemplo, false);
+	}
+
+	private Collection<Artista> consultarRepositorioLocalPor(Artista exemplo) throws ServiceException {
+		try {
+			return repositorioLocal.consultarPor(exemplo);
+		} catch (RepositoryException exception) {
+			throw new ServiceException("Erro ao consultar repositório local", exception);
+		}
+	}
+
+	private Collection<? extends Artista> consultarRepositorioRemotoPor(Artista exemplo) throws ServiceException {
+		String nome = exemplo.getNome();
+		
+		if (StringUtils.isNotBlank(nome)) {
+			try {
+				return repositorioRemoto.consultarPor(nome);
+			} catch (RepositoryException exception) {
+				throw new ServiceException("Erro ao consultar repositório remoto", exception);
+			}
+		} else {
+			logger.debug("Nenhum nome informado - a consulta não será realizada");
+			return CollectionUtils.emptyCollection();
+		}
 	}
 }

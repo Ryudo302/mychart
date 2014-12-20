@@ -6,7 +6,7 @@ import java.util.*;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.*;
 import org.slf4j.Logger;
 
 import com.google.gson.*;
@@ -35,6 +35,8 @@ public class ArtistaLastFmRepository implements ArtistaRepositoryRemoto {
 
 	@Override
 	public Set<Artista> consultarPor(String nome) throws RepositoryException {
+		Validate.notBlank(nome, "O nome a ser utilizado na consulta é obrigatório");
+		
 		try {
 			URL url = new URL("http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=" + nome + "&api_key=" + API_KEY
 					+ "&format=json");
