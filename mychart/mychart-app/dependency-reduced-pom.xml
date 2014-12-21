@@ -42,7 +42,7 @@
               <index>true</index>
               <manifest>
                 <addClasspath>true</addClasspath>
-                <mainClass>br.com.colbert.mychart.Main</mainClass>
+                <mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
               </manifest>
             </archive>
           </configuration>
@@ -66,7 +66,7 @@
           <doCheck>false</doCheck>
           <doUpdate>true</doUpdate>
           <shortRevisionLength>5</shortRevisionLength>
-          <format>{0} - {1,date,dd/MM/yyyy HH:mm}</format>
+          <format>(git rev. {0}) {1,date,dd/MM/yyyy HH:mm}</format>
           <items>
             <item>scmVersion</item>
             <item>timestamp</item>
@@ -121,7 +121,7 @@
               <transformers>
                 <transformer />
                 <transformer>
-                  <mainClass>br.com.colbert.mychart.Main</mainClass>
+                  <mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
                 </transformer>
                 <transformer />
                 <transformer>
@@ -149,7 +149,7 @@
               <outfile>${project.build.directory}/MyChart.exe</outfile>
               <downloadUrl>http://java.com/download</downloadUrl>
               <classPath>
-                <mainClass>br.com.colbert.mychart.Main</mainClass>
+                <mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
                 <preCp>anything</preCp>
               </classPath>
               <icon>src/main/resources/icon/application.ico</icon>

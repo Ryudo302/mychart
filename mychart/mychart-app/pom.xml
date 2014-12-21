@@ -170,7 +170,7 @@
 					<doCheck>false</doCheck>
 					<doUpdate>true</doUpdate>
 					<shortRevisionLength>5</shortRevisionLength>
-					<format>{0} - {1,date,dd/MM/yyyy HH:mm}</format>
+					<format>(git rev. {0}) {1,date,dd/MM/yyyy HH:mm}</format>
 					<items>
 						<item>scmVersion</item>
 						<item>timestamp</item>
@@ -308,6 +308,7 @@
 							<manifest>
 								<addClasspath>true</addClasspath>
 								<mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
+								<SplashScreen-Image>images/chart.png</SplashScreen-Image>
 							</manifest>
 							<!-- <manifestEntries> <mode>development</mode> </manifestEntries> -->
 						</archive>
