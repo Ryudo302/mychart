@@ -33,7 +33,7 @@ public interface ArtistaRepositoryLocal extends Repository<Artista, Integer> {
 	 * 
 	 * @param exemplo
 	 *            a ser utilizada na consulta
-	 * @return as artistas encontradas (pode ser uma lista vazia)
+	 * @return os artistas encontradas (pode ser uma lista vazia)
 	 * @throws RepositoryException
 	 *             caso ocorra algum erro não tratado durante a operação
 	 */

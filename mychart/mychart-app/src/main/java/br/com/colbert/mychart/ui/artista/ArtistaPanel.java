@@ -14,8 +14,8 @@ import com.jgoodies.forms.layout.*;
 
 import br.com.colbert.base.ui.*;
 import br.com.colbert.mychart.dominio.artista.*;
-import br.com.colbert.mychart.infraestrutura.eventos.artista.*;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
+import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 
 /**
  * Implementação de {@link ArtistaView} utilizando um {@link JPanel}.
@@ -38,7 +38,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.CONSULTA)
-	private Event<ConsultaArtistaEvent> ouvintesConsulta;
+	private Event<ConsultaEntidadeEvent> ouvintesConsulta;
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.INSERCAO)
@@ -107,7 +107,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		consultarButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				ouvintesConsulta.fire(new ConsultaArtistaEvent(getArtistaAtual(), getModoConsulta()));
+				ouvintesConsulta.fire(new ConsultaEntidadeEvent(getArtistaAtual(), getModoConsulta()));
 			}
 		});
 		botoesPanel.add(consultarButton);

@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.infraestrutura.eventos.artista;
+package br.com.colbert.mychart.infraestrutura.eventos.entidade;
 
 /**
  * Enumeração dos modos de consulta possíveis.

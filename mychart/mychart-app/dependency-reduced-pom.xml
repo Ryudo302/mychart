@@ -44,6 +44,10 @@
                 <addClasspath>true</addClasspath>
                 <mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
               </manifest>
+              <manifestEntries>
+                <SplashScreen-Image>images/chart.png</SplashScreen-Image>
+                <Build-Number>${buildNumber}</Build-Number>
+              </manifestEntries>
             </archive>
           </configuration>
         </plugin>

@@ -18,7 +18,7 @@ import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapper;
 
 /**
- * Uma implementação de {@link ArtistaRepositoryLocal} que utiliza o JPA.
+ * Uma implementação de {@link CancaoRepositoryLocal} que utiliza o JPA.
  * 
  * @author Thiago Colbert
  * @since 15/12/2014

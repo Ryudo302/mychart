@@ -11,7 +11,7 @@ import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
  * 
  * @author Thiago Colbert
  * @since 08/12/2014
- * @see ArtistaRepositoryLocal
+ * @see CancaoRepositoryLocal
  */
 public interface ArtistaRepositoryRemoto extends Repository<Artista, Integer> {
 

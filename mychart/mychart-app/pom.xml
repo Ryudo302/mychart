@@ -308,9 +308,11 @@
 							<manifest>
 								<addClasspath>true</addClasspath>
 								<mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
-								<SplashScreen-Image>images/chart.png</SplashScreen-Image>
 							</manifest>
-							<!-- <manifestEntries> <mode>development</mode> </manifestEntries> -->
+							<manifestEntries>
+								<SplashScreen-Image>images/chart.png</SplashScreen-Image>
+								<Build-Number>${buildNumber}</Build-Number>
+							</manifestEntries>
 						</archive>
 					</configuration>
 				</plugin>

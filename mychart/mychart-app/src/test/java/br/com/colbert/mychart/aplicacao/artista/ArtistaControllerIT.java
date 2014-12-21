@@ -18,7 +18,7 @@ import org.junit.*;
 import org.mockito.Mock;
 
 import br.com.colbert.mychart.dominio.artista.*;
-import br.com.colbert.mychart.infraestrutura.eventos.artista.*;
+import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 import br.com.colbert.mychart.infraestrutura.jpa.ArtistaJpaRepository;
 import br.com.colbert.mychart.infraestrutura.lastfm.ArtistaLastFmRepository;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
@@ -68,7 +68,7 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 	public void testConsultarExistentes() {
 		Artista exemplo = new Artista("rihanna", TipoArtista.FEMININO_SOLO);
 
-		controller.consultarExistentes(new ConsultaArtistaEvent(exemplo, ModoConsulta.TODOS));
+		controller.consultarExistentes(new ConsultaEntidadeEvent(exemplo, ModoConsulta.TODOS));
 
 		assertThat(artistas, is(notNullValue(Collection.class)));
 		assertThat(artistas.size(), is(equalTo(2)));
@@ -101,10 +101,10 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 	@Test
 	public void testRemoverArtistaExistente() {
 		Artista exemplo = new Artista("Rihanna", TipoArtista.FEMININO_SOLO);
-		controller.consultarExistentes(new ConsultaArtistaEvent(exemplo, ModoConsulta.SOMENTE_JA_INCLUIDOS));
+		controller.consultarExistentes(new ConsultaEntidadeEvent(exemplo, ModoConsulta.SOMENTE_JA_INCLUIDOS));
 
 		controller.removerExistente(artistas.stream().filter(artista -> artista.getId() != null).findFirst().get());
-		controller.consultarExistentes(new ConsultaArtistaEvent(exemplo, ModoConsulta.SOMENTE_JA_INCLUIDOS));
+		controller.consultarExistentes(new ConsultaEntidadeEvent(exemplo, ModoConsulta.SOMENTE_JA_INCLUIDOS));
 
 		System.out.println(artistas);
 
@@ -115,7 +115,7 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 	public void testRemoverArtistaInexistente() {
 		controller.removerExistente(new Artista("Fulano", TipoArtista.MASCULINO_SOLO));
 
-		controller.consultarExistentes(new ConsultaArtistaEvent(new Artista(null, null), ModoConsulta.SOMENTE_JA_INCLUIDOS));
+		controller.consultarExistentes(new ConsultaEntidadeEvent(new Artista(null, null), ModoConsulta.SOMENTE_JA_INCLUIDOS));
 
 		System.out.println(artistas);
 

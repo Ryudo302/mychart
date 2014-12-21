@@ -36,7 +36,7 @@ public class ArtistaLastFmRepository implements ArtistaRepositoryRemoto {
 	@Override
 	public Set<Artista> consultarPor(String nome) throws RepositoryException {
 		Validate.notBlank(nome, "O nome a ser utilizado na consulta é obrigatório");
-		
+
 		try {
 			URL url = new URL("http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=" + nome + "&api_key=" + API_KEY
 					+ "&format=json");

@@ -11,12 +11,12 @@ import org.mockito.Mock;
 
 import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.dominio.artista.repository.*;
-import br.com.colbert.mychart.infraestrutura.eventos.artista.ModoConsulta;
+import br.com.colbert.mychart.infraestrutura.eventos.entidade.ModoConsulta;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.tests.support.AbstractTest;
 
 /**
- * Testes unitários da classe {@link ConsultaArtistaService}.
+ * Testes unitários da classe {@link ConsultaCancaoService}.
  * 
  * @author Thiago Colbert
  * @since 08/12/2014

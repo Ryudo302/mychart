@@ -14,8 +14,8 @@ import br.com.colbert.base.aplicacao.validacao.*;
 import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepositoryLocal;
 import br.com.colbert.mychart.dominio.artista.service.ConsultaArtistaService;
-import br.com.colbert.mychart.infraestrutura.eventos.artista.ConsultaArtistaEvent;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
+import br.com.colbert.mychart.infraestrutura.eventos.entidade.ConsultaEntidadeEvent;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
@@ -47,8 +47,8 @@ public class ArtistaController implements Serializable {
 	@Any
 	private Instance<Validador<Artista>> validadores;
 
-	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) ConsultaArtistaEvent evento) {
-		Artista exemplo = evento.getArtista();
+	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) ConsultaEntidadeEvent evento) {
+		Artista exemplo = evento.getEntidade();
 
 		logger.info("Consultando artistas com base em exemplo: {}", exemplo);
 

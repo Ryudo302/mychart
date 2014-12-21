@@ -3,13 +3,13 @@ package br.com.colbert.mychart.dominio.cancao;
 import java.util.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.builder.*;
-import org.hibernate.validator.constraints.*;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import br.com.colbert.base.dominio.AbstractEntidade;
 import br.com.colbert.mychart.dominio.artista.Artista;
+import br.com.colbert.mychart.infraestrutura.validacao.TituloMusical;
 
 /**
  * Uma canção é uma composição musical criada para um ou mais artistas musicais.
@@ -29,19 +29,18 @@ public class Cancao extends AbstractEntidade<Integer> {
 	@Column(name = "COD_CANCAO", unique = true, nullable = false)
 	private Integer id;
 
-	@NotBlank
-	@Size(max = 255)
+	@TituloMusical
 	@Column(name = "DSC_TITULO", length = 255, unique = false, nullable = false)
 	private String titulo;
 
-	@NotEmpty
+	@NotEmpty(message = "{br.com.colbert.mychart.constraints.Artistas.message}")
 	@ManyToMany(cascade = {}, fetch = FetchType.LAZY)
 	@JoinTable(name = "TB_ARTISTA_CANCAO", joinColumns = { @JoinColumn(referencedColumnName = "COD_CANCAO") }, inverseJoinColumns = { @JoinColumn(referencedColumnName = "COD_ARTISTA") })
 	private List<Artista> artistas;
 
 	public Cancao(String titulo, List<Artista> artistas) {
 		this.titulo = titulo;
-		this.artistas = new ArrayList<>(artistas);
+		this.artistas = artistas != null ? new ArrayList<>(artistas) : Collections.emptyList();
 	}
 
 	/**

@@ -14,7 +14,7 @@ import br.com.colbert.mychart.dominio.artista.Artista;
 public interface ArtistaView extends View {
 
 	/**
-	 * Define o artista atualmente sendo exibida em detalhes na visão.
+	 * Define o artista atualmente sendo exibido em detalhes na visão.
 	 * 
 	 * @param artista
 	 */

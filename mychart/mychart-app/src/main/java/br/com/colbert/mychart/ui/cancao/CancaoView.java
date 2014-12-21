@@ -1,5 +1,7 @@
 package br.com.colbert.mychart.ui.cancao;
 
+import java.util.Collection;
+
 import br.com.colbert.base.ui.View;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 
@@ -11,4 +13,17 @@ import br.com.colbert.mychart.dominio.cancao.Cancao;
  */
 public interface CancaoView extends View {
 
+	/**
+	 * Define a canção atualmente sendo exibida em detalhes na visão.
+	 * 
+	 * @param cancao
+	 */
+	void setCancaoAtual(Cancao cancao);
+
+	/**
+	 * Define as canções a serem listadas na visão.
+	 * 
+	 * @param cancoes
+	 */
+	void setCancoes(Collection<Cancao> cancoes);
 }

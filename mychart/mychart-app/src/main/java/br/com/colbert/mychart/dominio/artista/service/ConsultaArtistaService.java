@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 
 import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.artista.repository.*;
-import br.com.colbert.mychart.infraestrutura.eventos.artista.ModoConsulta;
+import br.com.colbert.mychart.infraestrutura.eventos.entidade.ModoConsulta;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 
 /**
