@@ -44,7 +44,7 @@ public class ValidacaoException extends Exception {
 	private static String toString(List<String> mensagens) {
 		StringBuilder builder = new StringBuilder();
 		mensagens.forEach(mensagem -> builder.append(mensagem).append(StringUtils.LF));
-		return builder.toString();
+		return builder.deleteCharAt(builder.length() - 1).toString();
 	}
 
 	/**

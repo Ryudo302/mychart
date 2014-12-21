@@ -10,8 +10,6 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 
@@ -29,13 +27,10 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 
 	private static final long serialVersionUID = -7371434021781119641L;
 
-	private static final TipoArtista TIPO_ARTISTA_PADRAO = TipoArtista.DESCONHECIDO;
-
 	private JTextField nomeTextField;
 	private JTable artistasTable;
 	private JButton consultarButton;
 	private JButton incluirButton;
-	private JButton salvarButton;
 	private JButton removerButton;
 
 	private ArtistaTableModel artistasTableModel;
@@ -50,10 +45,6 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 	private Event<Artista> ouvintesInclusao;
 
 	@Inject
-	@OperacaoCrud(TipoOperacaoCrud.ATUALIZACAO)
-	private Event<Artista> ouvintesAtualizacao;
-
-	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.REMOCAO)
 	private Event<Artista> ouvintesRemocao;
 
@@ -64,19 +55,23 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		JPanel informacoesPanel = new JPanel();
-		informacoesPanel.setBorder(new TitledBorder(null, "Informa\u00E7\u00F5es", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		informacoesPanel.setBorder(new TitledBorder(null, "Informa\u00E7\u00F5es", TitledBorder.LEFT, TitledBorder.TOP, null,
+				null));
 		add(informacoesPanel);
-		informacoesPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("40px"),
-				FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("357px:grow"), }, new RowSpec[] { RowSpec.decode("21px"),
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, }));
+		informacoesPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.UNRELATED_GAP_COLSPEC,
+				ColumnSpec.decode("40px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("357px:grow"), },
+				new RowSpec[] { RowSpec.decode("21px"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+						FormFactory.RELATED_GAP_ROWSPEC, }));
 
 		JLabel nomeLabel = new JLabel("Nome:");
 		informacoesPanel.add(nomeLabel, "2, 1, left, center");
 
 		nomeTextField = new JTextField();
+		nomeTextField.setColumns(40);
 		nomeTextField.setToolTipText("Nome artístico (completo)");
-		nomeTextField.setColumns(46);
 		nomeTextField.setHorizontalAlignment(SwingConstants.LEFT);
+		nomeTextField.requestFocus();
+
 		informacoesPanel.add(nomeTextField, "4, 1, left, top");
 
 		JLabel tipoLabel = new JLabel("Tipo:");
@@ -99,7 +94,8 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 			}
 		});
 
-		consultarButton = ButtonFactory.createJButton("Consultar", "Procura por artistas que atendam aos critérios informados acima");
+		consultarButton = ButtonFactory.createJButton("Consultar",
+				"Procura por artistas que atendam aos critérios informados acima");
 		consultarButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -109,17 +105,6 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		botoesPanel.add(consultarButton);
 
 		botoesPanel.add(incluirButton);
-
-		salvarButton = ButtonFactory.createJButton("Salvar", "Salva as alterações realizadas nos dados do artista");
-		salvarButton.setEnabled(false);
-		salvarButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				ouvintesAtualizacao.fire(getArtistaAtual());
-				limparTela();
-			}
-		});
-		botoesPanel.add(salvarButton);
 
 		removerButton = ButtonFactory.createJButton("Excluir", "Exclui o artista selecionado");
 		removerButton.addActionListener(new ActionListener() {
@@ -136,6 +121,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		add(tabelaScrollPane);
 
 		artistasTable = new JTable();
+		artistasTable.setFillsViewportHeight(true);
 		artistasTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		artistasTableModel = new ArtistaTableModel();
 		artistasTable.setModel(artistasTableModel);
@@ -178,18 +164,17 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 	@Override
 	public void setArtistas(Collection<Artista> artistas) {
 		this.artistasTableModel.setElements(artistas);
+		repaint();
 	}
 
 	private void setEstadoAtual(EstadoTelaCrud estadoAtual) {
 		switch (estadoAtual) {
 		case CONSULTA:
 			this.incluirButton.setEnabled(true);
-			this.salvarButton.setEnabled(false);
 			this.removerButton.setEnabled(false);
 			break;
 		case INCLUSAO_OU_ALTERACAO:
 			this.incluirButton.setEnabled(false);
-			this.salvarButton.setEnabled(true);
 			this.removerButton.setEnabled(true);
 			break;
 		}
@@ -201,6 +186,6 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 	}
 
 	private Artista novoArtista() {
-		return new Artista(StringUtils.EMPTY, TIPO_ARTISTA_PADRAO);
+		return Artista.ARTISTA_NULL;
 	}
 }

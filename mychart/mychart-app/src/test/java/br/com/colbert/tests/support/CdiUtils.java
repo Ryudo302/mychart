@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.infraestrutura;
+package br.com.colbert.tests.support;
 
 import java.lang.annotation.Annotation;
 

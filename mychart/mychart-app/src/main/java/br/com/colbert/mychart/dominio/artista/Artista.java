@@ -3,13 +3,13 @@ package br.com.colbert.mychart.dominio.artista;
 import java.util.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.*;
-import org.hibernate.validator.constraints.NotBlank;
 
 import br.com.colbert.base.dominio.AbstractEntidade;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
+import br.com.colbert.mychart.infraestrutura.validacao.Nome;
 
 /**
  * Um artista é um indíviduo ou grupo dentro do ramo musical. É alguém que encabeça trabalhos musicais como canções.
@@ -22,6 +22,8 @@ import br.com.colbert.mychart.dominio.cancao.Cancao;
 @SequenceGenerator(name = "codArtistaGenerator", sequenceName = "SEQ_COD_ARTISTA")
 public class Artista extends AbstractEntidade<Integer> {
 
+	public static final Artista ARTISTA_NULL = new Artista(null, TipoArtista.DESCONHECIDO);
+
 	private static final long serialVersionUID = -5953280230091975040L;
 
 	@Id
@@ -29,12 +31,11 @@ public class Artista extends AbstractEntidade<Integer> {
 	@Column(name = "COD_ARTISTA", unique = true, nullable = false)
 	private Integer id;
 
-	@NotBlank
-	@Size(max = 255)
+	@Nome
 	@Column(name = "NOM_ARTISTA", length = 255, unique = false, nullable = false)
 	private String nome;
 
-	@NotNull
+	@NotNull(message = "{br.com.colbert.mychart.constraints.TipoArtista.message}")
 	@Column(name = "DSC_TIPO", length = 30, unique = false, nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TipoArtista tipo;

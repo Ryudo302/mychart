@@ -1,6 +1,6 @@
 package br.com.colbert.mychart.ui.comum.sobre;
 
-import br.com.colbert.mychart.infraestrutura.CdiUtils;
+import br.com.colbert.tests.support.CdiUtils;
 
 /**
  * 

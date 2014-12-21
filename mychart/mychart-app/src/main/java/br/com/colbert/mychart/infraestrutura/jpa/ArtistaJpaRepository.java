@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.dominio.artista.repository;
+package br.com.colbert.mychart.infraestrutura.jpa;
 
 import java.util.Collection;
 
@@ -12,6 +12,7 @@ import org.hibernate.criterion.*;
 import org.slf4j.Logger;
 
 import br.com.colbert.mychart.dominio.artista.*;
+import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepositoryLocal;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapper;
 

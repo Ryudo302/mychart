@@ -8,8 +8,6 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.hibernate.Session;
 
-import br.com.colbert.mychart.infraestrutura.CdiUtils;
-
 /**
  * Classe que permite a exportação dos dados e metadados do banco de dados para a geração de arquivos DTD e XML do DBUnit.
  * 

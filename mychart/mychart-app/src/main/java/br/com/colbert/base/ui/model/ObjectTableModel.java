@@ -81,7 +81,9 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 			this.elements.set(index, element);
 		}
 
+		LOGGER.debug("Ordenando elementos por sua ordem natural");
 		Collections.sort(elements);
+
 		this.fireTableDataChanged();
 	}
 

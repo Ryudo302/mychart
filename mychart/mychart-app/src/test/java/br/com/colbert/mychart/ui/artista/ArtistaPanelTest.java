@@ -5,7 +5,7 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 
 import br.com.colbert.mychart.dominio.artista.*;
-import br.com.colbert.mychart.infraestrutura.CdiUtils;
+import br.com.colbert.tests.support.CdiUtils;
 
 /**
  * 

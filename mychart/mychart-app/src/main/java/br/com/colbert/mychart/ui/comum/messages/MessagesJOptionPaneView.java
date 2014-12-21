@@ -1,5 +1,7 @@
 package br.com.colbert.mychart.ui.comum.messages;
 
+import java.text.MessageFormat;
+
 import javax.swing.JOptionPane;
 
 /**
@@ -21,7 +23,8 @@ public class MessagesJOptionPaneView implements MessagesView {
 	}
 
 	@Override
-	public void adicionarMensagemErro(String mensagem) {
-		JOptionPane.showMessageDialog(null, mensagem, "Erro", JOptionPane.ERROR_MESSAGE);
+	public void adicionarMensagemErro(String resumo, String detalhes) {
+		JOptionPane.showMessageDialog(null, MessageFormat.format("{0}:\n\n{4}", resumo, detalhes), "Erro",
+				JOptionPane.ERROR_MESSAGE);
 	}
 }

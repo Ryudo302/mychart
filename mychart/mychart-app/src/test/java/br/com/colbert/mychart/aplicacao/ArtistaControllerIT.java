@@ -16,8 +16,9 @@ import org.jglue.cdiunit.*;
 import org.junit.*;
 import org.mockito.Mock;
 
+import br.com.colbert.mychart.aplicacao.artista.ArtistaController;
 import br.com.colbert.mychart.dominio.artista.*;
-import br.com.colbert.mychart.dominio.artista.repository.ArtistaJpaRepository;
+import br.com.colbert.mychart.infraestrutura.jpa.ArtistaJpaRepository;
 import br.com.colbert.mychart.infraestrutura.lastfm.ArtistaLastFmRepository;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;

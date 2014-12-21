@@ -24,6 +24,11 @@
 			<artifactId>weld-se-core</artifactId>
 			<version>${weld.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-logger</artifactId>
+			<version>1.0.0-CR2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.web</groupId>
@@ -89,6 +94,13 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.3.2</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
@@ -224,7 +236,7 @@
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>br.com.colbert.mychart.Main</mainClass>
+									<mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
 								</transformer>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
@@ -253,7 +265,7 @@
 							<outfile>${project.build.directory}/MyChart.exe</outfile>
 							<downloadUrl>http://java.com/download</downloadUrl>
 							<classPath>
-								<mainClass>br.com.colbert.mychart.Main</mainClass>
+								<mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
 								<preCp>anything</preCp>
 							</classPath>
 							<icon>src/main/resources/icon/application.ico</icon>
@@ -295,7 +307,7 @@
 							<index>true</index>
 							<manifest>
 								<addClasspath>true</addClasspath>
-								<mainClass>br.com.colbert.mychart.Main</mainClass>
+								<mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
 							</manifest>
 							<!-- <manifestEntries> <mode>development</mode> </manifestEntries> -->
 						</archive>

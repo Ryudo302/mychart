@@ -44,7 +44,7 @@ public class TopMusicalController implements Serializable {
 			messagesView.adicionarMensagemSucesso(cancaoFormatter.format(event.getCancao()) + " estreou!");
 		} catch (ElementoJaExistenteException exception) {
 			logger.error("Erro ao processar estreia: " + event, exception);
-			messagesView.adicionarMensagemErro("Erro ao processar estreia:\n\n" + exception.getLocalizedMessage());
+			messagesView.adicionarMensagemErro("Erro ao processar estreia", exception.getLocalizedMessage());
 		}
 	}
 

@@ -1,16 +1,26 @@
 package br.com.colbert.mychart.ui.comum.messages;
 
+import br.com.colbert.base.ui.View;
+
 /**
- * EntidadeView que exibe mensagens geradas pela aplicação.
+ * {@link View} que exibe mensagens geradas pela aplicação.
  * 
  * @author Thiago Colbert
  * @since 08/12/2014
  */
-public interface MessagesView {
+public interface MessagesView extends View {
 
-	void adicionarMensagemSucesso(String mensagem);
-	
+	void adicionarMensagemSucesso(String sumario);
+
 	void adicionarMensagemAlerta(String mensagem);
-	
-	void adicionarMensagemErro(String mensagem);
+
+	/**
+	 * Adiciona uma mensagem de erro à tela.
+	 * 
+	 * @param resumo
+	 *            da mensagem de erro
+	 * @param detalhes
+	 *            da mensagem de erro
+	 */
+	void adicionarMensagemErro(String resumo, String detalhes);
 }

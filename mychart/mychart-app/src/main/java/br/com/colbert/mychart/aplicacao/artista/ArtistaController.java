@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.aplicacao;
+package br.com.colbert.mychart.aplicacao.artista;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -53,7 +53,7 @@ public class ArtistaController implements Serializable {
 			view.setArtistas(consultaArtistaService.consultarPor(exemplo));
 		} catch (Exception exception) {
 			logger.error("Erro ao consultar artistas a partir do exemplo: " + exemplo, exception);
-			messagesView.adicionarMensagemErro("Erro ao consultar artistas: " + exception.getLocalizedMessage());
+			messagesView.adicionarMensagemErro("Erro ao consultar artistas", exception.getLocalizedMessage());
 		}
 	}
 
@@ -73,7 +73,7 @@ public class ArtistaController implements Serializable {
 			messagesView.adicionarMensagemAlerta("Já existe um artista com o nome informado.");
 		} catch (RepositoryException exception) {
 			logger.error("Erro ao adicionar artista: " + artista, exception);
-			messagesView.adicionarMensagemErro("Erro ao adicionar artista: " + exception.getLocalizedMessage());
+			messagesView.adicionarMensagemErro("Erro ao adicionar artista", exception.getLocalizedMessage());
 		}
 	}
 
@@ -90,7 +90,7 @@ public class ArtistaController implements Serializable {
 			messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
 		} catch (RepositoryException exception) {
 			logger.error("Erro ao remover artista: " + artista, exception);
-			messagesView.adicionarMensagemErro("Erro ao remover artista: " + exception.getLocalizedMessage());
+			messagesView.adicionarMensagemErro("Erro ao remover artista", exception.getLocalizedMessage());
 		}
 	}
 
