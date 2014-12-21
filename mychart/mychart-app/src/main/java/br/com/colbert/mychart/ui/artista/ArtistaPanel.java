@@ -10,11 +10,11 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 
 import br.com.colbert.base.ui.*;
 import br.com.colbert.mychart.dominio.artista.*;
+import br.com.colbert.mychart.infraestrutura.eventos.artista.*;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
 
 /**
@@ -38,7 +38,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.CONSULTA)
-	private Event<Artista> ouvintesConsulta;
+	private Event<ConsultaArtistaEvent> ouvintesConsulta;
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.INSERCAO)
@@ -47,6 +47,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.REMOCAO)
 	private Event<Artista> ouvintesRemocao;
+	private JCheckBox consultarTodosCheckBox;
 
 	/**
 	 * Cria um novo painel.
@@ -58,10 +59,12 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		informacoesPanel.setBorder(new TitledBorder(null, "Informa\u00E7\u00F5es", TitledBorder.LEFT, TitledBorder.TOP, null,
 				null));
 		add(informacoesPanel);
-		informacoesPanel.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.UNRELATED_GAP_COLSPEC,
-				ColumnSpec.decode("40px"), FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("357px:grow"), },
-				new RowSpec[] { RowSpec.decode("21px"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.RELATED_GAP_ROWSPEC, }));
+		informacoesPanel.setLayout(new FormLayout(new ColumnSpec[] { com.jgoodies.forms.layout.FormSpecs.UNRELATED_GAP_COLSPEC,
+				ColumnSpec.decode("40px"), com.jgoodies.forms.layout.FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+				com.jgoodies.forms.layout.FormSpecs.DEFAULT_COLSPEC, com.jgoodies.forms.layout.FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("357px:grow"), }, new RowSpec[] { RowSpec.decode("21px"),
+				com.jgoodies.forms.layout.FormSpecs.RELATED_GAP_ROWSPEC, com.jgoodies.forms.layout.FormSpecs.DEFAULT_ROWSPEC,
+				com.jgoodies.forms.layout.FormSpecs.RELATED_GAP_ROWSPEC, }));
 
 		JLabel nomeLabel = new JLabel("Nome:");
 		informacoesPanel.add(nomeLabel, "2, 1, left, center");
@@ -72,7 +75,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		nomeTextField.setHorizontalAlignment(SwingConstants.LEFT);
 		nomeTextField.requestFocus();
 
-		informacoesPanel.add(nomeTextField, "4, 1, left, top");
+		informacoesPanel.add(nomeTextField, "4, 1, 3, 1, left, top");
 
 		JLabel tipoLabel = new JLabel("Tipo:");
 		informacoesPanel.add(tipoLabel, "2, 3, left, center");
@@ -81,6 +84,11 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		tipoComboBox.setToolTipText("Tipo de artista");
 		tipoComboBox.setModel(new DefaultComboBoxModel<>(TipoArtista.values()));
 		informacoesPanel.add(tipoComboBox, "4, 3, left, default");
+
+		consultarTodosCheckBox = new JCheckBox("Incluir consulta na LastFM");
+		consultarTodosCheckBox
+				.setToolTipText("Marque esta opção se deseja que também seja consultada a base de artistas da LastFM");
+		informacoesPanel.add(consultarTodosCheckBox, "6, 3");
 
 		JPanel botoesPanel = new JPanel();
 		add(botoesPanel);
@@ -99,7 +107,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		consultarButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				ouvintesConsulta.fire(getArtistaAtual());
+				ouvintesConsulta.fire(new ConsultaArtistaEvent(getArtistaAtual(), getModoConsulta()));
 			}
 		});
 		botoesPanel.add(consultarButton);
@@ -153,6 +161,10 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 
 	private Artista getArtistaAtual() {
 		return new Artista(nomeTextField.getText(), (TipoArtista) tipoComboBox.getSelectedItem());
+	}
+
+	private ModoConsulta getModoConsulta() {
+		return consultarTodosCheckBox.isSelected() ? ModoConsulta.TODOS : ModoConsulta.SOMENTE_JA_INCLUIDOS;
 	}
 
 	@Override
