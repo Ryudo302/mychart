@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.aplicacao;
+package br.com.colbert.mychart.aplicacao.artista;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -12,12 +12,13 @@ import java.util.Collection;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.jglue.cdiunit.*;
 import org.junit.*;
 import org.mockito.Mock;
 
-import br.com.colbert.mychart.aplicacao.artista.ArtistaController;
 import br.com.colbert.mychart.dominio.artista.*;
+import br.com.colbert.mychart.infraestrutura.eventos.artista.*;
 import br.com.colbert.mychart.infraestrutura.jpa.ArtistaJpaRepository;
 import br.com.colbert.mychart.infraestrutura.lastfm.ArtistaLastFmRepository;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
@@ -51,6 +52,7 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() {
+		artistas = CollectionUtils.emptyCollection();
 		doAnswer(invocation -> {
 			setArtistas(invocation.getArgumentAt(0, Collection.class));
 			return null;
@@ -66,7 +68,7 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 	public void testConsultarExistentes() {
 		Artista exemplo = new Artista("rihanna", TipoArtista.FEMININO_SOLO);
 
-		controller.consultarExistentes(exemplo);
+		controller.consultarExistentes(new ConsultaArtistaEvent(exemplo, ModoConsulta.TODOS));
 
 		assertThat(artistas, is(notNullValue(Collection.class)));
 		assertThat(artistas.size(), is(equalTo(2)));
@@ -99,24 +101,24 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 	@Test
 	public void testRemoverArtistaExistente() {
 		Artista exemplo = new Artista("Rihanna", TipoArtista.FEMININO_SOLO);
-		controller.consultarExistentes(exemplo);
+		controller.consultarExistentes(new ConsultaArtistaEvent(exemplo, ModoConsulta.SOMENTE_JA_INCLUIDOS));
 
 		controller.removerExistente(artistas.stream().filter(artista -> artista.getId() != null).findFirst().get());
-		controller.consultarExistentes(exemplo);
-		
+		controller.consultarExistentes(new ConsultaArtistaEvent(exemplo, ModoConsulta.SOMENTE_JA_INCLUIDOS));
+
 		System.out.println(artistas);
 
-		assertThat(artistas.size(), is(equalTo(1)));
+		assertThat(artistas.size(), is(equalTo(0)));
 	}
 
 	@Test
 	public void testRemoverArtistaInexistente() {
 		controller.removerExistente(new Artista("Fulano", TipoArtista.MASCULINO_SOLO));
 
-		controller.consultarExistentes(new Artista(null, null));
-		
+		controller.consultarExistentes(new ConsultaArtistaEvent(new Artista(null, null), ModoConsulta.SOMENTE_JA_INCLUIDOS));
+
 		System.out.println(artistas);
-		
+
 		assertThat(artistas.size(), is(equalTo(2)));
 	}
 }

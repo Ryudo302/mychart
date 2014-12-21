@@ -10,7 +10,7 @@ import javax.transaction.UserTransaction;
 
 import org.slf4j.Logger;
 
-import bitronix.tm.TransactionManagerServices;
+import bitronix.tm.*;
 
 /**
  * Provê acesso a instâncias responsáveis por gerenciamento de transações (JTA).
@@ -35,7 +35,9 @@ public class TransactionManagerProvider implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		TransactionManagerServices.getConfiguration().setResourceConfigurationFilename(DATASOURCE_CONFIG_FILENAME);
+		Configuration configuration = TransactionManagerServices.getConfiguration();
+		configuration.setResourceConfigurationFilename(DATASOURCE_CONFIG_FILENAME);
+		configuration.setJndiUserTransactionName("bitronixTransactionManager");
 		logger.trace("Configurações carregadas");
 	}
 

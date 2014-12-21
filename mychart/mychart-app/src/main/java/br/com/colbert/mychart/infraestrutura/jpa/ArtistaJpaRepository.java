@@ -2,6 +2,7 @@ package br.com.colbert.mychart.infraestrutura.jpa;
 
 import java.util.Collection;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.*;
 import javax.persistence.criteria.*;
@@ -28,23 +29,27 @@ public class ArtistaJpaRepository implements ArtistaRepositoryLocal {
 	private Logger logger;
 
 	@Inject
-	private EntityManager entityManager;
+	private Instance<EntityManager> entityManager;
+
+	private EntityManager getEntityManager() {
+		return entityManager.get();
+	}
 
 	@Override
 	@ExceptionWrapper(para = RepositoryException.class, mensagem = "Erro ao consultar artistas pelo nome: '{0}'")
 	public Collection<Artista> consultarPorNomeExato(String nome) throws RepositoryException {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<Artista> query = criteriaBuilder.createQuery(Artista.class);
 		Root<Artista> root = query.from(Artista.class);
 		query.where(criteriaBuilder.equal(criteriaBuilder.lower(root.get(Artista_.nome)), nome.toLowerCase()));
-		return entityManager.createQuery(query).getResultList();
+		return getEntityManager().createQuery(query).getResultList();
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	@ExceptionWrapper(para = RepositoryException.class, mensagem = "Erro ao consultar artistas")
 	public Collection<Artista> consultarPor(Artista exemplo) throws RepositoryException {
-		return entityManager.unwrap(Session.class).createCriteria(Artista.class)
+		return getEntityManager().unwrap(Session.class).createCriteria(Artista.class)
 				.add(Example.create(exemplo).enableLike(MatchMode.ANYWHERE).excludeZeroes().ignoreCase()).list();
 	}
 
@@ -58,7 +63,7 @@ public class ArtistaJpaRepository implements ArtistaRepositoryLocal {
 
 		try {
 			logger.debug("Persistindo artista");
-			entityManager.persist(artista);
+			getEntityManager().persist(artista);
 		} catch (EntityExistsException exception) {
 			throw new ElementoJaExistenteException(artista);
 		}
@@ -68,9 +73,11 @@ public class ArtistaJpaRepository implements ArtistaRepositoryLocal {
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao remover artista: {0}")
 	public boolean remover(Artista artista) throws RepositoryException {
 		logger.debug("Verificando se o artista existe no repositório: {}", artista);
-		if (entityManager.contains(artista)) {
+		if (artista.getId() != null) {
 			logger.debug("Removendo artista");
-			entityManager.remove(artista);
+			EntityManager entityManager = getEntityManager();
+			Artista artistaRemover = entityManager.getReference(Artista.class, artista.getId());
+			entityManager.remove(artistaRemover);
 			return true;
 		} else {
 			logger.debug("O artista já não existia no repositório");

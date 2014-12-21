@@ -11,6 +11,7 @@ import org.mockito.Mock;
 
 import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.dominio.artista.repository.*;
+import br.com.colbert.mychart.infraestrutura.eventos.artista.ModoConsulta;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.tests.support.AbstractTest;
 
@@ -36,7 +37,7 @@ public class ArtistaServiceTest extends AbstractTest {
 	public void testConsultarPorNome() throws ServiceException, RepositoryException {
 		Artista artista = new Artista("Teste", TipoArtista.MASCULINO_SOLO);
 
-		artistaService.consultarPor(artista);
+		artistaService.consultarPor(artista, ModoConsulta.TODOS);
 
 		verify(artistaRepositoryLocal, times(1)).consultarPor(artista);
 		verify(artistaRepositoryRemoto, times(1)).consultarPor(artista.getNome());

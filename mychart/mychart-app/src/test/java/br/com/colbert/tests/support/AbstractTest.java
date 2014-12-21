@@ -2,7 +2,7 @@ package br.com.colbert.tests.support;
 
 import org.jboss.weld.log.LoggerProducer;
 import org.jglue.cdiunit.*;
-import org.junit.Rule;
+import org.junit.*;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
@@ -20,6 +20,12 @@ import br.com.colbert.mychart.infraestrutura.providers.TransactionManagerProvide
 @AdditionalClasses(LoggerProducer.class)
 public abstract class AbstractTest {
 
+	@Before
+	public void setUpContext() {
+		// O CDI-Unit muda essa propriedade e causa erro no Hibernate
+		System.setProperty("java.naming.factory.initial", "bitronix.tm.jndi.BitronixInitialContextFactory");
+	}
+	
 	@Rule
 	public TestRule printTestName() {
 		return new PrintTestNameWatcher();

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 
 import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.artista.repository.*;
+import br.com.colbert.mychart.infraestrutura.eventos.artista.ModoConsulta;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 
 /**
@@ -45,15 +46,15 @@ public class ConsultaArtistaService {
 	 *
 	 * @param exemplo
 	 *            a ser utilizado na consulta
-	 * @param somenteJaIncluidos
-	 *            indica se devem ser consultados somente artistas já incluídos no repositório (local)
+	 * @param modoConsulta
+	 *            indica o modo de consulta
 	 * @return os artistas encontrados (pode ser uma lista vazia)
 	 * @throws NullPointerException
 	 *             caso o exemplo seja <code>null</code>
 	 * @throws ServiceException
 	 *             caso ocorra algum erro durante a operação
 	 */
-	public Set<Artista> consultarPor(Artista exemplo, boolean somenteJaIncluidos) throws ServiceException {
+	public Set<Artista> consultarPor(Artista exemplo, ModoConsulta modoConsulta) throws ServiceException {
 		Objects.requireNonNull(exemplo, "O exemplo a ser utilizado na consulta é obrigatório");
 
 		Set<Artista> resultadoTotal = new HashSet<>();
@@ -61,26 +62,12 @@ public class ConsultaArtistaService {
 		logger.debug("Consultando por artistas no repositório local com base em exemplo: {}", exemplo);
 		resultadoTotal.addAll(consultarRepositorioLocalPor(exemplo));
 
-		if (!somenteJaIncluidos) {
+		if (modoConsulta == ModoConsulta.TODOS) {
 			logger.debug("Consultando por artistas no repositório remoto com base em exemplo: {}", exemplo);
 			resultadoTotal.addAll(consultarRepositorioRemotoPor(exemplo));
 		}
 
 		return resultadoTotal;
-	}
-
-	/**
-	 * Faz uma consulta por artistas a partir de um artista de exemplo. Serão retornados artistas já incluídos e também artistas
-	 * que só existam no repositório remoto.
-	 * 
-	 * @param exemplo
-	 *            a ser utilizado na consulta
-	 * @return os artistas encontrados (pode ser uma lista vazia)
-	 * @throws ServiceException
-	 *             caso ocorra algum erro durante a operação
-	 */
-	public Set<Artista> consultarPor(Artista exemplo) throws ServiceException {
-		return consultarPor(exemplo, false);
 	}
 
 	private Collection<Artista> consultarRepositorioLocalPor(Artista exemplo) throws ServiceException {
@@ -93,7 +80,7 @@ public class ConsultaArtistaService {
 
 	private Collection<? extends Artista> consultarRepositorioRemotoPor(Artista exemplo) throws ServiceException {
 		String nome = exemplo.getNome();
-		
+
 		if (StringUtils.isNotBlank(nome)) {
 			try {
 				return repositorioRemoto.consultarPor(nome);

@@ -1,14 +1,17 @@
 package br.com.colbert.tests.support;
 
 import java.io.*;
-import java.sql.*;
-import java.util.ResourceBundle;
+import java.sql.SQLException;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.*;
 import org.dbunit.dataset.*;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
+import org.hibernate.Session;
 import org.junit.*;
 
 /**
@@ -22,26 +25,41 @@ public abstract class AbstractDbUnitTest extends AbstractTest {
 	private static final String DATASET_FILES_FOLDER = "datasets";
 	private static final String DTD_FILE_NAME = "mychart.dtd";
 
-	private static final ResourceBundle DATASOURCE_PROPERTIES = ResourceBundle.getBundle("datasources");
+	@Inject
+	private EntityManager entityManager;
 
 	@Before
 	public void setUpDB() throws DatabaseUnitException, SQLException, IOException, ClassNotFoundException {
-		final IDatabaseConnection connection = getConnection();
-		try {
-			DatabaseOperation.CLEAN_INSERT.execute(connection, getDataSet());
-		} finally {
-			connection.close();
-		}
+		entityManager.unwrap(Session.class).doWork(connection -> {
+			IDatabaseConnection dbUnitConnection = null;
+			try {
+				dbUnitConnection = new DatabaseConnection(connection);
+				DatabaseOperation.CLEAN_INSERT.execute(dbUnitConnection, getDataSet());
+			} catch (Exception exception) {
+				throw new RuntimeException("Erro ao carregar dados no DB", exception);
+			} finally {
+				if (dbUnitConnection != null) {
+					dbUnitConnection.close();
+				}
+			}
+		});
 	}
 
 	@After
 	public void tearDownDb() throws DatabaseUnitException, SQLException, IOException, ClassNotFoundException {
-		final IDatabaseConnection connection = getConnection();
-		try {
-			DatabaseOperation.DELETE_ALL.execute(connection, getDataSet());
-		} finally {
-			connection.close();
-		}
+		entityManager.unwrap(Session.class).doWork(connection -> {
+			IDatabaseConnection dbUnitConnection = null;
+			try {
+				dbUnitConnection = new DatabaseConnection(connection);
+				DatabaseOperation.DELETE_ALL.execute(dbUnitConnection, getDataSet());
+			} catch (Exception exception) {
+				throw new RuntimeException("Erro ao limpar DB", exception);
+			} finally {
+				if (dbUnitConnection != null) {
+					dbUnitConnection.close();
+				}
+			}
+		});
 	}
 
 	/**
@@ -52,11 +70,19 @@ public abstract class AbstractDbUnitTest extends AbstractTest {
 	 * @throws DataSetException
 	 */
 	protected IDataSet getDataSet() throws IOException, DataSetException {
-		return new FlatXmlDataSetBuilder().setMetaDataSetFromDtd(
-				Thread.currentThread().getContextClassLoader()
-						.getResourceAsStream(DATASET_FILES_FOLDER + File.separatorChar + DTD_FILE_NAME)).build(
-				Thread.currentThread().getContextClassLoader()
-						.getResourceAsStream(DATASET_FILES_FOLDER + File.separatorChar + getDataSetFileName()));
+		return new FlatXmlDataSetBuilder().setMetaDataSetFromDtd(getDtdFileInputStream()).build(getDataSetFileInputStream());
+	}
+
+	private InputStream getDtdFileInputStream() {
+		return getResourceAsStream(DATASET_FILES_FOLDER + File.separatorChar + DTD_FILE_NAME);
+	}
+
+	private InputStream getDataSetFileInputStream() {
+		return getResourceAsStream(DATASET_FILES_FOLDER + File.separatorChar + getDataSetFileName());
+	}
+
+	private InputStream getResourceAsStream(String name) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
 	}
 
 	/**
@@ -65,24 +91,4 @@ public abstract class AbstractDbUnitTest extends AbstractTest {
 	 * @return o nome do arquivo
 	 */
 	protected abstract String getDataSetFileName();
-
-	/**
-	 * Obtém uma conexão do DBUnit.
-	 * 
-	 * @return a conexão aberta
-	 * @throws ClassNotFoundException
-	 *             caso a classe do driver do banco não seja encontrada
-	 * @throws SQLException
-	 *             caso ocorra algum erro ao abrir conexão JDBC
-	 * @throws DatabaseUnitException
-	 *             caso ocorra algum erro ao abrir conexão com o DBUnit
-	 */
-	protected IDatabaseConnection getConnection() throws ClassNotFoundException, SQLException, DatabaseUnitException {
-		Class.forName(DATASOURCE_PROPERTIES.getString("resource.mychartds.driverProperties.driverClassName"));
-		Connection connection = DriverManager.getConnection(
-				DATASOURCE_PROPERTIES.getString("resource.mychartds.driverProperties.url"),
-				DATASOURCE_PROPERTIES.getString("resource.mychartds.driverProperties.user"),
-				DATASOURCE_PROPERTIES.getString("resource.mychartds.driverProperties.password"));
-		return new DatabaseConnection(connection);
-	}
 }
