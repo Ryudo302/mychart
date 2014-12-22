@@ -70,7 +70,7 @@
           <doCheck>false</doCheck>
           <doUpdate>true</doUpdate>
           <shortRevisionLength>5</shortRevisionLength>
-          <format>(git rev. {0}) {1,date,dd/MM/yyyy HH:mm}</format>
+          <format>(rev. {0}) {1,date,dd/MM/yyyy HH:mm}</format>
           <items>
             <item>scmVersion</item>
             <item>timestamp</item>

@@ -34,7 +34,7 @@ public class RequiredTransactionInterceptorTest extends AbstractTest {
 
 		@Transactional
 		public void testar() {
-			System.out.println("Rodou!");
+			System.out.println("[Teste] Rodou!");
 		}
 
 		@Transactional
