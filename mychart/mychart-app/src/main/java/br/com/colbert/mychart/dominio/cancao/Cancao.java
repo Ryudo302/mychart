@@ -63,6 +63,17 @@ public class Cancao extends AbstractEntidade<Integer> {
 		return Collections.unmodifiableList(artistas);
 	}
 
+	/**
+	 * Obtém o artista principal da canção, que é aquele que é o dono da canção (não convidado).
+	 * 
+	 * @return um opcional contendo o artista principal (pode estar vazio caso a canção ainda não possua artistas definidos)
+	 */
+	@Transient
+	public Optional<Artista> getArtistaPrincipal() {
+		// TODO Sempre o primeiro da lista?
+		return artistas.size() > 0 ? Optional.of(artistas.get(0)) : Optional.empty();
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString()).append("titulo", titulo)

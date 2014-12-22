@@ -1,6 +1,7 @@
 package br.com.colbert.mychart.aplicacao.cancao;
 
 import java.io.Serializable;
+import java.util.*;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.*;
@@ -9,12 +10,11 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.validacao.Validador;
-import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
-import br.com.colbert.mychart.dominio.cancao.repository.CancaoRepositoryLocal;
-import br.com.colbert.mychart.dominio.cancao.service.ConsultaCancaoService;
+import br.com.colbert.mychart.dominio.cancao.repository.CancaoRepository;
+import br.com.colbert.mychart.dominio.cancao.service.CancaoWs;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
-import br.com.colbert.mychart.infraestrutura.eventos.entidade.ConsultaEntidadeEvent;
+import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 import br.com.colbert.mychart.ui.cancao.CancaoView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 
@@ -37,24 +37,38 @@ public class CancaoController implements Serializable {
 	private MessagesView messagesView;
 
 	@Inject
-	private ConsultaCancaoService consultaService;
+	private CancaoRepository repositorio;
 	@Inject
-	private CancaoRepositoryLocal repositorioLocal;
+	private CancaoWs cancaoWs;
 
 	@Inject
 	@Any
-	private Instance<Validador<Artista>> validadores;
+	private Instance<Validador<Cancao>> validadores;
 
 	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) ConsultaEntidadeEvent evento) {
 		Cancao exemplo = evento.getEntidade();
 
-		logger.info("Consultando artistas com base em exemplo: {}", exemplo);
+		logger.info("Consultando canções com base em exemplo: {}", exemplo);
+		Collection<Cancao> cancoes;
 
 		try {
-			view.setCancoes(consultaService.consultarPor(exemplo, evento.getModoConsulta()));
+			if (evento.getModoConsulta() == ModoConsulta.TODOS) {
+				cancoes = new ArrayList<>();
+
+				logger.debug("Consultando no repositório local");
+				cancoes.addAll(repositorio.consultarPor(exemplo));
+
+				logger.debug("Consultando na web");
+				cancoes.addAll(cancaoWs.consultarPor(exemplo));
+			} else {
+				logger.debug("Consultando no repositório local");
+				cancoes = repositorio.consultarPor(exemplo);
+			}
+
+			view.setCancoes(cancoes);
 		} catch (Exception exception) {
-			logger.error("Erro ao consultar artistas a partir do exemplo: " + exemplo, exception);
-			messagesView.adicionarMensagemErro("Erro ao consultar artistas", exception.getLocalizedMessage());
+			logger.error("Erro ao consultar canções a partir de exemplo: " + exemplo, exception);
+			messagesView.adicionarMensagemErro("Erro ao consultar canções", exception.getLocalizedMessage());
 		}
 	}
 }

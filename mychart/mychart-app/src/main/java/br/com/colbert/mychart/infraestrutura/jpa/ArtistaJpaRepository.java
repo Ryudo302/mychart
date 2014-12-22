@@ -13,17 +13,17 @@ import org.hibernate.criterion.*;
 import org.slf4j.Logger;
 
 import br.com.colbert.mychart.dominio.artista.*;
-import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepositoryLocal;
+import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepository;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapper;
 
 /**
- * Uma implementação de {@link CancaoRepositoryLocal} que utiliza o JPA.
+ * Uma implementação de {@link ArtistaRepository} que utiliza o JPA.
  * 
  * @author Thiago Colbert
  * @since 15/12/2014
  */
-public class ArtistaJpaRepository implements ArtistaRepositoryLocal {
+public class ArtistaJpaRepository implements ArtistaRepository {
 
 	@Inject
 	private Logger logger;

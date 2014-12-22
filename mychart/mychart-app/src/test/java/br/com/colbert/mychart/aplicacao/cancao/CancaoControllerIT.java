@@ -11,12 +11,14 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.jglue.cdiunit.ProducesAlternative;
+import org.jglue.cdiunit.*;
 import org.junit.*;
 import org.mockito.Mock;
 
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
+import br.com.colbert.mychart.infraestrutura.jpa.CancaoJpaRepository;
+import br.com.colbert.mychart.infraestrutura.lastfm.CancaoLastFmWs;
 import br.com.colbert.mychart.ui.cancao.CancaoView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.tests.support.AbstractDbUnitTest;
@@ -27,6 +29,7 @@ import br.com.colbert.tests.support.AbstractDbUnitTest;
  * @author Thiago Colbert
  * @since 21/12/2014
  */
+@AdditionalClasses({ CancaoJpaRepository.class, CancaoLastFmWs.class })
 public class CancaoControllerIT extends AbstractDbUnitTest {
 
 	@Inject

@@ -16,9 +16,18 @@
 
 	<properties>
 		<aplicacao.nome>MyChart</aplicacao.nome>
+
+		<!-- Nome do projeto dentro do repositório SCM -->
+		<scm.project.name>mychart.git</scm.project.name>
 	</properties>
 
 	<modules>
 		<module>mychart-app</module>
 	</modules>
+
+	<scm>
+		<url>${scm.base.url}/${scm.project.name}</url>
+		<connection>scm:git:${project.scm.url}</connection>
+		<developerConnection>scm:git:${project.scm.url}</developerConnection>
+	</scm>
 </project>

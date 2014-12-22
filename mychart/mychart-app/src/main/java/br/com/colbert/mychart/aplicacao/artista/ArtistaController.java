@@ -1,7 +1,7 @@
 package br.com.colbert.mychart.aplicacao.artista;
 
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.*;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.*;
@@ -12,10 +12,10 @@ import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.validacao.*;
 import br.com.colbert.mychart.dominio.artista.Artista;
-import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepositoryLocal;
-import br.com.colbert.mychart.dominio.artista.service.ConsultaArtistaService;
+import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepository;
+import br.com.colbert.mychart.dominio.artista.service.ArtistaWs;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
-import br.com.colbert.mychart.infraestrutura.eventos.entidade.ConsultaEntidadeEvent;
+import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
@@ -39,9 +39,9 @@ public class ArtistaController implements Serializable {
 	private MessagesView messagesView;
 
 	@Inject
-	private ConsultaArtistaService consultaArtistaService;
+	private ArtistaRepository repositorio;
 	@Inject
-	private ArtistaRepositoryLocal repositorio;
+	private ArtistaWs artistaWs;
 
 	@Inject
 	@Any
@@ -51,9 +51,23 @@ public class ArtistaController implements Serializable {
 		Artista exemplo = evento.getEntidade();
 
 		logger.info("Consultando artistas com base em exemplo: {}", exemplo);
+		Collection<Artista> artistas;
 
 		try {
-			view.setArtistas(consultaArtistaService.consultarPor(exemplo, evento.getModoConsulta()));
+			if (evento.getModoConsulta() == ModoConsulta.TODOS) {
+				artistas = new ArrayList<>();
+
+				logger.debug("Consultando no repositório local");
+				artistas.addAll(repositorio.consultarPor(exemplo));
+
+				logger.debug("Consultando na web");
+				artistas.addAll(artistaWs.consultarPor(exemplo));
+			} else {
+				logger.debug("Consultando no repositório local");
+				artistas = repositorio.consultarPor(exemplo);
+			}
+
+			view.setArtistas(artistas);
 		} catch (Exception exception) {
 			logger.error("Erro ao consultar artistas a partir do exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar artistas", exception.getLocalizedMessage());

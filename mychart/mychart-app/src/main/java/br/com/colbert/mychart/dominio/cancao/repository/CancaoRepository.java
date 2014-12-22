@@ -7,14 +7,12 @@ import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 
 /**
- * Repositório local de {@link Cancao}. Ele difere de um repositório remoto por permitir operações de inserção, remoção e/ou
- * atualização de elementos.
+ * Repositório local de {@link Cancao}.
  * 
  * @author Thiago Colbert
  * @since 08/12/2014
- * @see CancaoRepositoryRemoto
  */
-public interface CancaoRepositoryLocal extends Repository<Cancao, Integer> {
+public interface CancaoRepository extends Repository<Cancao, Integer> {
 
 	/**
 	 * Consulta por canções que tenham o título exatamente igual ao informado. A consulta não é <em>case-sensitive</em> (uma
@@ -45,11 +43,23 @@ public interface CancaoRepositoryLocal extends Repository<Cancao, Integer> {
 	 * @param cancao
 	 *            a ser adicionada
 	 * @throws ElementoJaExistenteException
-	 *             caso a canção informado já exista no repositório
+	 *             caso a canção informada já exista no repositório
 	 * @throws RepositoryException
 	 *             caso ocorra algum erro não tratado durante a operação
 	 */
 	void adicionar(Cancao cancao) throws ElementoJaExistenteException, RepositoryException;
+
+	/**
+	 * Altera uma canção existente no repositório.
+	 * 
+	 * @param cancao
+	 *            a ser alterada
+	 * @throws ElementoNaoExistenteException
+	 *             caso a canção informada não exista no repositório
+	 * @throws RepositoryException
+	 *             caso ocorra algum erro não tratado durante a operação
+	 */
+	void alterar(Cancao cancao) throws ElementoNaoExistenteException, RepositoryException;
 
 	/**
 	 * Remove uma canção do repositório. A tentativa de remover uma canção inexistente é uma <em>no-op</em>.

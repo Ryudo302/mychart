@@ -20,7 +20,7 @@ import org.mockito.Mock;
 import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 import br.com.colbert.mychart.infraestrutura.jpa.ArtistaJpaRepository;
-import br.com.colbert.mychart.infraestrutura.lastfm.ArtistaLastFmRepository;
+import br.com.colbert.mychart.infraestrutura.lastfm.ArtistaLastFmWs;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.tests.support.AbstractDbUnitTest;
@@ -31,7 +31,7 @@ import br.com.colbert.tests.support.AbstractDbUnitTest;
  * @author Thiago Colbert
  * @since 08/12/2014
  */
-@AdditionalClasses({ ArtistaJpaRepository.class, ArtistaLastFmRepository.class })
+@AdditionalClasses({ ArtistaJpaRepository.class, ArtistaLastFmWs.class })
 public class ArtistaControllerIT extends AbstractDbUnitTest {
 
 	@Inject
