@@ -51,24 +51,19 @@ public class ArtistaController implements Serializable {
 		Artista exemplo = evento.getEntidade();
 
 		logger.info("Consultando artistas com base em exemplo: {}", exemplo);
-		Collection<Artista> artistas;
+		Collection<Artista> artistas = new ArrayList<>();
 
 		try {
+			logger.debug("Consultando no repositório local");
+			artistas.addAll(repositorio.consultarPor(exemplo));
+
 			if (evento.getModoConsulta() == ModoConsulta.TODOS) {
-				artistas = new ArrayList<>();
-
-				logger.debug("Consultando no repositório local");
-				artistas.addAll(repositorio.consultarPor(exemplo));
-
 				logger.debug("Consultando na web");
 				artistas.addAll(artistaWs.consultarPor(exemplo));
-			} else {
-				logger.debug("Consultando no repositório local");
-				artistas = repositorio.consultarPor(exemplo);
 			}
 
 			view.setArtistas(artistas);
-		} catch (Exception exception) {
+		} catch (RepositoryException | ServiceException exception) {
 			logger.error("Erro ao consultar artistas a partir do exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar artistas", exception.getLocalizedMessage());
 		}

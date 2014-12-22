@@ -15,6 +15,7 @@ import br.com.colbert.mychart.dominio.cancao.repository.CancaoRepository;
 import br.com.colbert.mychart.dominio.cancao.service.CancaoWs;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
 import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
+import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.ui.cancao.CancaoView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 
@@ -49,24 +50,19 @@ public class CancaoController implements Serializable {
 		Cancao exemplo = evento.getEntidade();
 
 		logger.info("Consultando canções com base em exemplo: {}", exemplo);
-		Collection<Cancao> cancoes;
+		Collection<Cancao> cancoes = new ArrayList<>();
 
 		try {
+			logger.debug("Consultando no repositório local");
+			cancoes.addAll(repositorio.consultarPor(exemplo));
+
 			if (evento.getModoConsulta() == ModoConsulta.TODOS) {
-				cancoes = new ArrayList<>();
-
-				logger.debug("Consultando no repositório local");
-				cancoes.addAll(repositorio.consultarPor(exemplo));
-
 				logger.debug("Consultando na web");
 				cancoes.addAll(cancaoWs.consultarPor(exemplo));
-			} else {
-				logger.debug("Consultando no repositório local");
-				cancoes = repositorio.consultarPor(exemplo);
 			}
 
 			view.setCancoes(cancoes);
-		} catch (Exception exception) {
+		} catch (RepositoryException | ServiceException exception) {
 			logger.error("Erro ao consultar canções a partir de exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar canções", exception.getLocalizedMessage());
 		}
