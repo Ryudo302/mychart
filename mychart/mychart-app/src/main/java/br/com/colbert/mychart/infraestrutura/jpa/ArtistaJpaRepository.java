@@ -19,7 +19,7 @@ import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapper;
 
 /**
  * Uma implementação de {@link ArtistaRepository} que utiliza o JPA.
- * 
+ *
  * @author Thiago Colbert
  * @since 15/12/2014
  */
@@ -74,11 +74,15 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	public boolean remover(Artista artista) throws RepositoryException {
 		logger.debug("Verificando se o artista existe no repositório: {}", artista);
 		if (artista.getId() != null) {
-			logger.debug("Removendo artista");
-			EntityManager entityManager = getEntityManager();
-			Artista artistaRemover = entityManager.getReference(Artista.class, artista.getId());
-			entityManager.remove(artistaRemover);
-			return true;
+			if (artista.getPossuiCancoes()) {
+				throw new RepositoryException("O artista não pode ser removido pois existem canções que o referenciam");
+			} else {
+				logger.debug("Removendo artista");
+				EntityManager entityManager = getEntityManager();
+				Artista artistaRemover = entityManager.getReference(Artista.class, artista.getId());
+				entityManager.remove(artistaRemover);
+				return true;
+			}
 		} else {
 			logger.debug("O artista já não existia no repositório");
 			return false;

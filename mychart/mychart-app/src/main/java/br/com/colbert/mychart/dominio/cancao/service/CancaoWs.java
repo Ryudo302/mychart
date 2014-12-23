@@ -24,6 +24,6 @@ public interface CancaoWs {
 	 * @throws ServiceException
 	 *             caso ocorra algum erro na consulta
 	 */
-	public abstract Set<Cancao> consultarPor(Cancao exemplo) throws ServiceException;
+	Set<Cancao> consultarPor(Cancao exemplo) throws ServiceException;
 
 }

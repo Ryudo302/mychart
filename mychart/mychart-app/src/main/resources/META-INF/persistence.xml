@@ -9,16 +9,17 @@
 
 		<class>br.com.colbert.mychart.dominio.artista.Artista</class>
 		<class>br.com.colbert.mychart.dominio.cancao.Cancao</class>
+		<class>br.com.colbert.mychart.dominio.cancao.ArtistaCancao</class>
 		<class>br.com.colbert.mychart.dominio.topmusical.Posicao</class>
 		<class>br.com.colbert.mychart.dominio.topmusical.PosicaoId</class>
 		<class>br.com.colbert.mychart.dominio.topmusical.TopMusical</class>
 		<class>br.com.colbert.mychart.dominio.IntervaloDeDatas</class>
 
 		<properties>
-			<property name="hibernate.connection.release_mode" value="after_statement"/>
+			<property name="hibernate.connection.release_mode" value="after_statement" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-			
+
 			<property name="hibernate.current_session_context_class" value="jta" />
 			<property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.BitronixJtaPlatform" />
 

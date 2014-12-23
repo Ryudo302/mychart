@@ -5,10 +5,11 @@ import java.util.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.builder.*;
 
 import br.com.colbert.base.dominio.AbstractEntidade;
-import br.com.colbert.mychart.dominio.cancao.Cancao;
+import br.com.colbert.mychart.dominio.cancao.ArtistaCancao;
 import br.com.colbert.mychart.infraestrutura.validacao.Nome;
 
 /**
@@ -40,20 +41,27 @@ public class Artista extends AbstractEntidade<Integer> {
 	@Enumerated(EnumType.STRING)
 	private TipoArtista tipo;
 
-	@ManyToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "artistas")
-	private Set<Cancao> cancoes;
+	@OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "artista", orphanRemoval = true)
+	private Set<ArtistaCancao> cancoesArtista;
 
+	/**
+	 * Cria um novo artista com o nome e tipo informados.
+	 * 
+	 * @param nome
+	 *            do artista
+	 * @param tipo
+	 *            de artista
+	 */
 	public Artista(String nome, TipoArtista tipo) {
 		this.nome = nome;
 		this.tipo = tipo;
-		this.cancoes = Collections.emptySet();
+		this.cancoesArtista = Collections.emptySet();
 	}
 
 	/**
 	 * Construtor <code>default</code> sem argumentos utilizado pelo framework ORM.
 	 */
 	Artista() {
-		this(null, null);
 	}
 
 	@Override
@@ -73,8 +81,8 @@ public class Artista extends AbstractEntidade<Integer> {
 		return tipo;
 	}
 
-	public Set<Cancao> getCancoes() {
-		return Collections.unmodifiableSet(cancoes);
+	public Set<ArtistaCancao> getCancoesArtista() {
+		return Collections.unmodifiableSet(cancoesArtista);
 	}
 
 	/**
@@ -83,7 +91,7 @@ public class Artista extends AbstractEntidade<Integer> {
 	 * @return <code>true</code>/<code>false</code>
 	 */
 	public boolean getPossuiCancoes() {
-		return cancoes.size() > 0;
+		return CollectionUtils.isNotEmpty(cancoesArtista);
 	}
 
 	@Override

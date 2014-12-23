@@ -32,7 +32,6 @@ public class Posicao extends AbstractEntidade<PosicaoId> {
 			@AttributeOverride(name = "idCancao", column = @Column(name = "COD_CANCAO", unique = false, nullable = false, insertable = true, updatable = false)) })
 	private PosicaoId id;
 
-	@NotNull
 	@NumeroPosicao
 	@Column(name = "NUM_POSICAO", unique = false, nullable = false)
 	private Integer numero;

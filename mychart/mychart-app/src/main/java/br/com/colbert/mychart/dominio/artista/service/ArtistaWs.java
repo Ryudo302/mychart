@@ -22,6 +22,6 @@ public interface ArtistaWs {
 	 * @throws ServiceException
 	 *             caso ocorra algum erro na consulta
 	 */
-	public abstract Set<Artista> consultarPor(Artista exemplo) throws ServiceException;
+	Set<Artista> consultarPor(Artista exemplo) throws ServiceException;
 
 }

@@ -9,6 +9,7 @@
 
 		<class>br.com.colbert.mychart.dominio.artista.Artista</class>
 		<class>br.com.colbert.mychart.dominio.cancao.Cancao</class>
+		<class>br.com.colbert.mychart.dominio.cancao.ArtistaCancao</class>
 		<class>br.com.colbert.mychart.dominio.topmusical.Posicao</class>
 		<class>br.com.colbert.mychart.dominio.topmusical.PosicaoId</class>
 		<class>br.com.colbert.mychart.dominio.topmusical.TopMusical</class>
