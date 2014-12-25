@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.util.Arrays;
+import java.util.*;
 
 import javax.inject.Inject;
 
@@ -36,7 +36,7 @@ public class CancaoValidadorTest extends AbstractTest {
 
 	@Test
 	public void testValidarValoresNulos() {
-		Cancao cancao = new Cancao(null, null);
+		Cancao cancao = new Cancao(null, (List<Artista>) null);
 
 		try {
 			validador.validar(cancao);

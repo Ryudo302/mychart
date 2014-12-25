@@ -4,8 +4,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.*;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.hibernate.annotations.*;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import br.com.colbert.base.dominio.AbstractEntidade;
@@ -35,9 +40,26 @@ public class Cancao extends AbstractEntidade<Integer> {
 	private String titulo;
 
 	@NotEmpty(message = "{br.com.colbert.mychart.constraints.Artistas.message}")
-	@OneToMany(cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY, mappedBy = "cancao", orphanRemoval = true)
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "cancao", orphanRemoval = true)
 	@OrderColumn(name = "NUM_ORDEM", nullable = false, insertable = true, updatable = true)
+	@Fetch(FetchMode.SELECT)
 	private List<ArtistaCancao> artistasCancao;
+
+	/**
+	 * Construtor <em>full</em>.
+	 * 
+	 * @param id
+	 *            da canção
+	 * @param titulo
+	 *            da canção
+	 * @param artistas
+	 *            da canção
+	 */
+	Cancao(Integer id, String titulo, Artista... artistas) {
+		this.id = id;
+		this.titulo = titulo;
+		this.artistasCancao = artistas != null ? toArtistasCancao(Arrays.asList(artistas)) : Collections.emptyList();
+	}
 
 	/**
 	 * Cria uma nova canção com o título e artistas informados.
@@ -48,18 +70,19 @@ public class Cancao extends AbstractEntidade<Integer> {
 	 *            os artistas da canção
 	 */
 	public Cancao(String titulo, List<Artista> artistas) {
-		this.titulo = titulo;
-		this.artistasCancao = artistas != null ? toArtistasCancao(artistas) : Collections.emptyList();
+		this(null, titulo, artistas != null ? artistas.toArray(new Artista[artistas.size()]) : (Artista[]) null);
 	}
 
-	private List<ArtistaCancao> toArtistasCancao(List<Artista> artistas) {
-		ArrayList<ArtistaCancao> artistasCancao = new ArrayList<>(artistas.size());
-
-		for (int i = 0; i < artistas.size(); i++) {
-			artistasCancao.add(new ArtistaCancao(artistas.get(i), this, i));
-		}
-
-		return artistasCancao;
+	/**
+	 * Cria uma nova canção com o título e artista informado.
+	 * 
+	 * @param titulo
+	 *            da canção
+	 * @param artistas
+	 *            da canção
+	 */
+	public Cancao(String titulo, Artista... artistas) {
+		this(titulo, artistas != null ? Arrays.asList(artistas) : Collections.emptyList());
 	}
 
 	/**
@@ -67,6 +90,16 @@ public class Cancao extends AbstractEntidade<Integer> {
 	 */
 	Cancao() {
 		this(null, Collections.emptyList());
+	}
+
+	private List<ArtistaCancao> toArtistasCancao(List<Artista> artistas) {
+		List<ArtistaCancao> artistasCancao = new ArrayList<>(artistas.size());
+
+		for (int i = 0; i < artistas.size(); i++) {
+			artistasCancao.add(new ArtistaCancao(artistas.get(i), this, i));
+		}
+
+		return artistasCancao;
 	}
 
 	@Override
@@ -99,13 +132,14 @@ public class Cancao extends AbstractEntidade<Integer> {
 	 */
 	@Transient
 	public Optional<Artista> getArtistaPrincipal() {
-		// TODO Sempre o primeiro da lista?
-		return artistasCancao.size() > 0 ? Optional.of(artistasCancao.get(0).getArtista()) : Optional.empty();
+		List<ArtistaCancao> artistaPrincipalList = artistasCancao.stream()
+				.filter(artistaCancao -> artistaCancao.getOrdem().equals(NumberUtils.INTEGER_ZERO)).collect(Collectors.toList());
+		return artistaPrincipalList.isEmpty() ? Optional.empty() : Optional.of(artistaPrincipalList.get(0).getArtista());
 	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString()).append("titulo", titulo)
-				.append("artistasCancao", artistasCancao).toString();
+				.append("artistas", getArtistas()).toString();
 	}
 }

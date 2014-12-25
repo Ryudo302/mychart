@@ -3,7 +3,7 @@ package br.com.colbert.mychart.infraestrutura.lastfm;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
-import java.util.Set;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
@@ -26,9 +26,9 @@ public class ArtistaLastFmWsIT extends AbstractTest {
 
 	@Test
 	public void testConsultarPor() throws ServiceException {
-		Set<Artista> artistas = artistaWs.consultarPor(new Artista("rihanna", TipoArtista.DESCONHECIDO));
+		Collection<Artista> artistas = artistaWs.consultarPor(new Artista("rihanna", TipoArtista.DESCONHECIDO));
 
-		assertThat(artistas, is(notNullValue(Set.class)));
+		assertThat(artistas, is(notNullValue(Collection.class)));
 		assertThat(artistas.size(), is(not(equalTo(0))));
 
 		System.out.println(artistas);

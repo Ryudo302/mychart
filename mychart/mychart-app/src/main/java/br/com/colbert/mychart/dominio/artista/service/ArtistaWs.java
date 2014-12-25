@@ -1,6 +1,6 @@
 package br.com.colbert.mychart.dominio.artista.service;
 
-import java.util.Set;
+import java.util.Collection;
 
 import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.infraestrutura.exception.ServiceException;
@@ -22,6 +22,6 @@ public interface ArtistaWs {
 	 * @throws ServiceException
 	 *             caso ocorra algum erro na consulta
 	 */
-	Set<Artista> consultarPor(Artista exemplo) throws ServiceException;
+	Collection<Artista> consultarPor(Artista exemplo) throws ServiceException;
 
 }

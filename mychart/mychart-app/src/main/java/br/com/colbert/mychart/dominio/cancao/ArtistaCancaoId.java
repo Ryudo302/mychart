@@ -26,6 +26,13 @@ public class ArtistaCancaoId extends AbstractCompositeId {
 		this.idCancao = idCancao;
 	}
 
+	/**
+	 * Construtor <code>default</code> sem argumentos utilizado pelo framework ORM.
+	 */
+	ArtistaCancaoId() {
+		this(null, null);
+	}
+
 	public Integer getIdArtista() {
 		return idArtista;
 	}

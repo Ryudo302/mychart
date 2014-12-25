@@ -15,16 +15,18 @@ import br.com.colbert.mychart.infraestrutura.exception.*;
 public interface CancaoRepository extends Repository<Cancao, Integer> {
 
 	/**
-	 * Consulta por canções que tenham o título exatamente igual ao informado. A consulta não é <em>case-sensitive</em> (uma
-	 * consulta por "TESTE" retorna os mesmos resultados que "Teste" e "teste").
+	 * Consulta por canções que tenham o título e artista(s) exatamente iguais aos informados. A consulta não é
+	 * <em>case-sensitive</em> (uma consulta pelo título "TESTE" retorna os mesmos resultados que "Teste" e "teste").
 	 * 
-	 * @param titulo
+	 * @param exemplo
 	 *            a ser utilizado na consulta
-	 * @return as canções que possuem o título informado (pode estar vazia)
+	 * @return as canções que possuem o título e artistas informados (pode estar vazia)
+	 * @throws NullPointerException
+	 *             caso o o exemplo seja <code>null</code>
 	 * @throws RepositoryException
 	 *             caso ocorra algum erro não-tratado durante a operação
 	 */
-	Collection<Cancao> consultarPorTituloExato(String titulo) throws RepositoryException;
+	Collection<Cancao> consultarPorTituloEArtistaExatos(Cancao exemplo) throws RepositoryException;
 
 	/**
 	 * Faz uma consulta por canções a partir de uma canção de exemplo.
@@ -32,6 +34,8 @@ public interface CancaoRepository extends Repository<Cancao, Integer> {
 	 * @param exemplo
 	 *            a ser utilizada na consulta
 	 * @return as canções encontradas (pode ser uma lista vazia)
+	 * @throws NullPointerException
+	 *             caso o o exemplo seja <code>null</code>
 	 * @throws RepositoryException
 	 *             caso ocorra algum erro não tratado durante a operação
 	 */
@@ -42,6 +46,8 @@ public interface CancaoRepository extends Repository<Cancao, Integer> {
 	 * 
 	 * @param cancao
 	 *            a ser adicionada
+	 * @throws NullPointerException
+	 *             caso o a canção seja <code>null</code>
 	 * @throws ElementoJaExistenteException
 	 *             caso a canção informada já exista no repositório
 	 * @throws RepositoryException
@@ -54,6 +60,8 @@ public interface CancaoRepository extends Repository<Cancao, Integer> {
 	 * 
 	 * @param cancao
 	 *            a ser alterada
+	 * @throws NullPointerException
+	 *             caso o a canção seja <code>null</code>
 	 * @throws ElementoNaoExistenteException
 	 *             caso a canção informada não exista no repositório
 	 * @throws RepositoryException
@@ -67,6 +75,8 @@ public interface CancaoRepository extends Repository<Cancao, Integer> {
 	 * @param cancao
 	 *            a ser removida
 	 * @return <code>true</code> caso a canção existia no repositório, <code>false</code> caso contrário
+	 * @throws NullPointerException
+	 *             caso o a canção seja <code>null</code>
 	 * @throws RepositoryException
 	 *             caso ocorra algum erro não tratado durante a operação
 	 */

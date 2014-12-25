@@ -45,7 +45,7 @@ public class RequiredTransactionInterceptorTest extends AbstractTest {
 
 	@Before
 	public void setUp() throws SystemException {
-		when(userTransaction.getStatus()).thenReturn(Status.STATUS_NO_TRANSACTION);
+		when(userTransaction.getStatus()).thenReturn(Status.STATUS_NO_TRANSACTION, Status.STATUS_ACTIVE);
 	}
 
 	@Test

@@ -6,10 +6,11 @@ import java.util.*;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.*;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 
-import br.com.colbert.base.aplicacao.validacao.Validador;
+import br.com.colbert.base.aplicacao.validacao.*;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.dominio.cancao.repository.CancaoRepository;
 import br.com.colbert.mychart.dominio.cancao.service.CancaoWs;
@@ -65,6 +66,35 @@ public class CancaoController implements Serializable {
 		} catch (RepositoryException | ServiceException exception) {
 			logger.error("Erro ao consultar canções a partir de exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar canções", exception.getLocalizedMessage());
+		}
+	}
+
+	@Transactional
+	public void adicionarNova(@Observes @OperacaoCrud(TipoOperacaoCrud.INSERCAO) Cancao cancao) {
+		logger.info("Adicionando: {}", cancao);
+
+		try {
+			validar(cancao);
+			repositorio.adicionar(cancao);
+			messagesView.adicionarMensagemSucesso("Canção incluída com sucesso!");
+		} catch (ValidacaoException exception) {
+			logger.debug("Erros de validação", exception);
+			messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
+		} catch (ElementoJaExistenteException exception) {
+			logger.debug("Canção já existente", exception);
+			messagesView.adicionarMensagemAlerta("Já existe uma canção com o título e artista(s) informados.");
+		} catch (RepositoryException exception) {
+			logger.error("Erro ao adicionar canção: " + cancao, exception);
+			messagesView.adicionarMensagemErro("Erro ao adicionar artista", exception.getLocalizedMessage());
+		}
+	}
+
+	private void validar(Cancao cancao) throws ValidacaoException {
+		logger.debug("Validando: {}", cancao);
+		Objects.requireNonNull(cancao, "A canção não foi informada");
+
+		for (Validador<Cancao> validador : validadores) {
+			validador.validar(cancao);
 		}
 	}
 }

@@ -3,9 +3,11 @@ package br.com.colbert.mychart.aplicacao.cancao;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyCollectionOf;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
 
-import java.util.Collection;
+import java.util.*;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -15,6 +17,7 @@ import org.jglue.cdiunit.*;
 import org.junit.*;
 import org.mockito.Mock;
 
+import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 import br.com.colbert.mychart.infraestrutura.jpa.CancaoJpaRepository;
@@ -29,7 +32,7 @@ import br.com.colbert.tests.support.AbstractDbUnitTest;
  * @author Thiago Colbert
  * @since 21/12/2014
  */
-@AdditionalClasses({ CancaoJpaRepository.class, CancaoLastFmWs.class })
+@AdditionalClasses({ CancaoValidador.class, CancaoJpaRepository.class, CancaoLastFmWs.class })
 public class CancaoControllerIT extends AbstractDbUnitTest {
 
 	@Inject
@@ -47,6 +50,8 @@ public class CancaoControllerIT extends AbstractDbUnitTest {
 
 	private Collection<Cancao> cancoes;
 
+	private Artista artistaExistente;
+
 	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() {
@@ -55,6 +60,8 @@ public class CancaoControllerIT extends AbstractDbUnitTest {
 			setCancoes(invocation.getArgumentAt(0, Collection.class));
 			return null;
 		}).when(view).setCancoes(anyCollectionOf(Cancao.class));
+
+		artistaExistente = entityManager.find(Artista.class, 2);
 	}
 
 	private void setCancoes(Collection<Cancao> cancoes) {
@@ -68,13 +75,40 @@ public class CancaoControllerIT extends AbstractDbUnitTest {
 
 	@Test
 	public void testConsultarExistentes() {
-		Cancao exemplo = new Cancao("Rehab", null);
+		Cancao exemplo = new Cancao("rehab", (List<Artista>) null);
 
 		controller.consultarExistentes(new ConsultaEntidadeEvent(exemplo, ModoConsulta.TODOS));
 
+		System.out.println(cancoes);
+
 		assertThat(cancoes, is(notNullValue(Collection.class)));
 		assertThat(cancoes.size(), is(equalTo(2)));
+	}
 
-		System.out.println(cancoes);
+	@Test
+	public void testAdicionarNovaComCancaoExistente() {
+		Cancao cancao = new Cancao("Unfaithful", artistaExistente);
+
+		controller.adicionarNova(cancao);
+
+		verify(messages).adicionarMensagemAlerta(anyString());
+	}
+
+	@Test
+	public void testAdicionarNovaComCancaoNovo() {
+		Cancao cancao = new Cancao("Rude Boy", artistaExistente);
+
+		controller.adicionarNova(cancao);
+
+		verify(messages).adicionarMensagemSucesso(anyString());
+	}
+
+	@Test
+	public void testAdicionarNovaComCancaoInvalida() {
+		Cancao cancao = new Cancao(null, (List<Artista>) null);
+
+		controller.adicionarNova(cancao);
+
+		verify(messages).adicionarMensagemAlerta(anyString());
 	}
 }

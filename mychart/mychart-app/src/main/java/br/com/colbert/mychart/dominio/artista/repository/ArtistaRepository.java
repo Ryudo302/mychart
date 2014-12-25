@@ -21,6 +21,10 @@ public interface ArtistaRepository extends Repository<Artista, Integer> {
 	 * @param nome
 	 *            a ser utilizado na consulta
 	 * @return os artistas que possuem o nome informado (pode estar vazia)
+	 * @throws NullPointerException
+	 *             caso o nome seja <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             caso o nome seja uma String vazia
 	 * @throws RepositoryException
 	 *             caso ocorra algum erro não-tratado durante a operação
 	 */
@@ -32,6 +36,8 @@ public interface ArtistaRepository extends Repository<Artista, Integer> {
 	 * @param exemplo
 	 *            a ser utilizada na consulta
 	 * @return os artistas encontradas (pode ser uma lista vazia)
+	 * @throws NullPointerException
+	 *             caso o exemplo seja <code>null</code>
 	 * @throws RepositoryException
 	 *             caso ocorra algum erro não tratado durante a operação
 	 */
@@ -42,6 +48,8 @@ public interface ArtistaRepository extends Repository<Artista, Integer> {
 	 * 
 	 * @param artista
 	 *            a ser adicionado
+	 * @throws NullPointerException
+	 *             caso o artista seja <code>null</code>
 	 * @throws ElementoJaExistenteException
 	 *             caso o artista informado já exista no repositório
 	 * @throws RepositoryException
@@ -55,6 +63,8 @@ public interface ArtistaRepository extends Repository<Artista, Integer> {
 	 * @param artista
 	 *            a ser removido
 	 * @return <code>true</code> caso o artista existia no repositório, <code>false</code> caso contrário
+	 * @throws NullPointerException
+	 *             caso o artista seja <code>null</code>
 	 * @throws RepositoryException
 	 *             caso ocorra algum erro não tratado durante a operação
 	 */

@@ -31,7 +31,7 @@ import br.com.colbert.tests.support.AbstractDbUnitTest;
  * @author Thiago Colbert
  * @since 08/12/2014
  */
-@AdditionalClasses({ ArtistaJpaRepository.class, ArtistaLastFmWs.class })
+@AdditionalClasses({ ArtistaValidador.class, ArtistaJpaRepository.class, ArtistaLastFmWs.class })
 public class ArtistaControllerIT extends AbstractDbUnitTest {
 
 	@Inject
@@ -81,21 +81,30 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 	}
 
 	@Test
-	public void testAdicionarNovaComArtistaExistente() {
+	public void testAdicionarNovoComArtistaExistente() {
 		Artista artista = new Artista("Rihanna", TipoArtista.FEMININO_SOLO);
 
-		controller.adicionarNova(artista);
+		controller.adicionarNovo(artista);
 
 		verify(messages).adicionarMensagemAlerta(anyString());
 	}
 
 	@Test
-	public void testAdicionarNovaComArtistaNovo() {
+	public void testAdicionarNovoComArtistaNovo() {
 		Artista artista = new Artista("Fulano", TipoArtista.MASCULINO_SOLO);
 
-		controller.adicionarNova(artista);
+		controller.adicionarNovo(artista);
 
 		verify(messages).adicionarMensagemSucesso(anyString());
+	}
+
+	@Test
+	public void testAdicionarNovoComArtistaInvalido() {
+		Artista artista = new Artista(null, null);
+
+		controller.adicionarNovo(artista);
+
+		verify(messages).adicionarMensagemAlerta(anyString());
 	}
 
 	@Test

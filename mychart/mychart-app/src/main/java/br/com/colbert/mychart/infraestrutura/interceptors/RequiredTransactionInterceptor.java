@@ -37,7 +37,7 @@ public class RequiredTransactionInterceptor {
 	 */
 	@AroundInvoke
 	public Object manageTransaction(InvocationContext context) throws Exception {
-		if (transaction.getStatus() == Status.STATUS_NO_TRANSACTION) {
+		if (!isTransactionActive()) {
 			logger.debug("Nenhuma transação ativa - iniciando uma nova");
 
 			transaction.begin();
@@ -48,13 +48,20 @@ public class RequiredTransactionInterceptor {
 				transaction.commit();
 				return result;
 			} catch (Exception exception) {
-				logger.debug("ROLLBACK");
-				transaction.rollback();
+				if (isTransactionActive()) {
+					logger.debug("ROLLBACK");
+					transaction.rollback();
+				}
+
 				throw exception;
 			}
 		} else {
 			logger.debug("Reutilizando a transação que já está ativa");
 			return context.proceed();
 		}
+	}
+
+	private boolean isTransactionActive() throws SystemException {
+		return transaction.getStatus() != Status.STATUS_NO_TRANSACTION;
 	}
 }

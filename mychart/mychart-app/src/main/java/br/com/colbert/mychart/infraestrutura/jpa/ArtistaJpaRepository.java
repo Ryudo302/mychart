@@ -1,6 +1,6 @@
 package br.com.colbert.mychart.infraestrutura.jpa;
 
-import java.util.Collection;
+import java.util.*;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.persistence.criteria.*;
 import javax.persistence.criteria.CriteriaQuery;
 
+import org.apache.commons.lang3.Validate;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
 import org.slf4j.Logger;
@@ -36,8 +37,9 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	}
 
 	@Override
-	@ExceptionWrapper(para = RepositoryException.class, mensagem = "Erro ao consultar artistas pelo nome: '{0}'")
+	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao consultar artistas pelo nome: '{0}'")
 	public Collection<Artista> consultarPorNomeExato(String nome) throws RepositoryException {
+		Validate.notBlank(nome, "O nome é obrigatório");
 		CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<Artista> query = criteriaBuilder.createQuery(Artista.class);
 		Root<Artista> root = query.from(Artista.class);
@@ -47,15 +49,20 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	@ExceptionWrapper(para = RepositoryException.class, mensagem = "Erro ao consultar artistas")
+	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao consultar artistas")
 	public Collection<Artista> consultarPor(Artista exemplo) throws RepositoryException {
-		return getEntityManager().unwrap(Session.class).createCriteria(Artista.class)
-				.add(Example.create(exemplo).enableLike(MatchMode.ANYWHERE).excludeZeroes().ignoreCase()).list();
+		return getEntityManager()
+				.unwrap(Session.class)
+				.createCriteria(Artista.class)
+				.add(Example.create(Objects.requireNonNull(exemplo, "O exemplo é obrigatório")).enableLike(MatchMode.ANYWHERE)
+						.excludeZeroes().ignoreCase()).list();
 	}
 
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao adicionar artista: {0}")
 	public void adicionar(Artista artista) throws ElementoJaExistenteException, RepositoryException {
+		Objects.requireNonNull(artista, "O artista a ser adicionado é obrigatório");
+
 		logger.debug("Verificando se já existe um artista com o mesmo nome: {}", artista);
 		if (!consultarPorNomeExato(artista.getNome()).isEmpty()) {
 			throw new ElementoJaExistenteException(artista);
@@ -72,6 +79,8 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao remover artista: {0}")
 	public boolean remover(Artista artista) throws RepositoryException {
+		Objects.requireNonNull(artista, "O artista a ser removido é obrigatório");
+
 		logger.debug("Verificando se o artista existe no repositório: {}", artista);
 		if (artista.getId() != null) {
 			if (artista.getPossuiCancoes()) {

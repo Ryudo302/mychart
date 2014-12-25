@@ -26,7 +26,7 @@ public abstract class AbstractDbUnitTest extends AbstractTest {
 	private static final String DTD_FILE_NAME = "mychart.dtd";
 
 	@Inject
-	private EntityManager entityManager;
+	protected EntityManager entityManager;
 
 	@Before
 	public void setUpDB() throws DatabaseUnitException, SQLException, IOException, ClassNotFoundException {

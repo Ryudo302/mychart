@@ -1,6 +1,6 @@
 package br.com.colbert.mychart.dominio.cancao.service;
 
-import java.util.Set;
+import java.util.Collection;
 
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.exception.ServiceException;
@@ -24,6 +24,6 @@ public interface CancaoWs {
 	 * @throws ServiceException
 	 *             caso ocorra algum erro na consulta
 	 */
-	Set<Cancao> consultarPor(Cancao exemplo) throws ServiceException;
+	Collection<Cancao> consultarPor(Cancao exemplo) throws ServiceException;
 
 }

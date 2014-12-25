@@ -3,7 +3,7 @@ package br.com.colbert.mychart.dominio.cancao;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.*;
 
 import br.com.colbert.base.dominio.*;
 import br.com.colbert.mychart.dominio.artista.Artista;
@@ -27,12 +27,12 @@ public class ArtistaCancao extends AbstractEntidade<ArtistaCancaoId> {
 	private ArtistaCancaoId id;
 
 	@NotNull(message = "{br.com.colbert.mychart.constraints.Artista.message}")
-	@ManyToOne(cascade = {}, fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(cascade = {}, fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "COD_ARTISTA", unique = false, nullable = false, insertable = false, updatable = false)
 	private Artista artista;
 
 	@NotNull(message = "{br.com.colbert.mychart.constraints.Cancao.message}")
-	@ManyToOne(cascade = {}, fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(cascade = {}, fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "COD_CANCAO", unique = false, nullable = false, insertable = false, updatable = false)
 	private Cancao cancao;
 
@@ -52,7 +52,8 @@ public class ArtistaCancao extends AbstractEntidade<ArtistaCancaoId> {
 	 *            número de ordem do artista dentro da coleção de artistas associados à canção
 	 */
 	public ArtistaCancao(Artista artista, Cancao cancao, Integer ordem) {
-		this.id = null;
+		this.id = artista != null && artista.getId() != null && cancao != null && cancao.getId() != null ? new ArtistaCancaoId(
+				artista.getId(), cancao.getId()) : null;
 		this.artista = artista;
 		this.cancao = cancao;
 		this.ordem = ordem;
@@ -62,17 +63,12 @@ public class ArtistaCancao extends AbstractEntidade<ArtistaCancaoId> {
 	 * Construtor <code>default</code> sem argumentos utilizado pelo framework ORM.
 	 */
 	ArtistaCancao() {
-
+		this(null, null, null);
 	}
 
 	@Override
 	public ArtistaCancaoId getId() {
 		return id;
-	}
-
-	@Override
-	public int compareTo(Entidade<ArtistaCancaoId> other) {
-		return new CompareToBuilder().append(ordem, ((ArtistaCancao) other).ordem).toComparison();
 	}
 
 	public Artista getArtista() {
@@ -85,5 +81,16 @@ public class ArtistaCancao extends AbstractEntidade<ArtistaCancaoId> {
 
 	public Integer getOrdem() {
 		return ordem;
+	}
+
+	@Override
+	public int compareTo(Entidade<ArtistaCancaoId> other) {
+		return new CompareToBuilder().append(ordem, ((ArtistaCancao) other).ordem).toComparison();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
+				.append("artista", artista).append("cancao", cancao).toString();
 	}
 }

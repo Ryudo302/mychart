@@ -70,7 +70,7 @@ public class ArtistaController implements Serializable {
 	}
 
 	@Transactional
-	public void adicionarNova(@Observes @OperacaoCrud(TipoOperacaoCrud.INSERCAO) Artista artista) {
+	public void adicionarNovo(@Observes @OperacaoCrud(TipoOperacaoCrud.INSERCAO) Artista artista) {
 		logger.info("Adicionando: {}", artista);
 
 		try {
