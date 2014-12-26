@@ -14,7 +14,7 @@ import br.com.colbert.mychart.infraestrutura.exception.ServiceException;
 import br.com.colbert.tests.support.AbstractTest;
 
 /**
- * Testes da {@link ArtistaLastFmWs}.
+ * Testes de integração da {@link ArtistaLastFmWs}.
  * 
  * @author Thiago Colbert
  * @since 08/12/2014

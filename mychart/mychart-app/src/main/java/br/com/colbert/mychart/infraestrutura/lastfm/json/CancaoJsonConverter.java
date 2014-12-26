@@ -1,5 +1,7 @@
 package br.com.colbert.mychart.infraestrutura.lastfm.json;
 
+import static br.com.colbert.mychart.infraestrutura.lastfm.json.JsonConverterUtils.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -42,19 +44,19 @@ public class CancaoJsonConverter {
 	public Collection<Cancao> fromJson(InputStream jsonStream) throws IOException {
 		try (InputStreamReader reader = new InputStreamReader(jsonStream)) {
 			Map<String, Object> lastFmResults = (Map<String, Object>) gson.fromJson(reader, Map.class);
-			Map<String, Object> results = (Map<String, Object>) lastFmResults.get("results");
+			Map<String, Object> results = getOrThrowExceptionIfNotExists(lastFmResults, "results");
 
-			if (Integer.valueOf((String) results.get("opensearch:totalResults")) > 0) {
-				Map<String, Object> trackMatches = (Map<String, Object>) results.get("trackmatches");
-				List<Map<String, Object>> tracks = (List<Map<String, Object>>) trackMatches.get("track");
+			if (Integer.valueOf(getOrThrowExceptionIfNotExists(results, "opensearch:totalResults")) > 0) {
+				Map<String, Object> trackMatches = getOrThrowExceptionIfNotExists(results, "trackmatches");
+				List<Map<String, Object>> tracks = getOrThrowExceptionIfNotExists(trackMatches, "track");
 				logger.debug("Convertendo: {}", tracks);
 
 				Set<Cancao> cancoes = new HashSet<>(tracks.size());
 				tracks.stream()
-						.filter(track -> StringUtils.isNotBlank((CharSequence) track.get("mbid")))
+						.filter(track -> StringUtils.isNotBlank(getOrThrowExceptionIfNotExists(track, "mbid")))
 						.forEach(
-								track -> cancoes.add(new Cancao((String) track.get("name"), new Artista((String) track
-										.get("artist"), TipoArtista.DESCONHECIDO))));
+								track -> cancoes.add(new Cancao((String) getOrThrowExceptionIfNotExists(track, "name"),
+										new Artista(getOrThrowExceptionIfNotExists(track, "artist"), TipoArtista.DESCONHECIDO))));
 
 				logger.debug("Resultado: {}", cancoes);
 				return cancoes;

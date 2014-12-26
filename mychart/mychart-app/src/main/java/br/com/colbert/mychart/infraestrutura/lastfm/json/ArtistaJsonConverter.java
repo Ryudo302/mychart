@@ -1,5 +1,7 @@
 package br.com.colbert.mychart.infraestrutura.lastfm.json;
 
+import static br.com.colbert.mychart.infraestrutura.lastfm.json.JsonConverterUtils.getOrThrowExceptionIfNotExists;
+
 import java.io.*;
 import java.util.*;
 
@@ -41,18 +43,18 @@ public class ArtistaJsonConverter {
 	public Collection<Artista> fromJson(InputStream jsonStream) throws IOException {
 		try (InputStreamReader reader = new InputStreamReader(jsonStream)) {
 			Map<String, Object> lastFmResults = (Map<String, Object>) gson.fromJson(reader, Map.class);
-			Map<String, Object> results = (Map<String, Object>) lastFmResults.get("results");
+			Map<String, Object> results = getOrThrowExceptionIfNotExists(lastFmResults, "results");
 
-			if (Integer.valueOf((String) results.get("opensearch:totalResults")) > 0) {
-				Map<String, Object> artistMatches = (Map<String, Object>) results.get("artistmatches");
-				List<Map<String, Object>> artists = (List<Map<String, Object>>) artistMatches.get("artist");
+			if (Integer.valueOf(getOrThrowExceptionIfNotExists(results, "opensearch:totalResults")) > 0) {
+				Map<String, Object> artistMatches = getOrThrowExceptionIfNotExists(results, "artistmatches");
+				List<Map<String, Object>> artists = getOrThrowExceptionIfNotExists(artistMatches, "artist");
 				logger.debug("Convertendo: {}", artists);
 
 				Set<Artista> artistas = new HashSet<>();
 				artists.stream().filter(artist -> {
-					return StringUtils.isNotBlank((CharSequence) artist.get("mbid"));
+					return StringUtils.isNotBlank(getOrThrowExceptionIfNotExists(artist, "mbid"));
 				}).forEach(artist -> {
-					artistas.add(new Artista((String) artist.get("name"), TipoArtista.DESCONHECIDO));
+					artistas.add(new Artista(getOrThrowExceptionIfNotExists(artist, "name"), TipoArtista.DESCONHECIDO));
 				});
 
 				logger.debug("Resultado: {}", artistas);

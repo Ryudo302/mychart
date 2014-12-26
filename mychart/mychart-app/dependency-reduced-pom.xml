@@ -9,11 +9,6 @@
   <artifactId>mychart-app</artifactId>
   <name>MyChart - App</name>
   <description>Módulo principal da aplicação.</description>
-  <scm>
-    <connection>${project.scm.url}</connection>
-    <developerConnection>${project.scm.url}</developerConnection>
-    <url>scm:git:git://github.com/Ryudo302/mychart.git</url>
-  </scm>
   <build>
     <resources>
       <resource>
@@ -80,6 +75,7 @@
       <plugin>
         <groupId>org.bsc.maven</groupId>
         <artifactId>maven-processor-plugin</artifactId>
+        <version>3.1.0-beta1</version>
         <executions>
           <execution>
             <id>process</id>
