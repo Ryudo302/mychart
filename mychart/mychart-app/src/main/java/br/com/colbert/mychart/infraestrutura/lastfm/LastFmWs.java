@@ -1,5 +1,6 @@
 package br.com.colbert.mychart.infraestrutura.lastfm;
 
+import java.net.UnknownHostException;
 import java.util.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -39,7 +40,13 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 	public Collection<Artista> consultarPor(Artista exemplo) throws ServiceException {
 		Objects.requireNonNull(exemplo, "O exemplo a ser utilizado na consulta é obrigatório");
 
-		Collection<Artist> resultadosConsulta = Artist.search(exemplo.getNome(), apiKey);
+		Collection<Artist> resultadosConsulta;
+		try {
+			resultadosConsulta = Artist.search(exemplo.getNome(), apiKey);
+		} catch (CallException exception) {
+			throw tratarExcecao(exception, exemplo);
+		}
+
 		Result result = caller.getLastResult();
 		logger.debug("Resultado da operação: {}", result.getStatus());
 
@@ -57,8 +64,13 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 	public Collection<Cancao> consultarPor(Cancao exemplo) throws ServiceException {
 		Objects.requireNonNull(exemplo, "O exemplo a ser utilizado na consulta é obrigatório");
 
-		Collection<Track> resultadosConsulta = Track.search(exemplo.getNomeArtistaPrincipal(), exemplo.getTitulo(),
-				Integer.MAX_VALUE, apiKey);
+		Collection<Track> resultadosConsulta;
+		try {
+			resultadosConsulta = Track.search(exemplo.getNomeArtistaPrincipal(), exemplo.getTitulo(), Integer.MAX_VALUE, apiKey);
+		} catch (CallException exception) {
+			throw tratarExcecao(exception, exemplo);
+		}
+
 		Result result = caller.getLastResult();
 		logger.debug("Resultado da operação: {}", result.getStatus());
 
@@ -73,6 +85,15 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 			return cancoes;
 		} else {
 			throw new LastFmException(result);
+		}
+	}
+
+	private <T> ServiceException tratarExcecao(CallException exception, T exemplo) throws ServicoInacessivelException,
+			LastFmException {
+		if (exception.getCause() instanceof UnknownHostException) {
+			return new ServicoInacessivelException(exception);
+		} else {
+			return new LastFmException("Erro ao consultar a partir de exemplo: " + exemplo, exception);
 		}
 	}
 }

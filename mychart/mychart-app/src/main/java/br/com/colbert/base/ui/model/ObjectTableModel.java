@@ -21,7 +21,7 @@ import org.slf4j.*;
  * <li><strong>Elemento</strong>: objeto representado por uma linha qualquer do modelo.</li>
  * </ul>
  * </p>
- * 
+ *
  * @author Thiago Colbert
  * @since 23/02/2014
  * @param <T>
@@ -56,16 +56,16 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	}
 
 	/**
-	 * Cria as colunas da tabela, representadas por instâncias de {@link ObjectTableModelColumn}. As colunas serão
-	 * adicionadas ao modelo na ordem em que estiverem presentes na lista.
-	 * 
+	 * Cria as colunas da tabela, representadas por instâncias de {@link ObjectTableModelColumn}. As colunas serão adicionadas ao
+	 * modelo na ordem em que estiverem presentes na lista.
+	 *
 	 * @return a lista de colunas da tabela, em ordem de exibição
 	 */
 	protected abstract List<ObjectTableModelColumn<?>> makeColumns();
 
 	/**
 	 * Adicionada um elemento ao modelo. Caso o elemento já exista na tabela, ele será atualizado.
-	 * 
+	 *
 	 * @param element
 	 *            elemento a ser adicionado ao modelo
 	 */
@@ -84,12 +84,12 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 		LOGGER.debug("Ordenando elementos por sua ordem natural");
 		Collections.sort(elements);
 
-		this.fireTableDataChanged();
+		fireTableDataChanged();
 	}
 
 	/**
 	 * Verifica se um elemento existe dentro do modelo.
-	 * 
+	 *
 	 * @param element
 	 *            elemento a ser verificado
 	 * @return <code>true</code>/<code>false</code>
@@ -100,7 +100,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 
 	/**
 	 * Remove um elemento do modelo. Caso o elemento não exista no modelo, este método não fará nada.
-	 * 
+	 *
 	 * @param element
 	 *            elemento a ser removido
 	 * @return <code>true</code> caso um elemento tenha sido removido do modelo, <code>false</code> caso contrário
@@ -110,7 +110,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 		if (elementoExiste) {
 			LOGGER.debug("Removendo elemento da tabela: " + element);
 			this.elements.remove(element);
-			this.fireTableRowsDeleted(elements.indexOf(element), elements.indexOf(element));
+			fireTableRowsDeleted(elements.indexOf(element), elements.indexOf(element));
 		}
 
 		return elementoExiste;
@@ -118,7 +118,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 
 	/**
 	 * Remove uma coleção de elementos do modelo.
-	 * 
+	 *
 	 * @param elements
 	 *            elementos a serem removidos
 	 * @return a quantidade de elementos que foram removidos do modelo
@@ -126,7 +126,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	public int removeAll(List<T> elements) {
 		int quantidadeInicialElementos = getRowCount();
 		this.elements.removeAll(elements);
-		this.fireTableDataChanged();
+		fireTableDataChanged();
 		int quantidadeFinalElementos = getRowCount();
 		assert quantidadeFinalElementos - quantidadeInicialElementos >= 0;
 		return quantidadeFinalElementos - quantidadeInicialElementos;
@@ -134,7 +134,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 
 	/**
 	 * Obtém um elemento do modelo a partir do número da linha que o representa.
-	 * 
+	 *
 	 * @param rowIndex
 	 *            índice da linha que representa o elemento desejado
 	 * @return o elemento na linha informada
@@ -147,7 +147,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 
 	/**
 	 * Obt�m uma lista com os elementos contidos no modelo.
-	 * 
+	 *
 	 * @return uma lista imutável (<code>view</code>) dos elementos do modelo
 	 */
 	public List<T> getElements() {
@@ -155,9 +155,9 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	}
 
 	/**
-	 * Define os elementos contidos dentro do modelo. Os elementos que possam estar contidos no modelo antes da execução
-	 * deste método seráo descartados.
-	 * 
+	 * Define os elementos contidos dentro do modelo. Os elementos que possam estar contidos no modelo antes da execução deste
+	 * método seráo descartados.
+	 *
 	 * @param elements
 	 *            elementos a serem adicionados ao modelo
 	 */
@@ -169,7 +169,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 			this.elements.addAll(elements);
 		}
 
-		this.fireTableDataChanged();
+		fireTableDataChanged();
 	}
 
 	/**
@@ -178,19 +178,17 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	public void clear() {
 		LOGGER.debug("Limpando tabela");
 		this.elements.clear();
-		this.fireTableDataChanged();
+		fireTableDataChanged();
 	}
 
 	@Override
 	public String getColumnName(int columnIndex) {
-		ObjectTableModelColumn<T> column = getColumn(columnIndex);
-		return column.getName();
+		return getColumn(columnIndex).getName();
 	}
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		ObjectTableModelColumn<?> column = getColumn(columnIndex);
-		return column.getColumnClass();
+		return getColumn(columnIndex).getColumnClass();
 	}
 
 	@Override
@@ -221,9 +219,8 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	}
 
 	/**
-	 * Verifica se determinada célula do modelo é ediável. Por padrão, este método retorna o mesmo que
-	 * {@link #isEditable()}.
-	 * 
+	 * Verifica se determinada célula do modelo é ediável. Por padrão, este método retorna o mesmo que {@link #isEditable()}.
+	 *
 	 * @return <code>true</code>/<code>false</code>
 	 */
 	@Override
@@ -232,9 +229,8 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	}
 
 	/**
-	 * Verifica se o modelo é <em>editável</em>, ou seja, se os valores de suas células podem ser alterados
-	 * individualmente.
-	 * 
+	 * Verifica se o modelo é <em>editável</em>, ou seja, se os valores de suas células podem ser alterados individualmente.
+	 *
 	 * @return <code>true</code>/<code>false</code>
 	 */
 	public boolean isEditable() {
@@ -252,8 +248,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	@Override
 	public void setValueAt(Object newValue, int rowIndex, int columnIndex) {
 		if (isCellEditable(rowIndex, columnIndex)) {
-			invokeMethod(getElement(rowIndex),
-					"set" + StringUtils.capitalize(getColumn(columnIndex).getPropertyName()), newValue);
+			invokeMethod(getElement(rowIndex), "set" + StringUtils.capitalize(getColumn(columnIndex).getPropertyName()), newValue);
 		}
 	}
 
@@ -269,7 +264,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 
 	/**
 	 * Obt�m a instância de {@link ObjectTableModelColumn} representando uma determinada coluna do modelo.
-	 * 
+	 *
 	 * @param columnIndex
 	 *            índice da coluna desejada
 	 * @return a instância da coluna

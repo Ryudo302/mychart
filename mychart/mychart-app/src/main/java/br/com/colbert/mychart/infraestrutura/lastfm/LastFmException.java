@@ -28,6 +28,18 @@ public class LastFmException extends ServiceException {
 		super(criarMensagem(result));
 	}
 
+	/**
+	 * Cria uma nova exceção com a mensagem de erro e a exceção-causa informadas.
+	 * 
+	 * @param message
+	 *            a mensagem de erro
+	 * @param cause
+	 *            a causa desta exceção
+	 */
+	public LastFmException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
 	private static String criarMensagem(Result result) {
 		if (!result.isSuccessful()) {
 			throw new IllegalArgumentException("Não é um resultado de erro: " + result);

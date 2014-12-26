@@ -126,15 +126,18 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		artistasTable.setModel(artistasTableModel);
 
 		artistasTable.getSelectionModel().addListSelectionListener(event -> {
-			setArtistaAtual(artistasTableModel.getElement(artistasTable.convertRowIndexToModel(artistasTable.getSelectedRow())));
+			setArtistaAtual(getArtistaSelecionado());
 			setEstadoAtual(EstadoTelaCrud.INCLUSAO_OU_ALTERACAO);
 		});
 
 		artistasTable.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent event) {
-				if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				int keyCode = event.getKeyCode();
+				if (keyCode == KeyEvent.VK_ESCAPE) {
 					limparTela();
+				} else if (keyCode == KeyEvent.VK_DELETE) {
+					ouvintesRemocao.fire(getArtistaSelecionado());
 				}
 			}
 		});
@@ -149,6 +152,10 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 
 	private Artista getArtistaAtual() {
 		return new Artista(nomeTextField.getText(), (TipoArtista) tipoComboBox.getSelectedItem());
+	}
+
+	private Artista getArtistaSelecionado() {
+		return artistasTableModel.getElement(artistasTable.convertRowIndexToModel(artistasTable.getSelectedRow()));
 	}
 
 	private ModoConsulta getModoConsulta() {

@@ -90,6 +90,7 @@ public class Artista extends AbstractEntidade<Integer> {
 	 * 
 	 * @return <code>true</code>/<code>false</code>
 	 */
+	@Transient
 	public boolean getPossuiCancoes() {
 		return CollectionUtils.isNotEmpty(cancoesArtista);
 	}

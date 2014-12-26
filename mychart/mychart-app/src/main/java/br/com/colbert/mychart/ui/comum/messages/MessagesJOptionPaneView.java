@@ -24,7 +24,7 @@ public class MessagesJOptionPaneView implements MessagesView {
 
 	@Override
 	public void adicionarMensagemErro(String resumo, String detalhes) {
-		JOptionPane.showMessageDialog(null, MessageFormat.format("{0}:\n\n{4}", resumo, detalhes), "Erro",
+		JOptionPane.showMessageDialog(null, MessageFormat.format("{0}:\n\n{1}\n\n", resumo, detalhes), "Erro",
 				JOptionPane.ERROR_MESSAGE);
 	}
 }

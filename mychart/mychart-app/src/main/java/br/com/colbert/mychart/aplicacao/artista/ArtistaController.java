@@ -8,6 +8,8 @@ import javax.enterprise.inject.*;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.validacao.*;
@@ -30,6 +32,14 @@ public class ArtistaController implements Serializable {
 
 	private static final long serialVersionUID = 2909647942422289099L;
 
+	private static final class ArtistasPorNomeComparator implements Comparator<Artista> {
+
+		@Override
+		public int compare(Artista artista1, Artista artista2) {
+			return new CompareToBuilder().append(artista1.getNome(), artista2.getNome()).toComparison();
+		}
+	}
+
 	@Inject
 	private Logger logger;
 
@@ -51,22 +61,40 @@ public class ArtistaController implements Serializable {
 		Artista exemplo = evento.getEntidade();
 
 		logger.info("Consultando artistas com base em exemplo: {}", exemplo);
-		Collection<Artista> artistas = new ArrayList<>();
+		List<Artista> artistas = new ArrayList<>();
 
+		artistas.addAll(consultarRepositorio(exemplo));
+		if (evento.getModoConsulta() == ModoConsulta.TODOS) {
+			artistas.addAll(consultarWeb(exemplo));
+		}
+
+		artistas.sort(new ArtistasPorNomeComparator());
+		view.setArtistas(artistas);
+		messagesView.adicionarMensagemSucesso("Foi(ram) encontrado(s) " + artistas.size() + " artista(s)");
+	}
+
+	private Collection<Artista> consultarWeb(Artista exemplo) {
+		Collection<Artista> artistas = CollectionUtils.emptyCollection();
 		try {
-			logger.debug("Consultando no repositório local");
-			artistas.addAll(repositorio.consultarPor(exemplo));
-
-			if (evento.getModoConsulta() == ModoConsulta.TODOS) {
-				logger.debug("Consultando na web");
-				artistas.addAll(artistaWs.consultarPor(exemplo));
-			}
-
-			view.setArtistas(artistas);
-		} catch (RepositoryException | ServiceException exception) {
-			logger.error("Erro ao consultar artistas a partir do exemplo: " + exemplo, exception);
+			logger.debug("Consultando na web");
+			artistas = artistaWs.consultarPor(exemplo);
+		} catch (ServiceException exception) {
+			logger.error("Erro ao consultar artistas na web a partir do exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar artistas", exception.getLocalizedMessage());
 		}
+		return artistas;
+	}
+
+	private Collection<Artista> consultarRepositorio(Artista exemplo) {
+		Collection<Artista> artistas = CollectionUtils.emptyCollection();
+		try {
+			logger.debug("Consultando no repositório local");
+			artistas = repositorio.consultarPor(exemplo);
+		} catch (RepositoryException exception) {
+			logger.error("Erro ao consultar artistas no repositório a partir do exemplo: " + exemplo, exception);
+			messagesView.adicionarMensagemErro("Erro ao consultar artistas", exception.getLocalizedMessage());
+		}
+		return artistas;
 	}
 
 	@Transactional
