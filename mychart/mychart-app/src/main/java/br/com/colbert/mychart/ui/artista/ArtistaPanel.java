@@ -38,7 +38,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.CONSULTA)
-	private Event<ConsultaEntidadeEvent> ouvintesConsulta;
+	private Event<ConsultaArtistaEvent> ouvintesConsulta;
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.INSERCAO)
@@ -107,7 +107,7 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		consultarButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				ouvintesConsulta.fire(new ConsultaEntidadeEvent(getArtistaAtual(), getModoConsulta()));
+				ouvintesConsulta.fire(new ConsultaArtistaEvent(getArtistaAtual(), getModoConsulta()));
 			}
 		});
 		botoesPanel.add(consultarButton);

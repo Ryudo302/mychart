@@ -40,12 +40,12 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 		Objects.requireNonNull(exemplo, "O exemplo a ser utilizado na consulta é obrigatório");
 
 		List<Artista> artistas = new ArrayList<>();
-		Collection<Artist> resultasConsulta = Artist.search(exemplo.getNome(), apiKey);
+		Collection<Artist> resultadosConsulta = Artist.search(exemplo.getNome(), apiKey);
 		Result result = caller.getLastResult();
 		logger.debug("Resultado da operação: {}", result.getStatus());
 
 		if (result.isSuccessful()) {
-			resultasConsulta.stream().filter(artist -> StringUtils.isNotBlank(artist.getMbid()))
+			resultadosConsulta.stream().filter(artist -> StringUtils.isNotBlank(artist.getMbid()))
 					.forEach(artist -> artistas.add(new Artista(artist.getName(), TipoArtista.DESCONHECIDO)));
 			return artistas;
 		} else {
@@ -58,15 +58,15 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 		Objects.requireNonNull(exemplo, "O exemplo a ser utilizado na consulta é obrigatório");
 
 		List<Cancao> cancoes = new ArrayList<>();
-		Collection<Track> resultasConsulta = Track.search(exemplo.getNomeArtistaPrincipal(), exemplo.getTitulo(),
+		Collection<Track> resultadosConsulta = Track.search(exemplo.getNomeArtistaPrincipal(), exemplo.getTitulo(),
 				Integer.MAX_VALUE, apiKey);
 		Result result = caller.getLastResult();
 		logger.debug("Resultado da operação: {}", result.getStatus());
 
 		if (result.isSuccessful()) {
-			resultasConsulta
+			resultadosConsulta
 					.stream()
-					.filter(artist -> StringUtils.isNotBlank(artist.getMbid()))
+					.filter(track -> StringUtils.isNotBlank(track.getMbid()))
 					.forEach(
 							track -> cancoes.add(new Cancao(track.getName(), new Artista(track.getArtist(),
 									TipoArtista.DESCONHECIDO))));

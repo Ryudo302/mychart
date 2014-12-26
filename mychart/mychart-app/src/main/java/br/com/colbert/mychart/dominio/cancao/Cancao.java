@@ -25,7 +25,7 @@ import br.com.colbert.mychart.infraestrutura.validacao.TituloMusical;
  */
 @Entity
 @Table(name = "TB_CANCAO")
-@SequenceGenerator(name = "codCancaoGenerator", sequenceName = "SEQ_COD_CANCAO")
+@SequenceGenerator(name = "codCancaoGenerator", sequenceName = "SEQ_COD_CANCAO", allocationSize = 1)
 public class Cancao extends AbstractEntidade<Integer> {
 
 	private static final long serialVersionUID = 7075988463233846463L;

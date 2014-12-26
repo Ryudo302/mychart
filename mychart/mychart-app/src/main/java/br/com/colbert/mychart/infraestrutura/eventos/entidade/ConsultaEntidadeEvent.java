@@ -10,11 +10,11 @@ import br.com.colbert.base.dominio.Entidade;
  * @author Thiago Colbert
  * @since 21/12/2014
  */
-public class ConsultaEntidadeEvent implements Serializable {
+public abstract class ConsultaEntidadeEvent<T extends Entidade<?>> implements Serializable {
 
 	private static final long serialVersionUID = -167414477846752667L;
 
-	private final Entidade<?> entidade;
+	private final T entidade;
 	private final ModoConsulta modoConsulta;
 
 	/**
@@ -24,13 +24,13 @@ public class ConsultaEntidadeEvent implements Serializable {
 	 * @param entidade
 	 * @param modoConsulta
 	 */
-	public ConsultaEntidadeEvent(Entidade<?> entidade, ModoConsulta modoConsulta) {
+	public ConsultaEntidadeEvent(T entidade, ModoConsulta modoConsulta) {
 		this.entidade = entidade;
 		this.modoConsulta = modoConsulta;
 	}
 
-	public <T extends Entidade<?>> T getEntidade() {
-		return (T) entidade;
+	public T getEntidade() {
+		return entidade;
 	}
 
 	public ModoConsulta getModoConsulta() {

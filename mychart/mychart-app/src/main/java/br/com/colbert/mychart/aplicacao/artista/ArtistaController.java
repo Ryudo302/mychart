@@ -47,7 +47,7 @@ public class ArtistaController implements Serializable {
 	@Any
 	private Instance<Validador<Artista>> validadores;
 
-	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) ConsultaEntidadeEvent evento) {
+	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) ConsultaArtistaEvent evento) {
 		Artista exemplo = evento.getEntidade();
 
 		logger.info("Consultando artistas com base em exemplo: {}", exemplo);

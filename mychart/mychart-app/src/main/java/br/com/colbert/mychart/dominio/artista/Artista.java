@@ -20,7 +20,7 @@ import br.com.colbert.mychart.infraestrutura.validacao.Nome;
  */
 @Entity
 @Table(name = "TB_ARTISTA")
-@SequenceGenerator(name = "codArtistaGenerator", sequenceName = "SEQ_COD_ARTISTA")
+@SequenceGenerator(name = "codArtistaGenerator", sequenceName = "SEQ_COD_ARTISTA", allocationSize = 1)
 public class Artista extends AbstractEntidade<Integer> {
 
 	public static final Artista ARTISTA_NULL = new Artista(null, TipoArtista.DESCONHECIDO);

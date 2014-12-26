@@ -47,7 +47,7 @@ public class CancaoController implements Serializable {
 	@Any
 	private Instance<Validador<Cancao>> validadores;
 
-	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) ConsultaEntidadeEvent evento) {
+	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) ConsultaCancaoEvent evento) {
 		Cancao exemplo = evento.getEntidade();
 
 		logger.info("Consultando canções com base em exemplo: {}", exemplo);

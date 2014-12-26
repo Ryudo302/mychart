@@ -77,7 +77,7 @@ public class CancaoControllerIT extends AbstractDbUnitTest {
 	public void testConsultarExistentes() {
 		Cancao exemplo = new Cancao("rehab", (List<Artista>) null);
 
-		controller.consultarExistentes(new ConsultaEntidadeEvent(exemplo, ModoConsulta.TODOS));
+		controller.consultarExistentes(new ConsultaCancaoEvent(exemplo, ModoConsulta.TODOS));
 
 		System.out.println(cancoes);
 
