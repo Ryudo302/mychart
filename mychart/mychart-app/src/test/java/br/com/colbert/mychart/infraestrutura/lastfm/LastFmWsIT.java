@@ -37,9 +37,9 @@ public class LastFmWsIT extends AbstractTest {
 	public void testConsultarArtista() throws ServiceException {
 		Collection<Artista> artistas = ws.consultarPor(new Artista("rihanna", TipoArtista.DESCONHECIDO));
 
+		System.out.println(artistas);
+
 		assertThat(artistas, is(notNullValue(Collection.class)));
 		assertThat(artistas.size(), is(not(equalTo(0))));
-
-		System.out.println(artistas);
 	}
 }

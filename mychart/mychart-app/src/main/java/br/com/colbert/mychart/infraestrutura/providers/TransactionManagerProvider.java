@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.*;
-import javax.inject.Inject;
+import javax.inject.*;
 import javax.transaction.UserTransaction;
 
 import org.slf4j.Logger;

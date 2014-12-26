@@ -39,12 +39,12 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 	public Collection<Artista> consultarPor(Artista exemplo) throws ServiceException {
 		Objects.requireNonNull(exemplo, "O exemplo a ser utilizado na consulta é obrigatório");
 
-		List<Artista> artistas = new ArrayList<>();
 		Collection<Artist> resultadosConsulta = Artist.search(exemplo.getNome(), apiKey);
 		Result result = caller.getLastResult();
 		logger.debug("Resultado da operação: {}", result.getStatus());
 
 		if (result.isSuccessful()) {
+			List<Artista> artistas = new ArrayList<>(resultadosConsulta.size() / 2);
 			resultadosConsulta.stream().filter(artist -> StringUtils.isNotBlank(artist.getMbid()))
 					.forEach(artist -> artistas.add(new Artista(artist.getName(), TipoArtista.DESCONHECIDO)));
 			return artistas;
@@ -57,13 +57,13 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 	public Collection<Cancao> consultarPor(Cancao exemplo) throws ServiceException {
 		Objects.requireNonNull(exemplo, "O exemplo a ser utilizado na consulta é obrigatório");
 
-		List<Cancao> cancoes = new ArrayList<>();
 		Collection<Track> resultadosConsulta = Track.search(exemplo.getNomeArtistaPrincipal(), exemplo.getTitulo(),
 				Integer.MAX_VALUE, apiKey);
 		Result result = caller.getLastResult();
 		logger.debug("Resultado da operação: {}", result.getStatus());
 
 		if (result.isSuccessful()) {
+			List<Cancao> cancoes = new ArrayList<>(resultadosConsulta.size() / 2);
 			resultadosConsulta
 					.stream()
 					.filter(track -> StringUtils.isNotBlank(track.getMbid()))

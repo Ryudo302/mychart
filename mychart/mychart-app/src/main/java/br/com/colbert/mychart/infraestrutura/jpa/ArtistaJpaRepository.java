@@ -40,11 +40,14 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao consultar artistas pelo nome: '{0}'")
 	public Collection<Artista> consultarPorNomeExato(String nome) throws RepositoryException {
 		Validate.notBlank(nome, "O nome é obrigatório");
-		CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+		EntityManager entityManager = getEntityManager();
+		
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Artista> query = criteriaBuilder.createQuery(Artista.class);
 		Root<Artista> root = query.from(Artista.class);
 		query.where(criteriaBuilder.equal(criteriaBuilder.lower(root.get(Artista_.nome)), nome.toLowerCase()));
-		return getEntityManager().createQuery(query).getResultList();
+		
+		return entityManager.createQuery(query).getResultList();
 	}
 
 	@Override

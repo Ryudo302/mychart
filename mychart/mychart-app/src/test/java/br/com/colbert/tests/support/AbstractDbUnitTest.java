@@ -13,6 +13,7 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.Session;
 import org.junit.*;
+import org.slf4j.Logger;
 
 /**
  * Classe-base para todos os testes de integração que utilizem o DBUnit.
@@ -26,10 +27,15 @@ public abstract class AbstractDbUnitTest extends AbstractTest {
 	private static final String DTD_FILE_NAME = "mychart.dtd";
 
 	@Inject
+	private Logger logger;
+
+	@Inject
 	protected EntityManager entityManager;
 
 	@Before
 	public void setUpDB() throws DatabaseUnitException, SQLException, IOException, ClassNotFoundException {
+		logger.info("Carga do banco de dados");
+
 		entityManager.unwrap(Session.class).doWork(connection -> {
 			IDatabaseConnection dbUnitConnection = null;
 			try {
@@ -37,16 +43,14 @@ public abstract class AbstractDbUnitTest extends AbstractTest {
 				DatabaseOperation.CLEAN_INSERT.execute(dbUnitConnection, getDataSet());
 			} catch (Exception exception) {
 				throw new RuntimeException("Erro ao carregar dados no DB", exception);
-			} finally {
-				if (dbUnitConnection != null) {
-					dbUnitConnection.close();
-				}
 			}
 		});
 	}
 
 	@After
 	public void tearDownDb() throws DatabaseUnitException, SQLException, IOException, ClassNotFoundException {
+		logger.info("Limpando banco de dados");
+
 		entityManager.unwrap(Session.class).doWork(connection -> {
 			IDatabaseConnection dbUnitConnection = null;
 			try {
@@ -54,10 +58,6 @@ public abstract class AbstractDbUnitTest extends AbstractTest {
 				DatabaseOperation.DELETE_ALL.execute(dbUnitConnection, getDataSet());
 			} catch (Exception exception) {
 				throw new RuntimeException("Erro ao limpar DB", exception);
-			} finally {
-				if (dbUnitConnection != null) {
-					dbUnitConnection.close();
-				}
 			}
 		});
 	}

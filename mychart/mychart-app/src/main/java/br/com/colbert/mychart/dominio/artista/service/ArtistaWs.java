@@ -11,6 +11,7 @@ import br.com.colbert.mychart.infraestrutura.exception.ServiceException;
  * @author Thiago Colbert
  * @since 22/12/2014
  */
+@FunctionalInterface
 public interface ArtistaWs {
 
 	/**

@@ -8,7 +8,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.*;
 
 import com.jgoodies.forms.layout.*;
 
@@ -19,7 +18,7 @@ import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 
 /**
  * Implementação de {@link ArtistaView} utilizando um {@link JPanel}.
- * 
+ *
  * @author Thiago Colbert
  * @since 08/12/2014
  */
@@ -27,14 +26,16 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 
 	private static final long serialVersionUID = -7371434021781119641L;
 
-	private JTextField nomeTextField;
-	private JTable artistasTable;
-	private JButton consultarButton;
-	private JButton incluirButton;
-	private JButton removerButton;
+	private final JTextField nomeTextField;
+	private final JComboBox<TipoArtista> tipoComboBox;
+	private final JCheckBox consultarTodosCheckBox;
 
-	private ArtistaTableModel artistasTableModel;
-	private JComboBox<TipoArtista> tipoComboBox;
+	private final JTable artistasTable;
+	private final ArtistaTableModel artistasTableModel;
+
+	private final JButton consultarButton;
+	private final JButton incluirButton;
+	private final JButton removerButton;
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.CONSULTA)
@@ -47,7 +48,6 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.REMOCAO)
 	private Event<Artista> ouvintesRemocao;
-	private JCheckBox consultarTodosCheckBox;
 
 	/**
 	 * Cria um novo painel.
@@ -94,32 +94,23 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		add(botoesPanel);
 
 		incluirButton = ButtonFactory.createJButton("Incluir", "Inclui um novo artista com os dados informados acima");
-		incluirButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				ouvintesInclusao.fire(getArtistaAtual());
-				limparTela();
-			}
+		incluirButton.addActionListener(event -> {
+			ouvintesInclusao.fire(getArtistaAtual());
+			limparTela();
 		});
 
 		consultarButton = ButtonFactory.createJButton("Consultar",
 				"Procura por artistas que atendam aos critérios informados acima");
-		consultarButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				ouvintesConsulta.fire(new ConsultaArtistaEvent(getArtistaAtual(), getModoConsulta()));
-			}
-		});
+		consultarButton.addActionListener(event -> ouvintesConsulta.fire(new ConsultaArtistaEvent(getArtistaAtual(),
+				getModoConsulta())));
 		botoesPanel.add(consultarButton);
 
 		botoesPanel.add(incluirButton);
 
 		removerButton = ButtonFactory.createJButton("Excluir", "Exclui o artista selecionado");
-		removerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				ouvintesRemocao.fire(getArtistaAtual());
-				limparTela();
-			}
+		removerButton.addActionListener(event -> {
+			ouvintesRemocao.fire(getArtistaAtual());
+			limparTela();
 		});
 		removerButton.setEnabled(false);
 		botoesPanel.add(removerButton);
@@ -134,12 +125,9 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		artistasTableModel = new ArtistaTableModel();
 		artistasTable.setModel(artistasTableModel);
 
-		artistasTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent event) {
-				setArtistaAtual(artistasTableModel.getElement(artistasTable.convertRowIndexToModel(artistasTable.getSelectedRow())));
-				setEstadoAtual(EstadoTelaCrud.INCLUSAO_OU_ALTERACAO);
-			}
+		artistasTable.getSelectionModel().addListSelectionListener(event -> {
+			setArtistaAtual(artistasTableModel.getElement(artistasTable.convertRowIndexToModel(artistasTable.getSelectedRow())));
+			setEstadoAtual(EstadoTelaCrud.INCLUSAO_OU_ALTERACAO);
 		});
 
 		artistasTable.addKeyListener(new KeyAdapter() {
@@ -169,25 +157,25 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 
 	@Override
 	public void setArtistaAtual(Artista artista) {
-		this.nomeTextField.setText(artista.getNome());
-		this.tipoComboBox.setSelectedItem(artista.getTipo());
+		nomeTextField.setText(artista.getNome());
+		tipoComboBox.setSelectedItem(artista.getTipo());
 	}
 
 	@Override
 	public void setArtistas(Collection<Artista> artistas) {
-		this.artistasTableModel.setElements(artistas);
-		repaint();
+		artistasTableModel.setElements(artistas);
+		artistasTable.updateUI();
 	}
 
 	private void setEstadoAtual(EstadoTelaCrud estadoAtual) {
 		switch (estadoAtual) {
 		case CONSULTA:
-			this.incluirButton.setEnabled(true);
-			this.removerButton.setEnabled(false);
+			incluirButton.setEnabled(true);
+			removerButton.setEnabled(false);
 			break;
 		case INCLUSAO_OU_ALTERACAO:
-			this.incluirButton.setEnabled(false);
-			this.removerButton.setEnabled(true);
+			incluirButton.setEnabled(false);
+			removerButton.setEnabled(true);
 			break;
 		}
 	}

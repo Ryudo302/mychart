@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Singleton;
 
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.cache.FileSystemCache;
@@ -29,6 +30,7 @@ public class LastFmProvider {
 	 */
 	@Produces
 	@WsBaseUrl
+	@Singleton
 	public String wsUrl() {
 		return "http://ws.audioscrobbler.com/2.0/";
 	}
@@ -40,6 +42,7 @@ public class LastFmProvider {
 	 */
 	@Produces
 	@ApiKey
+	@Singleton
 	public String apiKey() {
 		return "6747f6d7194dfd2edcea226c96e395cb";
 	}
@@ -51,6 +54,7 @@ public class LastFmProvider {
 	 */
 	@Produces
 	@ApiSecret
+	@Singleton
 	public String apiSecret() {
 		return "aa672af27375b77bc074d4f1b55d1f07";
 	}
@@ -62,6 +66,7 @@ public class LastFmProvider {
 	 */
 	@Produces
 	@CacheDirectory
+	@Singleton
 	public File cacheDir(@DiretorioBase File baseDir) {
 		return new File(baseDir, "lastfm-cache");
 	}
@@ -78,6 +83,7 @@ public class LastFmProvider {
 	 * @return a instância criada
 	 */
 	@Produces
+	@Singleton
 	public Caller caller(@WsBaseUrl String baseUrl, @TituloAplicacao(Formato.APENAS_NOME) String nomeApp,
 			@CacheDirectory File cacheDir) {
 		Caller caller = Caller.getInstance();

@@ -18,7 +18,7 @@ import br.com.colbert.mychart.ui.comum.sobre.SobreDialog;
 
 /**
  * A tela principal da aplicação implementada como um {@link JFrame}.
- * 
+ *
  * @author Thiago Colbert
  * @since 17/12/2014
  */
@@ -31,7 +31,7 @@ public class MainFrame extends JFrame implements MainWindow {
 
 	private static final String COMANDO_SAIR = "sair";
 
-	private Action sairAction;
+	private final Action sairAction;
 
 	@Inject
 	private Logger logger;
@@ -66,7 +66,7 @@ public class MainFrame extends JFrame implements MainWindow {
 			}
 		});
 
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 
 		JMenuBar menuBar = new JMenuBar();
@@ -76,11 +76,7 @@ public class MainFrame extends JFrame implements MainWindow {
 		menuBar.add(menuArquivo);
 
 		JMenuItem menuItemIncio = new JMenuItem("Início");
-		menuItemIncio.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				mudarTela(TELA_INICIAL);
-			}
-		});
+		menuItemIncio.addActionListener(event -> mudarTela(TELA_INICIAL));
 		menuArquivo.add(menuItemIncio);
 
 		JMenuItem menuItemSair = new JMenuItem("Sair");
@@ -91,11 +87,9 @@ public class MainFrame extends JFrame implements MainWindow {
 		menuBar.add(menuMusica);
 
 		JMenuItem menuItemArtistas = new JMenuItem("Artistas");
-		menuItemArtistas.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				logger.debug("Exibindo painel de artistas");
-				mudarTela(TELA_ARTISTAS);
-			}
+		menuItemArtistas.addActionListener(event -> {
+			logger.debug("Exibindo painel de artistas");
+			mudarTela(TELA_ARTISTAS);
 		});
 		menuMusica.add(menuItemArtistas);
 
@@ -103,11 +97,9 @@ public class MainFrame extends JFrame implements MainWindow {
 		menuBar.add(menuAjuda);
 
 		JMenuItem menuItemSobre = new JMenuItem("Sobre");
-		menuItemSobre.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				logger.debug("Exibindo janela 'Sobre'");
-				sobreDialog.setVisible(true);
-			}
+		menuItemSobre.addActionListener(event -> {
+			logger.debug("Exibindo janela 'Sobre'");
+			sobreDialog.setVisible(true);
 		});
 		menuAjuda.add(menuItemSobre);
 
@@ -135,7 +127,7 @@ public class MainFrame extends JFrame implements MainWindow {
 	private void mudarTela(String tela) {
 		logger.debug("Mudando tela para: '{}'", tela);
 		Container contentPane = getContentPane();
-		CardLayout layout = ((CardLayout) contentPane.getLayout());
+		CardLayout layout = (CardLayout) contentPane.getLayout();
 		layout.show(contentPane, tela);
 	}
 
