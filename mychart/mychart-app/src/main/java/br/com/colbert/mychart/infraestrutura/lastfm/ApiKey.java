@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.infraestrutura.lastfm.api;
+package br.com.colbert.mychart.infraestrutura.lastfm;
 
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 import javax.inject.Qualifier;
 
 /**
- * Qualificador indicando a API Secret da LastFM.
+ * Qualificador indicando a API Key da LastFM.
  * 
  * @author Thiago Colbert
  * @since 22/12/2014
@@ -16,6 +16,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Target({ METHOD, FIELD, PARAMETER })
 @Retention(RUNTIME)
-public @interface LastFmApiSecret {
+public @interface ApiKey {
 
 }

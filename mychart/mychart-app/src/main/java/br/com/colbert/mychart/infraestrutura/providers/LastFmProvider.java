@@ -1,9 +1,16 @@
 package br.com.colbert.mychart.infraestrutura.providers;
 
+import java.io.File;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
-import br.com.colbert.mychart.infraestrutura.lastfm.api.*;
+import de.umass.lastfm.Caller;
+import de.umass.lastfm.cache.FileSystemCache;
+
+import br.com.colbert.mychart.infraestrutura.info.*;
+import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao.Formato;
+import br.com.colbert.mychart.infraestrutura.lastfm.*;
 
 /**
  * Provê instâncias utilizadas pelos serviços da LastFM.
@@ -21,7 +28,7 @@ public class LastFmProvider {
 	 * @return a URL base
 	 */
 	@Produces
-	@LastFmWsUrl
+	@WsBaseUrl
 	public String wsUrl() {
 		return "http://ws.audioscrobbler.com/2.0/";
 	}
@@ -32,7 +39,7 @@ public class LastFmProvider {
 	 * @return a chave da API
 	 */
 	@Produces
-	@LastFmApiKey
+	@ApiKey
 	public String apiKey() {
 		return "6747f6d7194dfd2edcea226c96e395cb";
 	}
@@ -43,8 +50,40 @@ public class LastFmProvider {
 	 * @return a senha da API
 	 */
 	@Produces
-	@LastFmApiSecret
+	@ApiSecret
 	public String apiSecret() {
 		return "aa672af27375b77bc074d4f1b55d1f07";
+	}
+
+	/**
+	 * Obtém referência para o diretório a ser utilizado para fazer cache dos resultados retornados pelos WebServices da LastFM.
+	 * 
+	 * @return o diretório de cache
+	 */
+	@Produces
+	@CacheDirectory
+	public File cacheDir(@DiretorioBase File baseDir) {
+		return new File(baseDir, "lastfm-cache");
+	}
+
+	/**
+	 * Obtém uma instância de {@link Caller} para as operações envolvendo os WebService da LastFM.
+	 * 
+	 * @param baseUrl
+	 *            a URL base dos WebServices da LastFM
+	 * @param nomeApp
+	 *            o nome da aplicação
+	 * @param cacheDir
+	 *            diretório utilizado para cache
+	 * @return a instância criada
+	 */
+	@Produces
+	public Caller caller(@WsBaseUrl String baseUrl, @TituloAplicacao(Formato.APENAS_NOME) String nomeApp,
+			@CacheDirectory File cacheDir) {
+		Caller caller = Caller.getInstance();
+		caller.setApiRootUrl(baseUrl);
+		caller.setUserAgent(nomeApp);
+		caller.setCache(new FileSystemCache(cacheDir));
+		return caller;
 	}
 }

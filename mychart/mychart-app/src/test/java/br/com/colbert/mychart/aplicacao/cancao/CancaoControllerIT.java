@@ -21,7 +21,7 @@ import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 import br.com.colbert.mychart.infraestrutura.jpa.CancaoJpaRepository;
-import br.com.colbert.mychart.infraestrutura.lastfm.CancaoLastFmWs;
+import br.com.colbert.mychart.infraestrutura.lastfm.LastFmWs;
 import br.com.colbert.mychart.ui.cancao.CancaoView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.tests.support.AbstractDbUnitTest;
@@ -32,7 +32,7 @@ import br.com.colbert.tests.support.AbstractDbUnitTest;
  * @author Thiago Colbert
  * @since 21/12/2014
  */
-@AdditionalClasses({ CancaoValidador.class, CancaoJpaRepository.class, CancaoLastFmWs.class })
+@AdditionalClasses({ CancaoValidador.class, CancaoJpaRepository.class, LastFmWs.class })
 public class CancaoControllerIT extends AbstractDbUnitTest {
 
 	@Inject

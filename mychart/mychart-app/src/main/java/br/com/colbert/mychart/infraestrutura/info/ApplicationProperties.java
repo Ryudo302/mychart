@@ -1,10 +1,12 @@
 package br.com.colbert.mychart.infraestrutura.info;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ResourceBundle;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao.Formato;
@@ -15,6 +17,7 @@ import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao.Formato;
  * @author Thiago Colbert
  * @since 18/12/2014
  */
+@ApplicationScoped
 public class ApplicationProperties implements Serializable {
 
 	private static final long serialVersionUID = 2808347955265751909L;
@@ -49,5 +52,18 @@ public class ApplicationProperties implements Serializable {
 	@TituloAplicacao(Formato.COMPLETO)
 	public String getAppNomeVersaoBuild() {
 		return tituloCompleto;
+	}
+
+	/**
+	 * Obtém uma referência para o diretório base utilizado pela aplicação no sistema de arquivos do usuário.
+	 * 
+	 * @param nomeApp
+	 *            o nome da aplicação
+	 * @return o diretório base da aplicação
+	 */
+	@Produces
+	@DiretorioBase
+	public File getDiretorioBase(@TituloAplicacao(Formato.APENAS_NOME) String nomeApp) {
+		return new File(FileUtils.getUserDirectory(), '.' + nomeApp.toLowerCase());
 	}
 }

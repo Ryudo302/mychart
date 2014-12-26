@@ -128,13 +128,24 @@ public class Cancao extends AbstractEntidade<Integer> {
 	/**
 	 * Obtém o artista principal da canção, que é aquele que é o dono da canção (não convidado).
 	 * 
-	 * @return um opcional contendo o artista principal (pode estar vazio caso a canção ainda não possua artistasCancao definidos)
+	 * @return um opcional contendo o artista principal (pode estar vazio caso a canção ainda não possua artistas definidos)
 	 */
 	@Transient
 	public Optional<Artista> getArtistaPrincipal() {
 		List<ArtistaCancao> artistaPrincipalList = artistasCancao.stream()
 				.filter(artistaCancao -> artistaCancao.getOrdem().equals(NumberUtils.INTEGER_ZERO)).collect(Collectors.toList());
 		return artistaPrincipalList.isEmpty() ? Optional.empty() : Optional.of(artistaPrincipalList.get(0).getArtista());
+	}
+
+	/**
+	 * Obtém o nome do artista principal da canção.
+	 * 
+	 * @return o nome do artista principal da canção ou <code>null</code> caso a canção não possua artistas definidos
+	 * @see #getArtistaPrincipal()
+	 */
+	@Transient
+	public String getNomeArtistaPrincipal() {
+		return getArtistaPrincipal().isPresent() ? getArtistaPrincipal().get().getNome() : null;
 	}
 
 	@Override

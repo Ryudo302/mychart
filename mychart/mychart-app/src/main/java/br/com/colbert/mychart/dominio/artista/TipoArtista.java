@@ -40,6 +40,6 @@ public enum TipoArtista {
 			fixedName.append(firstLetter).append(restOfWord).append(spacer);
 		}
 
-		return fixedName.toString();
+		return fixedName.toString().trim();
 	}
 }

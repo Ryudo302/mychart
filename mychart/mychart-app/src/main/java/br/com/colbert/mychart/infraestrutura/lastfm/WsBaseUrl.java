@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.infraestrutura.lastfm.api;
+package br.com.colbert.mychart.infraestrutura.lastfm;
 
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -16,6 +16,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Target({ METHOD, FIELD, PARAMETER })
 @Retention(RUNTIME)
-public @interface LastFmWsUrl {
+public @interface WsBaseUrl {
 
 }

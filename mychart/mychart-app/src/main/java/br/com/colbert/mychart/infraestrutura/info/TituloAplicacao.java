@@ -14,7 +14,7 @@ import javax.inject.Qualifier;
  * @since 18/12/2014
  */
 @Qualifier
-@Target({ METHOD, FIELD, PARAMETER, TYPE })
+@Target({ METHOD, FIELD, PARAMETER })
 @Retention(RUNTIME)
 @Documented
 public @interface TituloAplicacao {
