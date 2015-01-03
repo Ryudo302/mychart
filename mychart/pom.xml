@@ -20,11 +20,25 @@
 		<!-- Nome do projeto dentro do repositório SCM -->
 		<scm.project.name>mychart.git</scm.project.name>
 
+		<junit.version>4.12</junit.version>
+
 		<cobertura-maven-plugin.version>2.7-SNAPSHOT</cobertura-maven-plugin.version>
 	</properties>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<modules>
 		<module>mychart-app</module>
+		<module>mychart-acceptance-tests</module>
 	</modules>
 
 	<scm>
