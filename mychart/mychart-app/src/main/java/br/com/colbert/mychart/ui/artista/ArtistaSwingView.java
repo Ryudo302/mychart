@@ -1,9 +1,11 @@
 package br.com.colbert.mychart.ui.artista;
 
 import java.awt.event.*;
-import java.util.Collection;
+import java.io.Serializable;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.swing.*;
@@ -14,7 +16,6 @@ import com.jgoodies.forms.layout.*;
 import br.com.colbert.base.ui.*;
 import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
-import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 
 /**
  * Implementação de {@link ArtistaView} utilizando um {@link JPanel}.
@@ -22,24 +23,27 @@ import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
  * @author Thiago Colbert
  * @since 08/12/2014
  */
-public class ArtistaPanel extends JPanel implements ArtistaView {
+@ApplicationScoped
+public class ArtistaSwingView implements ArtistaView, Serializable {
 
 	private static final long serialVersionUID = -7371434021781119641L;
 
-	private final JTextField nomeTextField;
-	private final JComboBox<TipoArtista> tipoComboBox;
-	private final JCheckBox consultarTodosCheckBox;
+	private JPanel panel;
 
-	private final JTable artistasTable;
-	private final ArtistaTableModel artistasTableModel;
+	private JTextField idTextField;
+	private JTextField nomeTextField;
+	private JComboBox<TipoArtista> tipoComboBox;
 
-	private final JButton consultarButton;
-	private final JButton incluirButton;
-	private final JButton removerButton;
+	private JTable artistasTable;
+	private ArtistaTableModel artistasTableModel;
+
+	private JButton consultarButton;
+	private JButton salvarButton;
+	private JButton removerButton;
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.CONSULTA)
-	private Event<ConsultaArtistaEvent> ouvintesConsulta;
+	private Event<Artista> ouvintesConsulta;
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.INSERCAO)
@@ -49,16 +53,19 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 	@OperacaoCrud(TipoOperacaoCrud.REMOCAO)
 	private Event<Artista> ouvintesRemocao;
 
-	/**
-	 * Cria um novo painel.
-	 */
-	public ArtistaPanel() {
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+	public static void main(String[] args) {
+		new ArtistaSwingView().init();
+	}
+
+	@PostConstruct
+	protected void init() {
+		panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
 		JPanel informacoesPanel = new JPanel();
 		informacoesPanel.setBorder(new TitledBorder(null, "Informa\u00E7\u00F5es", TitledBorder.LEFT, TitledBorder.TOP, null,
 				null));
-		add(informacoesPanel);
+		panel.add(informacoesPanel);
 		informacoesPanel.setLayout(new FormLayout(new ColumnSpec[] { com.jgoodies.forms.layout.FormSpecs.UNRELATED_GAP_COLSPEC,
 				ColumnSpec.decode("40px"), com.jgoodies.forms.layout.FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 				com.jgoodies.forms.layout.FormSpecs.DEFAULT_COLSPEC, com.jgoodies.forms.layout.FormSpecs.DEFAULT_COLSPEC,
@@ -69,7 +76,15 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		JLabel nomeLabel = new JLabel("Nome:");
 		informacoesPanel.add(nomeLabel, "2, 1, left, center");
 
+		idTextField = new JTextField();
+		idTextField.setVisible(false);
+
 		nomeTextField = new JTextField();
+		nomeTextField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				consultarButton.doClick();
+			}
+		});
 		nomeTextField.setColumns(40);
 		nomeTextField.setToolTipText("Nome artístico (completo)");
 		nomeTextField.setHorizontalAlignment(SwingConstants.LEFT);
@@ -85,27 +100,21 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		tipoComboBox.setModel(new DefaultComboBoxModel<>(TipoArtista.values()));
 		informacoesPanel.add(tipoComboBox, "4, 3, left, default");
 
-		consultarTodosCheckBox = new JCheckBox("Incluir consulta na LastFM");
-		consultarTodosCheckBox
-				.setToolTipText("Marque esta opção se deseja que também seja consultada a base de artistas da LastFM");
-		informacoesPanel.add(consultarTodosCheckBox, "6, 3");
-
 		JPanel botoesPanel = new JPanel();
-		add(botoesPanel);
+		panel.add(botoesPanel);
 
-		incluirButton = ButtonFactory.createJButton("Incluir", "Inclui um novo artista com os dados informados acima");
-		incluirButton.addActionListener(event -> {
+		salvarButton = ButtonFactory.createJButton("Salvar", "Salva o artista selecionado");
+		salvarButton.addActionListener(event -> {
 			ouvintesInclusao.fire(getArtistaAtual());
 			limparTela();
 		});
 
 		consultarButton = ButtonFactory.createJButton("Consultar",
 				"Procura por artistas que atendam aos critérios informados acima");
-		consultarButton.addActionListener(event -> ouvintesConsulta.fire(new ConsultaArtistaEvent(getArtistaAtual(),
-				getModoConsulta())));
+		consultarButton.addActionListener(event -> ouvintesConsulta.fire(getArtistaAtual()));
 		botoesPanel.add(consultarButton);
 
-		botoesPanel.add(incluirButton);
+		botoesPanel.add(salvarButton);
 
 		removerButton = ButtonFactory.createJButton("Excluir", "Exclui o artista selecionado");
 		removerButton.addActionListener(event -> {
@@ -115,19 +124,16 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 		removerButton.setEnabled(false);
 		botoesPanel.add(removerButton);
 
-		JScrollPane tabelaScrollPane = new JScrollPane();
-		tabelaScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-		add(tabelaScrollPane);
-
-		artistasTable = new JTable();
+		artistasTableModel = new ArtistaTableModel();
+		artistasTable = new JTable(artistasTableModel);
 		artistasTable.setFillsViewportHeight(true);
 		artistasTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		artistasTableModel = new ArtistaTableModel();
-		artistasTable.setModel(artistasTableModel);
 
 		artistasTable.getSelectionModel().addListSelectionListener(event -> {
-			setArtistaAtual(getArtistaSelecionado());
-			setEstadoAtual(EstadoTelaCrud.INCLUSAO_OU_ALTERACAO);
+			getArtistaSelecionado().ifPresent(artista -> {
+				setArtistaAtual(artista);
+				setEstadoAtual(EstadoTelaCrud.INCLUSAO_OU_ALTERACAO);
+			});
 		});
 
 		artistasTable.addKeyListener(new KeyAdapter() {
@@ -137,33 +143,32 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 				if (keyCode == KeyEvent.VK_ESCAPE) {
 					limparTela();
 				} else if (keyCode == KeyEvent.VK_DELETE) {
-					ouvintesRemocao.fire(getArtistaSelecionado());
+					getArtistaSelecionado().ifPresent(artista -> ouvintesRemocao.fire(artista));
 				}
 			}
 		});
 
+		JScrollPane tabelaScrollPane = new JScrollPane();
+		tabelaScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		tabelaScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		tabelaScrollPane.setViewportView(artistasTable);
-	}
+		panel.add(tabelaScrollPane);
 
-	@PostConstruct
-	protected void init() {
 		limparTela();
 	}
 
 	private Artista getArtistaAtual() {
-		return new Artista(nomeTextField.getText(), (TipoArtista) tipoComboBox.getSelectedItem());
+		return new Artista(idTextField.getText(), nomeTextField.getText(), (TipoArtista) tipoComboBox.getSelectedItem());
 	}
 
-	private Artista getArtistaSelecionado() {
-		return artistasTableModel.getElement(artistasTable.convertRowIndexToModel(artistasTable.getSelectedRow()));
-	}
-
-	private ModoConsulta getModoConsulta() {
-		return consultarTodosCheckBox.isSelected() ? ModoConsulta.TODOS : ModoConsulta.SOMENTE_JA_INCLUIDOS;
+	private Optional<Artista> getArtistaSelecionado() {
+		int modelIndex = artistasTable.convertRowIndexToModel(artistasTable.getSelectedRow());
+		return modelIndex != -1 ? Optional.of(artistasTableModel.getElement(modelIndex)) : Optional.empty();
 	}
 
 	@Override
 	public void setArtistaAtual(Artista artista) {
+		idTextField.setText(artista.getId());
 		nomeTextField.setText(artista.getNome());
 		tipoComboBox.setSelectedItem(artista.getTipo());
 	}
@@ -171,17 +176,20 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 	@Override
 	public void setArtistas(Collection<Artista> artistas) {
 		artistasTableModel.setElements(artistas);
-		artistasTable.updateUI();
 	}
 
 	private void setEstadoAtual(EstadoTelaCrud estadoAtual) {
 		switch (estadoAtual) {
 		case CONSULTA:
-			incluirButton.setEnabled(true);
+			nomeTextField.setEditable(true);
+			tipoComboBox.setEnabled(false);
+			salvarButton.setEnabled(false);
 			removerButton.setEnabled(false);
 			break;
 		case INCLUSAO_OU_ALTERACAO:
-			incluirButton.setEnabled(false);
+			nomeTextField.setEditable(false);
+			tipoComboBox.setEnabled(true);
+			salvarButton.setEnabled(true);
 			removerButton.setEnabled(true);
 			break;
 		}
@@ -194,5 +202,9 @@ public class ArtistaPanel extends JPanel implements ArtistaView {
 
 	private Artista novoArtista() {
 		return Artista.ARTISTA_NULL;
+	}
+
+	public JPanel getPanel() {
+		return panel;
 	}
 }

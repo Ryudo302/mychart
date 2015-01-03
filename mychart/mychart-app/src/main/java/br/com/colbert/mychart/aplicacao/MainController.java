@@ -10,6 +10,7 @@ import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.slf4j.Logger;
 
 import br.com.colbert.mychart.infraestrutura.eventos.app.*;
+import br.com.colbert.mychart.ui.comum.messages.*;
 import br.com.colbert.mychart.ui.principal.MainWindow;
 
 /**
@@ -27,6 +28,8 @@ public class MainController implements Serializable {
 
 	@Inject
 	private MainWindow mainWindow;
+	@Inject
+	private MessagesView messagesView;
 
 	/**
 	 * Inicia a aplicação.
@@ -45,10 +48,12 @@ public class MainController implements Serializable {
 	 *            a janela principal da aplicação
 	 */
 	public void sair(@Observes @StatusAplicacao(TipoStatusAplicacao.ENCERRADA) MainWindow window) {
-		EventQueue.invokeLater(() -> {
-			logger.info("Encerrando...");
-			mainWindow.close();
-			System.exit(0);
-		});
+		if (messagesView.exibirConfirmacao("Deseja realmente sair?") == RespostaConfirmacao.SIM) {
+			EventQueue.invokeLater(() -> {
+				logger.info("Encerrando...");
+				mainWindow.close();
+				System.exit(0);
+			});
+		}
 	}
 }

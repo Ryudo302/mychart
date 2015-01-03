@@ -17,11 +17,11 @@ public class ArtistaCancaoId extends AbstractCompositeId {
 	private static final long serialVersionUID = -6186511476741490766L;
 
 	@NotNull
-	private Integer idArtista;
+	private String idArtista;
 	@NotNull
-	private Integer idCancao;
+	private String idCancao;
 
-	public ArtistaCancaoId(Integer idArtista, Integer idCancao) {
+	public ArtistaCancaoId(String idArtista, String idCancao) {
 		this.idArtista = idArtista;
 		this.idCancao = idCancao;
 	}
@@ -33,11 +33,11 @@ public class ArtistaCancaoId extends AbstractCompositeId {
 		this(null, null);
 	}
 
-	public Integer getIdArtista() {
+	public String getIdArtista() {
 		return idArtista;
 	}
 
-	public Integer getIdCancao() {
+	public String getIdCancao() {
 		return idCancao;
 	}
 }

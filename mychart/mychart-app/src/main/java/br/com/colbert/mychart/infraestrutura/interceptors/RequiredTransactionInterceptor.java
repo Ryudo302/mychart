@@ -44,13 +44,17 @@ public class RequiredTransactionInterceptor {
 
 			try {
 				Object result = context.proceed();
-				logger.debug("COMMIT");
-				transaction.commit();
+
+				if (!isRollBackOnly()) {
+					commit();
+				} else {
+					rollback();
+				}
+
 				return result;
 			} catch (Exception exception) {
 				if (isTransactionActive()) {
-					logger.debug("ROLLBACK");
-					transaction.rollback();
+					rollback();
 				}
 
 				throw exception;
@@ -61,7 +65,21 @@ public class RequiredTransactionInterceptor {
 		}
 	}
 
+	private void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SystemException {
+		logger.debug("COMMIT");
+		transaction.commit();
+	}
+
+	private void rollback() throws SystemException {
+		logger.debug("ROLLBACK");
+		transaction.rollback();
+	}
+
 	private boolean isTransactionActive() throws SystemException {
 		return transaction.getStatus() != Status.STATUS_NO_TRANSACTION;
+	}
+
+	private boolean isRollBackOnly() throws SystemException {
+		return transaction.getStatus() == Status.STATUS_MARKED_ROLLBACK;
 	}
 }

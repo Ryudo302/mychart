@@ -12,7 +12,7 @@ import br.com.colbert.mychart.infraestrutura.exception.*;
  * @author Thiago Colbert
  * @since 08/12/2014
  */
-public interface ArtistaRepository extends Repository<Artista, Integer> {
+public interface ArtistaRepository extends Repository<Artista, String> {
 
 	/**
 	 * Consulta por artistas que tenham o nome exatamente igual ao informado. A consulta não é <em>case-sensitive</em> (uma

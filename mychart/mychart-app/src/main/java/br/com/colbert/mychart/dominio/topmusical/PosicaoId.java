@@ -19,9 +19,9 @@ public class PosicaoId extends AbstractCompositeId {
 	@NotNull
 	private Integer numeroTopMusical;
 	@NotNull
-	private Integer idCancao;
+	private String idCancao;
 
-	public PosicaoId(Integer numeroTopMusical, Integer idCancao) {
+	public PosicaoId(Integer numeroTopMusical, String idCancao) {
 		this.numeroTopMusical = numeroTopMusical;
 		this.idCancao = idCancao;
 	}
@@ -37,7 +37,7 @@ public class PosicaoId extends AbstractCompositeId {
 		return numeroTopMusical;
 	}
 
-	public Integer getIdCancao() {
+	public String getIdCancao() {
 		return idCancao;
 	}
 }

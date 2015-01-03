@@ -31,16 +31,16 @@ public class CancaoTest {
 
 	@Before
 	public void setUp() {
-		when(artista1.getId()).thenReturn(1);
+		when(artista1.getId()).thenReturn("1");
 		when(artista1.getNome()).thenReturn("A");
 
 		when(artista2.getNome()).thenReturn("B");
-		when(artista2.getId()).thenReturn(2);
+		when(artista2.getId()).thenReturn("2");
 	}
 
 	@Test
 	public void deveriaCriarListaDeArtistasCancaoMantendoAOrdemOriginal() {
-		cancao = new Cancao(1, "Teste", artista1, artista2);
+		cancao = new Cancao("1", "Teste", artista1, artista2);
 
 		List<ArtistaCancao> artistasCancao = cancao.getArtistasCancao();
 

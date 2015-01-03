@@ -20,17 +20,16 @@ import br.com.colbert.mychart.infraestrutura.validacao.Nome;
  */
 @Entity
 @Table(name = "TB_ARTISTA")
-@SequenceGenerator(name = "codArtistaGenerator", sequenceName = "SEQ_COD_ARTISTA", allocationSize = 1)
-public class Artista extends AbstractEntidade<Integer> {
+public class Artista extends AbstractEntidade<String> {
 
-	public static final Artista ARTISTA_NULL = new Artista(null, TipoArtista.DESCONHECIDO);
+	public static final Artista ARTISTA_NULL = new Artista(null, null, TipoArtista.DESCONHECIDO);
 
 	private static final long serialVersionUID = -5953280230091975040L;
 
 	@Id
-	@GeneratedValue(generator = "codArtistaGenerator", strategy = GenerationType.SEQUENCE)
+	@NotNull
 	@Column(name = "COD_ARTISTA", unique = true, nullable = false)
-	private Integer id;
+	private String id;
 
 	@Nome
 	@Column(name = "NOM_ARTISTA", length = 255, unique = false, nullable = false)
@@ -44,6 +43,26 @@ public class Artista extends AbstractEntidade<Integer> {
 	@OneToMany(cascade = {}, fetch = FetchType.LAZY, mappedBy = "artista", orphanRemoval = true)
 	private Set<ArtistaCancao> cancoesArtista;
 
+	@Transient
+	private boolean persistente;
+
+	/**
+	 * Cria um novo artista com o ID, nome e tipo informados.
+	 * 
+	 * @param id
+	 *            o ID do artista
+	 * @param nome
+	 *            do artista
+	 * @param tipo
+	 *            de artista
+	 */
+	public Artista(String id, String nome, TipoArtista tipo) {
+		this.id = id;
+		this.nome = nome;
+		this.tipo = tipo;
+		this.cancoesArtista = Collections.emptySet();
+	}
+
 	/**
 	 * Cria um novo artista com o nome e tipo informados.
 	 * 
@@ -53,9 +72,7 @@ public class Artista extends AbstractEntidade<Integer> {
 	 *            de artista
 	 */
 	public Artista(String nome, TipoArtista tipo) {
-		this.nome = nome;
-		this.tipo = tipo;
-		this.cancoesArtista = Collections.emptySet();
+		this(null, nome, tipo);
 	}
 
 	/**
@@ -65,8 +82,12 @@ public class Artista extends AbstractEntidade<Integer> {
 	}
 
 	@Override
-	public Integer getId() {
+	public String getId() {
 		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getNome() {
@@ -83,6 +104,20 @@ public class Artista extends AbstractEntidade<Integer> {
 
 	public Set<ArtistaCancao> getCancoesArtista() {
 		return Collections.unmodifiableSet(cancoesArtista);
+	}
+
+	/**
+	 * Verifica se o artista é persistente - ou seja, se está salvo na base de dados.
+	 * 
+	 * @return <code>true</code>/<code>false</code>
+	 */
+	public boolean getPersistente() {
+		return persistente;
+	}
+
+	@PostLoad
+	protected void setPersistente() {
+		persistente = true;
 	}
 
 	/**

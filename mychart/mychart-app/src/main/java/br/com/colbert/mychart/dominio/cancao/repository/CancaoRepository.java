@@ -12,7 +12,7 @@ import br.com.colbert.mychart.infraestrutura.exception.*;
  * @author Thiago Colbert
  * @since 08/12/2014
  */
-public interface CancaoRepository extends Repository<Cancao, Integer> {
+public interface CancaoRepository extends Repository<Cancao, String> {
 
 	/**
 	 * Consulta por canções que tenham o título e artista(s) exatamente iguais aos informados. A consulta não é

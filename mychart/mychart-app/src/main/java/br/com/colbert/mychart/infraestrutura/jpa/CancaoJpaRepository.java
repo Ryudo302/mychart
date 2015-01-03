@@ -6,10 +6,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.*;
-import javax.persistence.criteria.*;
-import javax.persistence.criteria.CriteriaQuery;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
 import org.slf4j.Logger;
@@ -38,27 +35,20 @@ public class CancaoJpaRepository implements CancaoRepository {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao consultar canções pelo título: '{0}'")
 	public Collection<Cancao> consultarPorTituloEArtistaExatos(Cancao exemplo) throws RepositoryException {
 		Objects.requireNonNull(exemplo, "O exemplo é obrigatório");
 
 		EntityManager entityManager = getEntityManager();
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Cancao> query = criteriaBuilder.createQuery(Cancao.class);
-		Root<Cancao> root = query.from(Cancao.class);
-		ListJoin<Cancao, ArtistaCancao> artistasCancaoJoin = root.join(Cancao_.artistasCancao);
-		query.where(artistasCancaoJoin.in(exemplo.getArtistasCancao()));
+		Query query = entityManager.createNamedQuery("ArtistaCancao.findCancaoByTituloEArtistasExatos");
+		query.setParameter("titulo", exemplo.getTitulo());
+		query.setParameter("nomeArtista", exemplo.getArtistaPrincipal().get().getNome());
 
-		List<Cancao> cancoes = entityManager.createQuery(query).getResultList();
-		logger.debug("Canções que possuem algum dos artistas definidos pelo exemplo: {}", exemplo.getArtistasCancao());
+		List<ArtistaCancao> artistasCancoes = query.getResultList();
+		logger.debug("Resultados de canções com o mesmo título e artista(s): {}", artistasCancoes);
 
-		cancoes = cancoes
-				.stream()
-				.filter(cancao -> cancao.getArtistasCancao().equals(exemplo.getArtistasCancao())
-						&& StringUtils.equalsIgnoreCase(cancao.getTitulo(), exemplo.getTitulo())).collect(Collectors.toList());
-		logger.debug("Canções exatamente iguais ao exemplo: {}", cancoes);
-
-		return cancoes;
+		return artistasCancoes.stream().map(artistasCancao -> artistasCancao.getCancao()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -77,19 +67,15 @@ public class CancaoJpaRepository implements CancaoRepository {
 	public void adicionar(Cancao cancao) throws ElementoJaExistenteException, RepositoryException {
 		Objects.requireNonNull(cancao, "A canção a ser adicionada é obrigatória");
 
-		if (cancao.getId() == null) {
-			logger.debug("Verificando se já existe um cancao com o mesmo título e do mesmo artista: {}", cancao);
-			if (!consultarPorTituloEArtistaExatos(cancao).isEmpty()) {
-				throw new ElementoJaExistenteException(cancao);
-			}
+		logger.debug("Verificando se já existe uma canção com o mesmo título e do(s) mesmo(s) artista(s): {}", cancao);
+		if (!consultarPorTituloEArtistaExatos(cancao).isEmpty()) {
+			throw new ElementoJaExistenteException(cancao);
+		}
 
-			try {
-				logger.debug("Persistindo cancao");
-				getEntityManager().persist(cancao);
-			} catch (EntityExistsException exception) {
-				throw new ElementoJaExistenteException(cancao);
-			}
-		} else {
+		try {
+			logger.debug("Persistindo cancao");
+			getEntityManager().persist(cancao);
+		} catch (EntityExistsException exception) {
 			throw new ElementoJaExistenteException(cancao);
 		}
 	}
@@ -112,15 +98,15 @@ public class CancaoJpaRepository implements CancaoRepository {
 	public boolean remover(Cancao cancao) throws RepositoryException {
 		Objects.requireNonNull(cancao, "A canção a ser removida é obrigatória");
 
-		logger.debug("Verificando se a canção existe no repositório: {}", cancao);
-		if (cancao.getId() != null) {
-			logger.debug("Removendo cancao");
-			EntityManager entityManager = getEntityManager();
+		logger.debug("Removendo canção");
+		EntityManager entityManager = getEntityManager();
+		try {
+			logger.debug("Verificando se a canção existe no repositório: {}", cancao);
 			Cancao cancaoRemover = entityManager.getReference(Cancao.class, cancao.getId());
 			entityManager.remove(cancaoRemover);
 			return true;
-		} else {
-			logger.debug("O cancao já não existia no repositório");
+		} catch (EntityNotFoundException exception) {
+			logger.debug("A canção já não existia no repositório");
 			return false;
 		}
 	}

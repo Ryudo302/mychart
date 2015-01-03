@@ -1,14 +1,17 @@
 package br.com.colbert.mychart.aplicacao.artista;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.*;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.*;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.list.SetUniqueList;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.slf4j.Logger;
 
@@ -17,10 +20,9 @@ import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepository;
 import br.com.colbert.mychart.dominio.artista.service.ArtistaWs;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
-import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
-import br.com.colbert.mychart.ui.comum.messages.MessagesView;
+import br.com.colbert.mychart.ui.comum.messages.*;
 
 /**
  * Controlador de ações referentes a artistas.
@@ -28,6 +30,7 @@ import br.com.colbert.mychart.ui.comum.messages.MessagesView;
  * @author Thiago Colbert
  * @since 08/12/2014
  */
+@ApplicationScoped
 public class ArtistaController implements Serializable {
 
 	private static final long serialVersionUID = 2909647942422289099L;
@@ -57,18 +60,21 @@ public class ArtistaController implements Serializable {
 	@Any
 	private Instance<Validador<Artista>> validadores;
 
-	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) ConsultaArtistaEvent evento) {
-		Artista exemplo = evento.getEntidade();
-
+	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) Artista exemplo) {
 		logger.info("Consultando artistas com base em exemplo: {}", exemplo);
 		List<Artista> artistas = new ArrayList<>();
+		List<Artista> artistasUniqueList = SetUniqueList.setUniqueList(artistas);
 
-		artistas.addAll(consultarRepositorio(exemplo));
-		if (evento.getModoConsulta() == ModoConsulta.TODOS) {
-			artistas.addAll(consultarWeb(exemplo));
-		}
+		logger.debug("Consultando no repositório local");
+		artistasUniqueList.addAll(consultarRepositorio(exemplo));
 
+		logger.debug("Consultando na web");
+		artistasUniqueList.addAll(consultarWeb(exemplo));
+
+		logger.debug("Ordenando artistas");
 		artistas.sort(new ArtistasPorNomeComparator());
+
+		logger.debug("Definindo artistas na visão: {}", artistasUniqueList);
 		view.setArtistas(artistas);
 		messagesView.adicionarMensagemSucesso("Foi(ram) encontrado(s) " + artistas.size() + " artista(s)");
 	}
@@ -76,8 +82,8 @@ public class ArtistaController implements Serializable {
 	private Collection<Artista> consultarWeb(Artista exemplo) {
 		Collection<Artista> artistas = CollectionUtils.emptyCollection();
 		try {
-			logger.debug("Consultando na web");
 			artistas = artistaWs.consultarPor(exemplo);
+			logger.debug("Resultado web: {}", artistas);
 		} catch (ServiceException exception) {
 			logger.error("Erro ao consultar artistas na web a partir do exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar artistas", exception.getLocalizedMessage());
@@ -88,8 +94,8 @@ public class ArtistaController implements Serializable {
 	private Collection<Artista> consultarRepositorio(Artista exemplo) {
 		Collection<Artista> artistas = CollectionUtils.emptyCollection();
 		try {
-			logger.debug("Consultando no repositório local");
 			artistas = repositorio.consultarPor(exemplo);
+			logger.debug("Resultado repositório: {}", artistas);
 		} catch (RepositoryException exception) {
 			logger.error("Erro ao consultar artistas no repositório a partir do exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar artistas", exception.getLocalizedMessage());
@@ -121,16 +127,18 @@ public class ArtistaController implements Serializable {
 	public void removerExistente(@Observes @OperacaoCrud(TipoOperacaoCrud.REMOCAO) Artista artista) {
 		logger.info("Removendo: {}", artista);
 
-		try {
-			validar(artista);
-			repositorio.remover(artista);
-			messagesView.adicionarMensagemSucesso("Artista removido com sucesso!");
-		} catch (ValidacaoException exception) {
-			logger.debug("Erros de validação", exception);
-			messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
-		} catch (RepositoryException exception) {
-			logger.error("Erro ao remover artista: " + artista, exception);
-			messagesView.adicionarMensagemErro("Erro ao remover artista", exception.getLocalizedMessage());
+		if (messagesView.exibirConfirmacao(MessageFormat.format("Deseja realmente excluir o artista {0}?", artista.getNome())) == RespostaConfirmacao.SIM) {
+			try {
+				validar(artista);
+				repositorio.remover(artista);
+				messagesView.adicionarMensagemSucesso("Artista removido com sucesso!");
+			} catch (ValidacaoException exception) {
+				logger.debug("Erros de validação", exception);
+				messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
+			} catch (RepositoryException exception) {
+				logger.error("Erro ao remover artista: " + artista, exception);
+				messagesView.adicionarMensagemErro("Erro ao remover artista", exception.getLocalizedMessage());
+			}
 		}
 	}
 

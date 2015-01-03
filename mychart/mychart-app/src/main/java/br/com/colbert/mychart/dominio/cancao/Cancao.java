@@ -25,15 +25,13 @@ import br.com.colbert.mychart.infraestrutura.validacao.TituloMusical;
  */
 @Entity
 @Table(name = "TB_CANCAO")
-@SequenceGenerator(name = "codCancaoGenerator", sequenceName = "SEQ_COD_CANCAO", allocationSize = 1)
-public class Cancao extends AbstractEntidade<Integer> {
+public class Cancao extends AbstractEntidade<String> {
 
 	private static final long serialVersionUID = 7075988463233846463L;
 
 	@Id
-	@GeneratedValue(generator = "codCancaoGenerator", strategy = GenerationType.SEQUENCE)
 	@Column(name = "COD_CANCAO", unique = true, nullable = false)
-	private Integer id;
+	private String id;
 
 	@TituloMusical
 	@Column(name = "DSC_TITULO", length = 255, unique = false, nullable = false)
@@ -45,6 +43,9 @@ public class Cancao extends AbstractEntidade<Integer> {
 	@Fetch(FetchMode.SELECT)
 	private List<ArtistaCancao> artistasCancao;
 
+	@Transient
+	private boolean persistente;
+
 	/**
 	 * Construtor <em>full</em>.
 	 * 
@@ -55,7 +56,7 @@ public class Cancao extends AbstractEntidade<Integer> {
 	 * @param artistas
 	 *            da canção
 	 */
-	Cancao(Integer id, String titulo, Artista... artistas) {
+	public Cancao(String id, String titulo, Artista... artistas) {
 		this.id = id;
 		this.titulo = titulo;
 		this.artistasCancao = artistas != null ? toArtistasCancao(Arrays.asList(artistas)) : Collections.emptyList();
@@ -103,8 +104,12 @@ public class Cancao extends AbstractEntidade<Integer> {
 	}
 
 	@Override
-	public Integer getId() {
+	public String getId() {
 		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getTitulo() {
@@ -113,6 +118,15 @@ public class Cancao extends AbstractEntidade<Integer> {
 
 	public List<ArtistaCancao> getArtistasCancao() {
 		return Collections.unmodifiableList(artistasCancao);
+	}
+
+	public boolean isPersistente() {
+		return persistente;
+	}
+
+	@PostLoad
+	protected void setPersistente() {
+		persistente = true;
 	}
 
 	/**

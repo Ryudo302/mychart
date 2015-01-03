@@ -8,6 +8,8 @@ import javax.enterprise.inject.*;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections4.list.SetUniqueList;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.validacao.*;
@@ -15,7 +17,6 @@ import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.dominio.cancao.repository.CancaoRepository;
 import br.com.colbert.mychart.dominio.cancao.service.CancaoWs;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
-import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.ui.cancao.CancaoView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
@@ -29,6 +30,14 @@ import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 public class CancaoController implements Serializable {
 
 	private static final long serialVersionUID = -444876850735933938L;
+
+	private static final class CancoesPorTituloComparator implements Comparator<Cancao> {
+
+		@Override
+		public int compare(Cancao cancao1, Cancao cancao2) {
+			return new CompareToBuilder().append(cancao1.getTitulo(), cancao2.getTitulo()).toComparison();
+		}
+	}
 
 	@Inject
 	private Logger logger;
@@ -47,22 +56,23 @@ public class CancaoController implements Serializable {
 	@Any
 	private Instance<Validador<Cancao>> validadores;
 
-	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) ConsultaCancaoEvent evento) {
-		Cancao exemplo = evento.getEntidade();
-
+	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) Cancao exemplo) {
 		logger.info("Consultando canções com base em exemplo: {}", exemplo);
-		Collection<Cancao> cancoes = new ArrayList<>();
+		List<Cancao> cancoes = new ArrayList<>();
+		List<Cancao> cancoesUniqueList = SetUniqueList.setUniqueList(cancoes);
 
 		try {
 			logger.debug("Consultando no repositório local");
-			cancoes.addAll(repositorio.consultarPor(exemplo));
+			cancoesUniqueList.addAll(repositorio.consultarPor(exemplo));
 
-			if (evento.getModoConsulta() == ModoConsulta.TODOS) {
-				logger.debug("Consultando na web");
-				cancoes.addAll(cancaoWs.consultarPor(exemplo));
-			}
+			logger.debug("Consultando na web");
+			cancoesUniqueList.addAll(cancaoWs.consultarPor(exemplo));
 
-			view.setCancoes(cancoes);
+			logger.debug("Ordenando canções");
+			cancoes.sort(new CancoesPorTituloComparator());
+
+			logger.debug("Definindo canções na visão: {}", cancoesUniqueList);
+			view.setCancoes(cancoesUniqueList);
 		} catch (RepositoryException | ServiceException exception) {
 			logger.error("Erro ao consultar canções a partir de exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar canções", exception.getLocalizedMessage());

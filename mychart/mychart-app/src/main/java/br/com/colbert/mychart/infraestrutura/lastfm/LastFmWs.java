@@ -6,6 +6,7 @@ import java.util.*;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
@@ -39,6 +40,10 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 	@Override
 	public Collection<Artista> consultarPor(Artista exemplo) throws ServiceException {
 		Objects.requireNonNull(exemplo, "O exemplo a ser utilizado na consulta é obrigatório");
+		if (StringUtils.isBlank(exemplo.getNome())) {
+			logger.debug("Nenhum nome de artista informado - a consulta não será feita");
+			return CollectionUtils.emptyCollection();
+		}
 
 		Collection<Artist> resultadosConsulta;
 		try {
@@ -52,8 +57,9 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 
 		if (result.isSuccessful()) {
 			List<Artista> artistas = new ArrayList<>(resultadosConsulta.size() / 2);
+			logger.debug("Artistas encontrados: {}", resultadosConsulta);
 			resultadosConsulta.stream().filter(artist -> StringUtils.isNotBlank(artist.getMbid()))
-					.forEach(artist -> artistas.add(new Artista(artist.getName(), TipoArtista.DESCONHECIDO)));
+					.forEach(artist -> artistas.add(new Artista(artist.getMbid(), artist.getName(), TipoArtista.DESCONHECIDO)));
 			return artistas;
 		} else {
 			throw new LastFmException(result);
@@ -80,7 +86,7 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 					.stream()
 					.filter(track -> StringUtils.isNotBlank(track.getMbid()))
 					.forEach(
-							track -> cancoes.add(new Cancao(track.getName(), new Artista(track.getArtist(),
+							track -> cancoes.add(new Cancao(track.getName(), new Artista(null, track.getArtist(),
 									TipoArtista.DESCONHECIDO))));
 			return cancoes;
 		} else {

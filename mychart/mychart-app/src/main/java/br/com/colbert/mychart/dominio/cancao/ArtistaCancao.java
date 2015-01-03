@@ -16,6 +16,7 @@ import br.com.colbert.mychart.dominio.artista.Artista;
  */
 @Entity
 @Table(name = "TB_ARTISTA_CANCAO")
+@NamedQuery(name = "ArtistaCancao.findCancaoByTituloEArtistasExatos", query = "SELECT ac FROM ArtistaCancao ac JOIN FETCH ac.artista a LEFT JOIN FETCH ac.cancao c WHERE c.titulo = :titulo AND a.nome = :nomeArtista")
 public class ArtistaCancao extends AbstractEntidade<ArtistaCancaoId> {
 
 	private static final long serialVersionUID = -2080646278760200072L;

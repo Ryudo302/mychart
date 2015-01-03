@@ -2,8 +2,10 @@ package br.com.colbert.mychart.ui.principal;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.swing.*;
@@ -13,7 +15,7 @@ import org.slf4j.Logger;
 
 import br.com.colbert.mychart.infraestrutura.eventos.app.*;
 import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao;
-import br.com.colbert.mychart.ui.artista.ArtistaPanel;
+import br.com.colbert.mychart.ui.artista.ArtistaSwingView;
 import br.com.colbert.mychart.ui.comum.sobre.SobreDialog;
 
 /**
@@ -22,7 +24,8 @@ import br.com.colbert.mychart.ui.comum.sobre.SobreDialog;
  * @author Thiago Colbert
  * @since 17/12/2014
  */
-public class MainFrame extends JFrame implements MainWindow {
+@ApplicationScoped
+public class SwingMainWindow implements MainWindow, Serializable {
 
 	private static final long serialVersionUID = 581637404111512993L;
 
@@ -31,7 +34,9 @@ public class MainFrame extends JFrame implements MainWindow {
 
 	private static final String COMANDO_SAIR = "sair";
 
-	private final Action sairAction;
+	private JFrame frame;
+
+	private Action sairAction;
 
 	@Inject
 	private Logger logger;
@@ -43,7 +48,7 @@ public class MainFrame extends JFrame implements MainWindow {
 	@Inject
 	private InicioPanel inicioPanel;
 	@Inject
-	private ArtistaPanel artistaPanel;
+	private ArtistaSwingView artistaSwingView;
 
 	@Inject
 	private SobreDialog sobreDialog;
@@ -52,25 +57,39 @@ public class MainFrame extends JFrame implements MainWindow {
 	@StatusAplicacao(TipoStatusAplicacao.ENCERRADA)
 	private Event<MainWindow> ouvintesEncerramento;
 
+	public static void main(String[] args) {
+		new SwingMainWindow().initFrame();
+	}
+
 	/**
-	 * Create the frame.
+	 * Inicializa todos os componentes da janela.
 	 */
-	public MainFrame() {
+	@PostConstruct
+	protected void init() {
+		initFrame();
+		initComponents();
+	}
+
+	/**
+	 * Inicializa os componentes da janela que não dependem do CDI.
+	 */
+	protected void initFrame() {
+		frame = new JFrame();
 		sairAction = new SairAction();
 
-		addWindowListener(new WindowAdapter() {
+		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent event) {
 				logger.debug("Fechando janela");
-				sairAction.actionPerformed(new ActionEvent(event.getSource(), event.getID(), MainFrame.COMANDO_SAIR));
+				sairAction.actionPerformed(new ActionEvent(event.getSource(), event.getID(), SwingMainWindow.COMANDO_SAIR));
 			}
 		});
 
-		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		frame.setBounds(100, 100, 600, 350);
 
 		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
+		frame.setJMenuBar(menuBar);
 
 		JMenu menuArquivo = new JMenu("Arquivo");
 		menuBar.add(menuArquivo);
@@ -107,26 +126,33 @@ public class MainFrame extends JFrame implements MainWindow {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new CardLayout(0, 0));
 
-		setContentPane(contentPane);
+		frame.setContentPane(contentPane);
 	}
 
-	@PostConstruct
+	/**
+	 * Inicializa os componentes da janela injetados pelo CDI.
+	 */
 	protected void initComponents() {
-		setTitle(tituloAplicacao);
+		frame.setTitle(tituloAplicacao);
 
-		Container contentPane = getContentPane();
-		contentPane.add(inicioPanel, TELA_INICIAL);
-		contentPane.add(artistaPanel, TELA_ARTISTAS);
+		Container contentPane = frame.getContentPane();
+		contentPane.add(inicioPanel.getPanel(), TELA_INICIAL);
+		contentPane.add(artistaSwingView.getPanel(), TELA_ARTISTAS);
+	}
+
+	@Override
+	public void show() {
+		frame.setVisible(true);
 	}
 
 	@Override
 	public void close() {
-		dispose();
+		frame.dispose();
 	}
 
 	private void mudarTela(String tela) {
 		logger.debug("Mudando tela para: '{}'", tela);
-		Container contentPane = getContentPane();
+		Container contentPane = frame.getContentPane();
 		CardLayout layout = (CardLayout) contentPane.getLayout();
 		layout.show(contentPane, tela);
 	}
@@ -144,7 +170,7 @@ public class MainFrame extends JFrame implements MainWindow {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			logger.debug("Disparando evento de '{}'", COMANDO_SAIR);
-			ouvintesEncerramento.fire(MainFrame.this);
+			ouvintesEncerramento.fire(SwingMainWindow.this);
 		}
 	}
 }

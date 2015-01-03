@@ -23,4 +23,13 @@ public interface MessagesView extends View {
 	 *            da mensagem de erro
 	 */
 	void adicionarMensagemErro(String resumo, String detalhes);
+
+	/**
+	 * Exibe uma mensagem de confirmação na tela.
+	 * 
+	 * @param mensagem
+	 *            conteúdo da mensagem
+	 * @return a resposta do usuário
+	 */
+	RespostaConfirmacao exibirConfirmacao(String mensagem);
 }

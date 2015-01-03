@@ -41,12 +41,12 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	public Collection<Artista> consultarPorNomeExato(String nome) throws RepositoryException {
 		Validate.notBlank(nome, "O nome é obrigatório");
 		EntityManager entityManager = getEntityManager();
-		
+
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Artista> query = criteriaBuilder.createQuery(Artista.class);
 		Root<Artista> root = query.from(Artista.class);
 		query.where(criteriaBuilder.equal(criteriaBuilder.lower(root.get(Artista_.nome)), nome.toLowerCase()));
-		
+
 		return entityManager.createQuery(query).getResultList();
 	}
 
@@ -58,7 +58,7 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 				.unwrap(Session.class)
 				.createCriteria(Artista.class)
 				.add(Example.create(Objects.requireNonNull(exemplo, "O exemplo é obrigatório")).enableLike(MatchMode.ANYWHERE)
-						.excludeZeroes().ignoreCase()).list();
+						.excludeZeroes().ignoreCase().excludeProperty("tipo")).list();
 	}
 
 	@Override
@@ -84,20 +84,21 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	public boolean remover(Artista artista) throws RepositoryException {
 		Objects.requireNonNull(artista, "O artista a ser removido é obrigatório");
 
-		logger.debug("Verificando se o artista existe no repositório: {}", artista);
-		if (artista.getId() != null) {
-			if (artista.getPossuiCancoes()) {
-				throw new RepositoryException("O artista não pode ser removido pois existem canções que o referenciam");
-			} else {
-				logger.debug("Removendo artista");
-				EntityManager entityManager = getEntityManager();
+		if (artista.getPossuiCancoes()) {
+			throw new RepositoryException("O artista não pode ser removido pois existem canções que o referenciam");
+		} else {
+			logger.debug("Removendo artista");
+			EntityManager entityManager = getEntityManager();
+
+			try {
+				logger.debug("Verificando se o artista existe no repositório: {}", artista);
 				Artista artistaRemover = entityManager.getReference(Artista.class, artista.getId());
 				entityManager.remove(artistaRemover);
 				return true;
+			} catch (EntityNotFoundException exception) {
+				logger.debug("O artista já não existia no repositório");
+				return false;
 			}
-		} else {
-			logger.debug("O artista já não existia no repositório");
-			return false;
 		}
 	}
 }

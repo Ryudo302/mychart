@@ -12,7 +12,7 @@ import br.com.colbert.tests.support.CdiUtils;
  * @author Thiago Colbert
  * @since 11/12/2014
  */
-public class ArtistaPanelTest {
+public class ArtistaSwingViewTest {
 
 	/**
 	 * @param args
@@ -28,15 +28,15 @@ public class ArtistaPanelTest {
 
 		try {
 			CdiUtils.init();
-			ArtistaPanel artistaPanel = CdiUtils.getBean(ArtistaPanel.class);
+			ArtistaSwingView artistaSwingView = CdiUtils.getBean(ArtistaSwingView.class);
 
-			artistaPanel.setArtistaAtual(artista1);
-			artistaPanel.setArtistas(Arrays.asList(artista1, artista2, artista3));
+			artistaSwingView.setArtistaAtual(artista1);
+			artistaSwingView.setArtistas(Arrays.asList(artista1, artista2, artista3));
 
 			JFrame frame = new JFrame();
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-			frame.getContentPane().add(artistaPanel);
+			frame.getContentPane().add(artistaSwingView.getPanel());
 
 			frame.pack();
 			frame.setVisible(true);
@@ -50,14 +50,14 @@ public class ArtistaPanelTest {
 		Artista artista2 = new Artista("Fulano 2", TipoArtista.GRUPO_OU_BANDA);
 		Artista artista3 = new Artista("Fulano 3", TipoArtista.MASCULINO_SOLO);
 
-		ArtistaPanel artistaPanel = new ArtistaPanel();
-		artistaPanel.setArtistaAtual(artista1);
-		artistaPanel.setArtistas(Arrays.asList(artista1, artista2, artista3));
+		ArtistaSwingView artistaSwingView = new ArtistaSwingView();
+		artistaSwingView.setArtistaAtual(artista1);
+		artistaSwingView.setArtistas(Arrays.asList(artista1, artista2, artista3));
 
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		frame.getContentPane().add(artistaPanel);
+		frame.getContentPane().add(artistaSwingView.getPanel());
 
 		frame.pack();
 		frame.setVisible(true);

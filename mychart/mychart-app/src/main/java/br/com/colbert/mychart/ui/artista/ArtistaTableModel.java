@@ -16,10 +16,12 @@ public class ArtistaTableModel extends ObjectTableModel<Artista> {
 
 	@Override
 	protected List<ObjectTableModelColumn<?>> makeColumns() {
-		List<ObjectTableModelColumn<?>> colunas = new ArrayList<>(2);
+		List<ObjectTableModelColumn<?>> colunas = new ArrayList<>(3);
 
 		colunas.add(ObjectTableModelColumn.<String> newColumn().withName("Nome").withTheValueOf("nome").type(String.class));
 		colunas.add(ObjectTableModelColumn.<String> newColumn().withName("Tipo").withTheValueOf("tipo").type(String.class));
+		colunas.add(ObjectTableModelColumn.<Boolean> newColumn().withName("Salvo?").withTheValueOf("persistente")
+				.type(Boolean.class));
 
 		return colunas;
 	}

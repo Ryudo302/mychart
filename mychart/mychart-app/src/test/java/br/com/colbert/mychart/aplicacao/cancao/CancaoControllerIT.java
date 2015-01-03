@@ -19,7 +19,6 @@ import org.mockito.Mock;
 
 import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
-import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 import br.com.colbert.mychart.infraestrutura.jpa.CancaoJpaRepository;
 import br.com.colbert.mychart.infraestrutura.lastfm.LastFmWs;
 import br.com.colbert.mychart.ui.cancao.CancaoView;
@@ -61,7 +60,7 @@ public class CancaoControllerIT extends AbstractDbUnitTest {
 			return null;
 		}).when(view).setCancoes(anyCollectionOf(Cancao.class));
 
-		artistaExistente = entityManager.find(Artista.class, 2);
+		artistaExistente = entityManager.find(Artista.class, "2");
 	}
 
 	private void setCancoes(Collection<Cancao> cancoes) {
@@ -77,9 +76,7 @@ public class CancaoControllerIT extends AbstractDbUnitTest {
 	public void testConsultarExistentes() {
 		Cancao exemplo = new Cancao("rehab", (List<Artista>) null);
 
-		controller.consultarExistentes(new ConsultaCancaoEvent(exemplo, ModoConsulta.TODOS));
-
-		System.out.println(cancoes);
+		controller.consultarExistentes(exemplo);
 
 		assertThat(cancoes, is(notNullValue(Collection.class)));
 		assertThat(cancoes.size(), is(equalTo(2)));
@@ -87,7 +84,7 @@ public class CancaoControllerIT extends AbstractDbUnitTest {
 
 	@Test
 	public void testAdicionarNovaComCancaoExistente() {
-		Cancao cancao = new Cancao("Unfaithful", artistaExistente);
+		Cancao cancao = new Cancao("xxx", "Unfaithful", artistaExistente);
 
 		controller.adicionarNova(cancao);
 
@@ -96,7 +93,7 @@ public class CancaoControllerIT extends AbstractDbUnitTest {
 
 	@Test
 	public void testAdicionarNovaComCancaoNovo() {
-		Cancao cancao = new Cancao("Rude Boy", artistaExistente);
+		Cancao cancao = new Cancao("xxx", "Rude Boy", artistaExistente);
 
 		controller.adicionarNova(cancao);
 

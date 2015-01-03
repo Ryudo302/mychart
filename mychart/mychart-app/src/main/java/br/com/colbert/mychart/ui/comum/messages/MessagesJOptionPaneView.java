@@ -27,4 +27,10 @@ public class MessagesJOptionPaneView implements MessagesView {
 		JOptionPane.showMessageDialog(null, MessageFormat.format("{0}:\n\n{1}\n\n", resumo, detalhes), "Erro",
 				JOptionPane.ERROR_MESSAGE);
 	}
+
+	@Override
+	public RespostaConfirmacao exibirConfirmacao(String mensagem) {
+		return JOptionPane.showConfirmDialog(null, mensagem, "Confirmação", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION ? RespostaConfirmacao.SIM
+				: RespostaConfirmacao.NAO;
+	}
 }

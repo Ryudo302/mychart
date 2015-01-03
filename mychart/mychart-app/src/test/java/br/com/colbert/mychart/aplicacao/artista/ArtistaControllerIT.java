@@ -18,7 +18,6 @@ import org.junit.*;
 import org.mockito.Mock;
 
 import br.com.colbert.mychart.dominio.artista.*;
-import br.com.colbert.mychart.infraestrutura.eventos.entidade.*;
 import br.com.colbert.mychart.infraestrutura.jpa.ArtistaJpaRepository;
 import br.com.colbert.mychart.infraestrutura.lastfm.LastFmWs;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
@@ -68,12 +67,10 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 	public void testConsultarExistentes() {
 		Artista exemplo = new Artista("rihanna", TipoArtista.FEMININO_SOLO);
 
-		controller.consultarExistentes(new ConsultaArtistaEvent(exemplo, ModoConsulta.TODOS));
+		controller.consultarExistentes(exemplo);
 
 		assertThat(artistas, is(notNullValue(Collection.class)));
-		assertThat(artistas.size(), is(equalTo(2)));
-
-		System.out.println(artistas);
+		assertThat(artistas.size(), is(equalTo(1)));
 	}
 
 	private void setArtistas(Collection<Artista> artistas) {
@@ -91,7 +88,7 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 
 	@Test
 	public void testAdicionarNovoComArtistaNovo() {
-		Artista artista = new Artista("Fulano", TipoArtista.MASCULINO_SOLO);
+		Artista artista = new Artista("XXX", "Fulano", TipoArtista.MASCULINO_SOLO);
 
 		controller.adicionarNovo(artista);
 
@@ -110,23 +107,21 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 	@Test
 	public void testRemoverArtistaExistente() {
 		Artista exemplo = new Artista("Rihanna", TipoArtista.FEMININO_SOLO);
-		controller.consultarExistentes(new ConsultaArtistaEvent(exemplo, ModoConsulta.SOMENTE_JA_INCLUIDOS));
+		controller.consultarExistentes(exemplo);
 
-		controller.removerExistente(artistas.stream().filter(artista -> artista.getId() != null).findFirst().get());
-		controller.consultarExistentes(new ConsultaArtistaEvent(exemplo, ModoConsulta.SOMENTE_JA_INCLUIDOS));
+		assertThat(artistas.stream().findFirst().get().getPersistente(), is(equalTo(true)));
 
-		System.out.println(artistas);
+		controller.removerExistente(artistas.stream().findFirst().get());
+		controller.consultarExistentes(exemplo);
 
-		assertThat(artistas.size(), is(equalTo(0)));
+		assertThat(artistas.stream().findFirst().get().getPersistente(), is(equalTo(false)));
 	}
 
 	@Test
 	public void testRemoverArtistaInexistente() {
-		controller.removerExistente(new Artista("Fulano", TipoArtista.MASCULINO_SOLO));
+		controller.removerExistente(new Artista("xxx", "Fulano", TipoArtista.MASCULINO_SOLO));
 
-		controller.consultarExistentes(new ConsultaArtistaEvent(new Artista(null, null), ModoConsulta.SOMENTE_JA_INCLUIDOS));
-
-		System.out.println(artistas);
+		controller.consultarExistentes(new Artista(null, null));
 
 		assertThat(artistas.size(), is(equalTo(2)));
 	}
