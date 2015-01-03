@@ -30,7 +30,7 @@ public class ArtistaValidadorTest extends AbstractTest {
 
 	@Test
 	public void testValidarArtistaValido() throws ValidacaoException {
-		Artista artista = new Artista("Fulano", TipoArtista.MASCULINO_SOLO);
+		Artista artista = new Artista("xxx", "Fulano", TipoArtista.MASCULINO_SOLO);
 		validador.validar(artista);
 	}
 
