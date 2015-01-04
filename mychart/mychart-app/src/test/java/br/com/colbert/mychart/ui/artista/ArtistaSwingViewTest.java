@@ -36,7 +36,7 @@ public class ArtistaSwingViewTest {
 			JFrame frame = new JFrame();
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-			frame.getContentPane().add(artistaSwingView.getPanel());
+			frame.getContentPane().add(artistaSwingView.getContainer());
 
 			frame.pack();
 			frame.setVisible(true);
@@ -57,7 +57,7 @@ public class ArtistaSwingViewTest {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		frame.getContentPane().add(artistaSwingView.getPanel());
+		frame.getContentPane().add(artistaSwingView.getContainer());
 
 		frame.pack();
 		frame.setVisible(true);

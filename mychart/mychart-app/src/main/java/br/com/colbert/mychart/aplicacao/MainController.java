@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
 
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.slf4j.Logger;
@@ -30,6 +31,9 @@ public class MainController implements Serializable {
 	private MainWindow mainWindow;
 	@Inject
 	private MessagesView messagesView;
+	
+	@Inject
+	private EntityManagerFactory entityManagerFactory;
 
 	/**
 	 * Inicia a aplicação.
@@ -37,6 +41,7 @@ public class MainController implements Serializable {
 	public void iniciar(@Observes ContainerInitialized event) {
 		EventQueue.invokeLater(() -> {
 			logger.info("Iniciando...");
+			entityManagerFactory.toString();
 			mainWindow.show();
 		});
 	}

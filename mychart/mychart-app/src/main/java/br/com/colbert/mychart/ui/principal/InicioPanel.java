@@ -1,5 +1,6 @@
 package br.com.colbert.mychart.ui.principal;
 
+import java.awt.Container;
 import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
@@ -35,7 +36,12 @@ public class InicioPanel implements Serializable {
 		panel.add(nomeAppLabel);
 	}
 
-	public JPanel getPanel() {
+	/**
+	 * Obtém o {@link Container} utilizado para representar a tela.
+	 * 
+	 * @return a instância do contêiner AWT
+	 */
+	public Container getContainer() {
 		return panel;
 	}
 }

@@ -1,5 +1,6 @@
 package br.com.colbert.mychart.ui.artista;
 
+import java.awt.Container;
 import java.awt.event.*;
 import java.io.Serializable;
 import java.util.*;
@@ -204,7 +205,12 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 		return Artista.ARTISTA_NULL;
 	}
 
-	public JPanel getPanel() {
+	/**
+	 * Obtém o {@link Container} utilizado para representar a tela.
+	 * 
+	 * @return a instância do contêiner AWT
+	 */
+	public Container getContainer() {
 		return panel;
 	}
 }

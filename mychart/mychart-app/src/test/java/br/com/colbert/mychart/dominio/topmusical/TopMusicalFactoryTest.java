@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.time.*;
 import java.util.*;
@@ -11,7 +12,9 @@ import java.util.*;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
-import org.junit.Test;
+import org.jglue.cdiunit.ProducesAlternative;
+import org.junit.*;
+import org.mockito.Mock;
 
 import br.com.colbert.mychart.dominio.IntervaloDeDatas;
 import br.com.colbert.mychart.dominio.artista.*;
@@ -32,14 +35,14 @@ public class TopMusicalFactoryTest extends AbstractTest {
 	private TopMusicalFactory factory;
 
 	@Produces
-	public Vigencia vigenciaDosTops() {
-		return Vigencia.SEMANAL;
-	}
+	@ProducesAlternative
+	@Mock
+	private TopMusicalConfiguration configuration;
 
-	@Produces
-	@QuantidadePosicoes
-	public Integer quantidadePosicoes() {
-		return QUANTIDADE_POSICOES;
+	@Before
+	public void setUp() {
+		when(configuration.getFrequencia()).thenReturn(Frequencia.SEMANAL);
+		when(configuration.getQuantidadePosicoes()).thenReturn(QUANTIDADE_POSICOES);
 	}
 
 	@Test
@@ -53,7 +56,8 @@ public class TopMusicalFactoryTest extends AbstractTest {
 		assertThat(topMusical.getAnterior().isPresent(), is(false));
 		assertThat(topMusical.getProximo().isPresent(), is(false));
 		assertThat(topMusical.getNumero(), is(equalTo(1)));
-		assertThat(topMusical.getPeriodo(), is(equalTo(IntervaloDeDatas.novo().de(dataInicial).ate(dataInicial.plus(Period.ofWeeks(1))))));
+		assertThat(topMusical.getPeriodo(),
+				is(equalTo(IntervaloDeDatas.novo().de(dataInicial).ate(dataInicial.plus(Period.ofWeeks(1))))));
 
 		Map<Integer, Posicao> posicoes = topMusical.getPosicoes();
 		assertThat(posicoes.size(), is(equalTo(QUANTIDADE_POSICOES)));
@@ -80,13 +84,14 @@ public class TopMusicalFactoryTest extends AbstractTest {
 		Posicao posicao1 = Posicao.nova().noTop(topMusical).comNumero(1).daCancao(cancao);
 		Posicao posicao2 = Posicao.nova().noTop(topMusical).comNumero(2).daCancao(cancao);
 
-		TopMusical atual = new TopMusical(1, IntervaloDeDatas.novo().de(dataInicial).ate(dataFinal), Optional.empty(), Optional.empty(),
-				criarPosicoes(posicao1, posicao2));
+		TopMusical atual = new TopMusical(1, IntervaloDeDatas.novo().de(dataInicial).ate(dataFinal), Optional.empty(),
+				Optional.empty(), criarPosicoes(posicao1, posicao2));
 		TopMusical proximo = factory.proximo(atual);
 
 		assertThat(proximo.getAnterior().get(), is(equalTo(atual)));
 		assertThat(proximo.getNumero(), is(equalTo(2)));
-		assertThat(proximo.getPeriodo(),
+		assertThat(
+				proximo.getPeriodo(),
 				is(equalTo(IntervaloDeDatas.novo().de(dataInicial.plus(Period.ofWeeks(1))).ate(dataFinal.plus(Period.ofWeeks(1))))));
 		assertThat(proximo.getProximo().isPresent(), is(false));
 

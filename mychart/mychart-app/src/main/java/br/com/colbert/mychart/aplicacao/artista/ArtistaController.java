@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.list.SetUniqueList;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.slf4j.Logger;
 
@@ -60,23 +61,35 @@ public class ArtistaController implements Serializable {
 	@Any
 	private Instance<Validador<Artista>> validadores;
 
+	/**
+	 * Consulta artistas a partir de um artista de exemplo.
+	 * 
+	 * @param exemplo
+	 *            a ser utilizado na consulta
+	 */
 	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) Artista exemplo) {
-		logger.info("Consultando artistas com base em exemplo: {}", exemplo);
-		List<Artista> artistas = new ArrayList<>();
-		List<Artista> artistasUniqueList = SetUniqueList.setUniqueList(artistas);
+		Objects.requireNonNull(exemplo, "O artista de exemplo não foi informado");
 
-		logger.debug("Consultando no repositório local");
-		artistasUniqueList.addAll(consultarRepositorio(exemplo));
+		if (StringUtils.isBlank(exemplo.getNome())) {
+			messagesView.adicionarMensagemAlerta("Informe um nome a ser consultado.");
+		} else {
+			logger.info("Consultando artistas com base em exemplo: {}", exemplo);
+			List<Artista> artistas = new ArrayList<>();
+			List<Artista> artistasUniqueList = SetUniqueList.setUniqueList(artistas);
 
-		logger.debug("Consultando na web");
-		artistasUniqueList.addAll(consultarWeb(exemplo));
+			logger.debug("Consultando no repositório local");
+			artistasUniqueList.addAll(consultarRepositorio(exemplo));
 
-		logger.debug("Ordenando artistas");
-		artistas.sort(new ArtistasPorNomeComparator());
+			logger.debug("Consultando na web");
+			artistasUniqueList.addAll(consultarWeb(exemplo));
 
-		logger.debug("Definindo artistas na visão: {}", artistasUniqueList);
-		view.setArtistas(artistas);
-		messagesView.adicionarMensagemSucesso("Foi(ram) encontrado(s) " + artistas.size() + " artista(s)");
+			logger.debug("Ordenando artistas");
+			artistas.sort(new ArtistasPorNomeComparator());
+
+			logger.debug("Definindo artistas na visão: {}", artistasUniqueList);
+			view.setArtistas(artistas);
+			messagesView.adicionarMensagemSucesso("Foi(ram) encontrado(s) " + artistas.size() + " artista(s)");
+		}
 	}
 
 	private Collection<Artista> consultarWeb(Artista exemplo) {
@@ -103,8 +116,15 @@ public class ArtistaController implements Serializable {
 		return artistas;
 	}
 
+	/**
+	 * Salva um novo artista no repositório.
+	 * 
+	 * @param artista
+	 *            a ser salvo
+	 */
 	@Transactional
 	public void adicionarNovo(@Observes @OperacaoCrud(TipoOperacaoCrud.INSERCAO) Artista artista) {
+		Objects.requireNonNull(artista, "O artista não foi informado");
 		logger.info("Adicionando: {}", artista);
 
 		try {
@@ -123,29 +143,39 @@ public class ArtistaController implements Serializable {
 		}
 	}
 
+	/**
+	 * Remove um artista do repositório.
+	 * 
+	 * @param artista
+	 *            a ser removido
+	 */
 	@Transactional
 	public void removerExistente(@Observes @OperacaoCrud(TipoOperacaoCrud.REMOCAO) Artista artista) {
-		logger.info("Removendo: {}", artista);
+		Objects.requireNonNull(artista, "O artista não foi informado");
+		if (!artista.getPersistente()) {
+			messagesView.adicionarMensagemAlerta("O artista não pode ser removido porque ainda não foi salvo.");
+		} else {
+			logger.info("Removendo: {}", artista);
 
-		if (messagesView.exibirConfirmacao(MessageFormat.format("Deseja realmente excluir o artista {0}?", artista.getNome())) == RespostaConfirmacao.SIM) {
-			try {
-				validar(artista);
-				repositorio.remover(artista);
-				messagesView.adicionarMensagemSucesso("Artista removido com sucesso!");
-			} catch (ValidacaoException exception) {
-				logger.debug("Erros de validação", exception);
-				messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
-			} catch (RepositoryException exception) {
-				logger.error("Erro ao remover artista: " + artista, exception);
-				messagesView.adicionarMensagemErro("Erro ao remover artista", exception.getLocalizedMessage());
+			if (messagesView
+					.exibirConfirmacao(MessageFormat.format("Deseja realmente excluir o artista {0}?", artista.getNome())) == RespostaConfirmacao.SIM) {
+				try {
+					validar(artista);
+					repositorio.remover(artista);
+					messagesView.adicionarMensagemSucesso("Artista removido com sucesso!");
+				} catch (ValidacaoException exception) {
+					logger.debug("Erros de validação", exception);
+					messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
+				} catch (RepositoryException exception) {
+					logger.error("Erro ao remover artista: " + artista, exception);
+					messagesView.adicionarMensagemErro("Erro ao remover artista", exception.getLocalizedMessage());
+				}
 			}
 		}
 	}
 
 	private void validar(Artista artista) throws ValidacaoException {
 		logger.debug("Validando: {}", artista);
-		Objects.requireNonNull(artista, "O artista não foi informado");
-
 		for (Validador<Artista> validador : validadores) {
 			validador.validar(artista);
 		}

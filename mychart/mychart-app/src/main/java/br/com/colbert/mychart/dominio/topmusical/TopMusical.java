@@ -1,6 +1,7 @@
 package br.com.colbert.mychart.dominio.topmusical;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -154,6 +155,15 @@ public class TopMusical extends AbstractEntidade<Integer> {
 
 	public void setPosicoes(Map<Integer, Posicao> posicoes) {
 		this.posicoes = new HashMap<>(Objects.requireNonNull(posicoes, "As posições não podem ser nulas"));
+	}
+
+	/**
+	 * Obtém apenas os objetos {@link Posicao}, ao invés do mapa retornado por {@link #getPosicoes()}.
+	 * 
+	 * @return as posições
+	 */
+	public List<Posicao> getPosicoesOnly() {
+		return getPosicoes().entrySet().stream().map(entry -> entry.getValue()).collect(Collectors.toList());
 	}
 
 	/**

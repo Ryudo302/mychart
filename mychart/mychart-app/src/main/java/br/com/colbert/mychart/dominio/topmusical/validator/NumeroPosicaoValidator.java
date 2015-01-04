@@ -4,8 +4,6 @@ import java.util.Objects;
 
 import javax.validation.*;
 
-import br.com.colbert.mychart.dominio.topmusical.QuantidadePosicoes;
-
 /**
  * Validador de números de posições.
  * 
@@ -16,7 +14,7 @@ public class NumeroPosicaoValidator implements ConstraintValidator<NumeroPosicao
 
 	// TODO Não funciona
 	// @Inject
-	@QuantidadePosicoes
+	// private TopMusicalConfiguration topMusicalConfig;
 	private Integer quantidadePosicoes = Integer.MAX_VALUE;
 
 	@Override

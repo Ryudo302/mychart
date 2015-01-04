@@ -17,6 +17,7 @@ import br.com.colbert.mychart.infraestrutura.eventos.app.*;
 import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao;
 import br.com.colbert.mychart.ui.artista.ArtistaSwingView;
 import br.com.colbert.mychart.ui.comum.sobre.SobreDialog;
+import br.com.colbert.mychart.ui.topmusical.*;
 
 /**
  * A tela principal da aplicação implementada como um {@link JFrame}.
@@ -31,6 +32,7 @@ public class SwingMainWindow implements MainWindow, Serializable {
 
 	private static final String TELA_INICIAL = "inicio";
 	private static final String TELA_ARTISTAS = "artistas";
+	private static final String TELA_TOP_PRINCIPAL = "topPrincipal";
 
 	private static final String COMANDO_SAIR = "sair";
 
@@ -48,8 +50,12 @@ public class SwingMainWindow implements MainWindow, Serializable {
 	@Inject
 	private InicioPanel inicioPanel;
 	@Inject
-	private ArtistaSwingView artistaSwingView;
+	private ArtistaSwingView artistaView;
+	@Inject
+	private TopMusicalSwingView topMusicalView;
 
+	@Inject
+	private TopMusicalConfigSwingView topMusicalConfigView;
 	@Inject
 	private SobreDialog sobreDialog;
 
@@ -112,6 +118,22 @@ public class SwingMainWindow implements MainWindow, Serializable {
 		});
 		menuMusica.add(menuItemArtistas);
 
+		JMenu menuRankings = new JMenu("Rankings");
+		menuBar.add(menuRankings);
+
+		JMenuItem menuItemTopPrincipal = new JMenuItem("Top Principal");
+		menuItemTopPrincipal.addActionListener(event -> {
+			logger.debug("Exibindo painel do top principal");
+			mudarTela(TELA_TOP_PRINCIPAL);
+		});
+		menuRankings.add(menuItemTopPrincipal);
+
+		JMenuItem menuItemConfig = new JMenuItem("Configurações");
+		menuItemConfig.addActionListener(event -> {
+			topMusicalConfigView.show();
+		});
+		menuRankings.add(menuItemConfig);
+
 		JMenu menuAjuda = new JMenu("Ajuda");
 		menuBar.add(menuAjuda);
 
@@ -136,8 +158,9 @@ public class SwingMainWindow implements MainWindow, Serializable {
 		frame.setTitle(tituloAplicacao);
 
 		Container contentPane = frame.getContentPane();
-		contentPane.add(inicioPanel.getPanel(), TELA_INICIAL);
-		contentPane.add(artistaSwingView.getPanel(), TELA_ARTISTAS);
+		contentPane.add(inicioPanel.getContainer(), TELA_INICIAL);
+		contentPane.add(artistaView.getContainer(), TELA_ARTISTAS);
+		contentPane.add(topMusicalView.getContainer(), TELA_TOP_PRINCIPAL);
 	}
 
 	@Override
@@ -172,5 +195,14 @@ public class SwingMainWindow implements MainWindow, Serializable {
 			logger.debug("Disparando evento de '{}'", COMANDO_SAIR);
 			ouvintesEncerramento.fire(SwingMainWindow.this);
 		}
+	}
+
+	/**
+	 * Obtém a instância de {@link Frame} utilizada para representar a visão.
+	 * 
+	 * @return a instância da janela AWT
+	 */
+	public Frame getFrame() {
+		return frame;
 	}
 }

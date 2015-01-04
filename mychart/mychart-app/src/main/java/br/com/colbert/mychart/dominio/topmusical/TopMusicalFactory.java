@@ -23,34 +23,29 @@ public class TopMusicalFactory {
 	@Inject
 	private transient Logger logger;
 
-	private final Vigencia vigenciaDosTops;
-	private final Integer quantidadePosicoes;
+	private final TopMusicalConfiguration config;
 
 	/**
-	 * Cria uma fábrica definindo uma {@link Vigencia} para as instâncias de {@link TopMusical} que serão criadas por ela.
+	 * Cria uma fábrica definindo uma {@link Frequencia} para as instâncias de {@link TopMusical} que serão criadas por ela.
 	 * 
-	 * @param vigenciaDosTops
-	 *            a ser utilizada na criação das instâncias de top musical
-	 * @param quantidadePosicoes
-	 *            a quantidade de posições dos tops gerados
+	 * @param config
+	 *            configurações dos tops musicais criados
 	 * @throws NullPointerException
-	 *             caso qualquer um dos parâmetros seja <code>null</code>
+	 *             caso o parâmetro seja <code>null</code>
 	 */
 	@Inject
-	public TopMusicalFactory(Vigencia vigenciaDosTops, @QuantidadePosicoes Integer quantidadePosicoes) {
-		this.quantidadePosicoes = Objects.requireNonNull(quantidadePosicoes, "A quantidade de posições é obrigatória");
-		this.vigenciaDosTops = Objects.requireNonNull(vigenciaDosTops, "A vigência obrigatória");
+	public TopMusicalFactory(TopMusicalConfiguration config) {
+		this.config = Objects.requireNonNull(config, "A configuração dos tops musicais é obrigatória!");
 	}
 
 	@PostConstruct
 	protected void logInfo() {
-		logger.info("Vigência dos tops: {}", vigenciaDosTops);
-		logger.info("Quantidade de posições: {}", quantidadePosicoes);
+		logger.info("Configuração dos tops: {}", config);
 	}
 
 	/**
-	 * Cria um novo {@link TopMusical} com valores iniciais padrão. Normalmente este método deve ser utilizado quando não existe outro top a
-	 * partir do qual possa ser criado um novo - método {@link #proximo(TopMusical)}.
+	 * Cria um novo {@link TopMusical} com valores iniciais padrão. Normalmente este método deve ser utilizado quando não existe
+	 * outro top a partir do qual possa ser criado um novo - método {@link #proximo(TopMusical)}.
 	 * 
 	 * @param dataInicial
 	 *            a data inicial do período de vigência do top criado
@@ -59,16 +54,18 @@ public class TopMusicalFactory {
 	 * @throws NullPointerException
 	 *             caso qualquer um dos parâmetros seja <code>null</code>
 	 * @throws IllegalArgumentException
-	 *             caso não seja informado um número de canções exatamente igual a {@link #getQuantidadePosicoes()}
+	 *             caso não seja informado um número de canções exatamente igual ao definido por {@link #getConfig()}
 	 * @return o top criado
 	 */
 	public TopMusical novo(LocalDate dataInicial, List<Cancao> cancoes) {
 		Validate.notNull(dataInicial, "A data inicial é obrigatória");
 		Validate.notNull(cancoes, "As canções são obrigatórias");
+
+		Integer quantidadePosicoes = config.getQuantidadePosicoes();
 		Validate.isTrue(cancoes.size() == quantidadePosicoes, "Devem ser informadas " + quantidadePosicoes + " canções");
 
 		TopMusical topMusical = new TopMusical(1, IntervaloDeDatas.novo().de(dataInicial)
-				.ate(dataInicial.plus(vigenciaDosTops.getPeriodo())), Optional.empty(), Optional.empty());
+				.ate(dataInicial.plus(config.getFrequencia().getPeriodo())), Optional.empty(), Optional.empty());
 		logger.debug("Criando top vazio: {}", topMusical);
 
 		Map<Integer, Posicao> posicoes = new HashMap<>(quantidadePosicoes);
@@ -103,11 +100,16 @@ public class TopMusicalFactory {
 		posicoesAtual.forEach((numero, posicao) -> posicoesProximo.put(numero, posicao.permanencia()));
 		logger.debug("Posições do próximo top: {}", posicoesProximo);
 
-		return new TopMusical(atual.getNumero() + 1, atual.getPeriodo().adicionar(vigenciaDosTops.getPeriodo()), Optional.of(atual),
-				Optional.empty(), posicoesProximo);
+		return new TopMusical(atual.getNumero() + 1, atual.getPeriodo().adicionar(config.getFrequencia().getPeriodo()),
+				Optional.of(atual), Optional.empty(), posicoesProximo);
 	}
 
-	public Integer getQuantidadePosicoes() {
-		return quantidadePosicoes;
+	/**
+	 * Obtém as configurações dos tops musicais criados por esta fábrica.
+	 * 
+	 * @return as configurações dos tops musicais criados
+	 */
+	public TopMusicalConfiguration getConfig() {
+		return config;
 	}
 }

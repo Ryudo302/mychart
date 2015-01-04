@@ -1,5 +1,6 @@
 package br.com.colbert.mychart.infraestrutura.formatter;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -12,7 +13,8 @@ import br.com.colbert.mychart.dominio.cancao.Cancao;
  * @author Thiago Colbert
  * @since 10/12/2014
  */
-public final class CancaoFormatter {
+@ApplicationScoped
+public class CancaoFormatter {
 
 	private static final String SEPARADOR_ARTISTA_CANCAO = " - ";
 	private static final String DELIMITADOR_TITULO_CANCAO = "\"";
@@ -36,8 +38,7 @@ public final class CancaoFormatter {
 		String artistasString = new ArtistaStringBuilder().appendAll(cancao.getArtistas()).toString();
 		logger.debug("Artista(s): {}", artistasString);
 
-		return new StringBuilder().append(artistasString).append(SEPARADOR_ARTISTA_CANCAO)
-				.append(DELIMITADOR_TITULO_CANCAO).append(cancao.getTitulo()).append(DELIMITADOR_TITULO_CANCAO)
-				.toString();
+		return new StringBuilder().append(artistasString).append(SEPARADOR_ARTISTA_CANCAO).append(DELIMITADOR_TITULO_CANCAO)
+				.append(cancao.getTitulo()).append(DELIMITADOR_TITULO_CANCAO).toString();
 	}
 }
