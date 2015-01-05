@@ -5,6 +5,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 
+import java.util.Optional;
+
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
@@ -14,6 +16,7 @@ import org.mockito.Mock;
 
 import br.com.colbert.mychart.dominio.topmusical.*;
 import br.com.colbert.mychart.infraestrutura.jpa.TopMusicalJpaRepository;
+import br.com.colbert.mychart.infraestrutura.swing.topmusical.PrimeiroTopMusicalSwingView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.mychart.ui.topmusical.TopMusicalView;
 import br.com.colbert.tests.support.AbstractDbUnitTest;
@@ -24,7 +27,7 @@ import br.com.colbert.tests.support.AbstractDbUnitTest;
  * @author Thiago Colbert
  * @since 04/01/2015
  */
-@AdditionalClasses({ TopMusicalConfiguration.class, TopMusicalJpaRepository.class })
+@AdditionalClasses({ TopMusicalConfiguration.class, TopMusicalJpaRepository.class, PrimeiroTopMusicalSwingView.class })
 public class TopMusicalControllerIT extends AbstractDbUnitTest {
 
 	@Inject
@@ -45,7 +48,7 @@ public class TopMusicalControllerIT extends AbstractDbUnitTest {
 	@Before
 	public void setUp() {
 		doAnswer(invocation -> {
-			topMusical = invocation.getArgumentAt(0, TopMusical.class);
+			topMusical = (TopMusical) invocation.getArgumentAt(0, Optional.class).get();
 			return null;
 		}).when(view).setTopMusical(any());
 	}

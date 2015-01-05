@@ -14,8 +14,9 @@ import br.com.colbert.mychart.dominio.topmusical.repository.TopMusicalRepository
 import br.com.colbert.mychart.infraestrutura.eventos.topmusical.*;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.infraestrutura.formatter.CancaoFormatter;
+import br.com.colbert.mychart.ui.comum.CausaSaidaDeView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
-import br.com.colbert.mychart.ui.topmusical.TopMusicalView;
+import br.com.colbert.mychart.ui.topmusical.*;
 
 /**
  * Controlador de ações referentes a tops musicais.
@@ -35,6 +36,8 @@ public class TopMusicalController implements Serializable {
 	private TopMusicalView topMusicalView;
 	@Inject
 	private MessagesView messagesView;
+	@Inject
+	private PrimeiroTopMusicalView primeiroTopMusicalView;
 
 	@Inject
 	private TopMusicalRepository repositorio;
@@ -45,7 +48,6 @@ public class TopMusicalController implements Serializable {
 	private CancaoFormatter cancaoFormatter;
 
 	public void carregarTopAtual(@Observes TopMusicalView topMusicalView) {
-		TopMusical topMusical;
 		Optional<TopMusical> topAtual = null;
 
 		try {
@@ -56,19 +58,21 @@ public class TopMusicalController implements Serializable {
 			return;
 		}
 
-		if (topAtual.isPresent()) {
-			logger.debug("Top atual: {}", topAtual);
-			topMusical = topAtual.get();
-		} else {
+		logger.debug("Top atual: {}", topAtual);
+		if (!topAtual.isPresent()) {
 			logger.debug("Nenhum top ainda salvo. Criando um novo.");
 			messagesView
 					.adicionarMensagemSucesso("É a sua primeira vez aqui, portanto é necessário informar alguns dados do seu primeiro top musical.");
-			// TODO Criar tela de configuração do primeiro top musical
-			// topMusical = topMusicalFactory.novo(dataInicial, cancoes);
-			topMusical = null;
+			CausaSaidaDeView causaSaida = primeiroTopMusicalView.show();
+			if (causaSaida == CausaSaidaDeView.CONFIRMACAO) {
+				topAtual = Optional.of(topMusicalFactory.novo(primeiroTopMusicalView.getDataInicial(),
+						primeiroTopMusicalView.getCancoes()));
+			} else {
+				topAtual = Optional.empty();
+			}
 		}
 
-		topMusicalView.setTopMusical(topMusical);
+		topMusicalView.setTopMusical(topAtual);
 	}
 
 	public void estreia(@Observes @MudancaTopMusical(TipoMudancaTopMusical.ESTREIA) MudancaTopMusicalEvent event) {

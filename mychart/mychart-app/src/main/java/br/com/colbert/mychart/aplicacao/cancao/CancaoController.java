@@ -72,7 +72,7 @@ public class CancaoController implements Serializable {
 			cancoes.sort(new CancoesPorTituloComparator());
 
 			logger.debug("Definindo canções na visão: {}", cancoesUniqueList);
-			view.setCancoes(cancoesUniqueList);
+			view.setCancoesDisponiveis(cancoesUniqueList);
 		} catch (RepositoryException | ServiceException exception) {
 			logger.error("Erro ao consultar canções a partir de exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar canções", exception.getLocalizedMessage());

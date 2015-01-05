@@ -13,37 +13,43 @@ public enum Frequencia {
 	/**
 	 * Diário - a cada dia, um novo top é gerado.
 	 */
-	DIARIO(Period.ofDays(1)),
+	DIARIO("Diário", Period.ofDays(1)),
 
 	/**
 	 * Semanal - a cada semana, um novo top é gerado.
 	 */
-	SEMANAL(Period.ofWeeks(1)),
+	SEMANAL("Semanal", Period.ofWeeks(1)),
 
 	/**
 	 * Mensal - a cada mês, um novo top é gerado.
 	 */
-	MENSAL(Period.ofMonths(1)),
+	MENSAL("Mensal", Period.ofMonths(1)),
 
 	/**
 	 * Anual - a cada ano, um novo top é gerado
 	 */
-	ANUAL(Period.ofYears(1)),
+	ANUAL("Anual", Period.ofYears(1)),
 
 	/**
 	 * Decadal - a cada década, um novo top é gerado.
 	 */
-	DECADAL(Period.ofYears(10)),
+	DECADAL("Decadal", Period.ofYears(10)),
 
 	/**
 	 * Eterno - o top tem vigência permanente.
 	 */
-	SEMPRE(Period.between(LocalDate.MIN, LocalDate.MAX));
+	SEMPRE("Eterno", Period.between(LocalDate.MIN, LocalDate.MAX));
 
+	private String descricao;
 	private Period periodo;
 
-	private Frequencia(Period periodo) {
+	private Frequencia(String descricao, Period periodo) {
+		this.descricao = descricao;
 		this.periodo = periodo;
+	}
+
+	public String getDescricao() {
+		return descricao;
 	}
 
 	/**

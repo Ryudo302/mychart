@@ -22,6 +22,7 @@ import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepository;
 import br.com.colbert.mychart.dominio.artista.service.ArtistaWs;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
 import br.com.colbert.mychart.infraestrutura.exception.*;
+import br.com.colbert.mychart.infraestrutura.lastfm.ServicoInacessivelException;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
 import br.com.colbert.mychart.ui.comum.messages.*;
 
@@ -97,6 +98,10 @@ public class ArtistaController implements Serializable {
 		try {
 			artistas = artistaWs.consultarPor(exemplo);
 			logger.debug("Resultado web: {}", artistas);
+		} catch (ServicoInacessivelException exception) {
+			logger.error("Erro ao consultar artistas na web", exception);
+			messagesView.adicionarMensagemAlerta(MessageFormat.format("{0}\n\n{1}",
+					"O serviço da LastFM está inacessível no momento.", "Consultando apenas os artistas já salvos localmente."));
 		} catch (ServiceException exception) {
 			logger.error("Erro ao consultar artistas na web a partir do exemplo: " + exemplo, exception);
 			messagesView.adicionarMensagemErro("Erro ao consultar artistas", exception.getLocalizedMessage());

@@ -27,6 +27,8 @@ import br.com.colbert.mychart.infraestrutura.validacao.TituloMusical;
 @Table(name = "TB_CANCAO")
 public class Cancao extends AbstractEntidade<String> {
 
+	public static final Cancao CANCAO_NULL = new Cancao();
+
 	private static final long serialVersionUID = 7075988463233846463L;
 
 	@Id
@@ -114,6 +116,10 @@ public class Cancao extends AbstractEntidade<String> {
 
 	public String getTitulo() {
 		return titulo;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
 	}
 
 	public List<ArtistaCancao> getArtistasCancao() {

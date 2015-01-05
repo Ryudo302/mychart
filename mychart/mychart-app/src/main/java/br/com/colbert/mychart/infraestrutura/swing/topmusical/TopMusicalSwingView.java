@@ -3,6 +3,7 @@ package br.com.colbert.mychart.infraestrutura.swing.topmusical;
 import java.awt.Container;
 import java.awt.event.*;
 import java.io.Serializable;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -16,6 +17,7 @@ import com.jgoodies.forms.layout.*;
 
 import br.com.colbert.base.ui.ButtonFactory;
 import br.com.colbert.mychart.dominio.topmusical.TopMusical;
+import br.com.colbert.mychart.infraestrutura.swing.cancao.CancaoColumnTableCellRenderer;
 import br.com.colbert.mychart.ui.topmusical.TopMusicalView;
 
 /**
@@ -43,6 +45,7 @@ public class TopMusicalSwingView implements TopMusicalView, Serializable {
 	@Inject
 	@Any
 	private Event<TopMusicalView> ouvintesView;
+	private JButton salvarButton;
 
 	public static void main(String[] args) {
 		new TopMusicalSwingView().initPanel();
@@ -80,19 +83,16 @@ public class TopMusicalSwingView implements TopMusicalView, Serializable {
 
 		anteriorButton = ButtonFactory.createJButton("Anterior", (String) null);
 		anteriorButton.setEnabled(false);
-		anteriorButton.addActionListener(event -> {
-			topAtual.getAnterior().ifPresent(topAnterior -> setTopMusical(topAnterior));
-		});
+		anteriorButton.addActionListener(event -> setTopMusical(topAtual.getAnterior()));
 		botoesPanel.add(anteriorButton);
 
 		proximoButton = ButtonFactory.createJButton("Próximo", (String) null);
 		proximoButton.setEnabled(false);
-		proximoButton.addActionListener(event -> {
-			topAtual.getProximo().ifPresent(topAnterior -> setTopMusical(topAnterior));
-		});
+		proximoButton.addActionListener(event -> setTopMusical(topAtual.getProximo()));
 		botoesPanel.add(proximoButton);
 
-		JButton salvarButton = ButtonFactory.createJButton("Salvar", (String) null);
+		salvarButton = ButtonFactory.createJButton("Salvar", (String) null);
+		salvarButton.setEnabled(false);
 		botoesPanel.add(salvarButton);
 
 		JPanel posicoesPanel = new JPanel();
@@ -105,6 +105,7 @@ public class TopMusicalSwingView implements TopMusicalView, Serializable {
 
 		PosicaoTableModel model = new PosicaoTableModel();
 		posicoesTable = new JTable();
+		posicoesTable.setEnabled(false);
 		posicoesTable.setModel(model);
 		posicoesTable.setFillsViewportHeight(true);
 
@@ -121,10 +122,14 @@ public class TopMusicalSwingView implements TopMusicalView, Serializable {
 	}
 
 	@Override
-	public void setTopMusical(TopMusical topMusical) {
-		topAtual = topMusical;
-		anteriorButton.setEnabled(topAtual.getAnterior().isPresent());
-		proximoButton.setEnabled(topAtual.getProximo().isPresent());
+	public void setTopMusical(Optional<TopMusical> topMusical) {
+		topMusical.ifPresent(top -> {
+			topAtual = top;
+			salvarButton.setEnabled(true);
+			anteriorButton.setEnabled(topAtual.getAnterior().isPresent());
+			proximoButton.setEnabled(topAtual.getProximo().isPresent());
+			posicoesTable.setEnabled(true);
+		});
 	}
 
 	/**

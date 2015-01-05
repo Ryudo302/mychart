@@ -1,13 +1,16 @@
 package br.com.colbert.mychart.infraestrutura.lastfm;
 
-import java.net.UnknownHostException;
+import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 
 import de.umass.lastfm.*;
@@ -36,6 +39,40 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 	@Inject
 	@ApiKey
 	private transient String apiKey;
+
+	@Inject
+	@WsBaseUrl
+	private transient String baseUrl;
+
+	/**
+	 * Verifica se o serviço está acessível e respondendo.
+	 * 
+	 * @return <code>true</code>/<code>false</code>
+	 */
+	public boolean ping() {
+		try {
+			URLConnection connection = new URL(baseUrl).openConnection();
+			int responseCode = ((HttpURLConnection) connection).getResponseCode();
+			if (responseCode != 200) {
+				logger.warn("PING error: a conexão com a URL {} retornou o código HTTP: {}", baseUrl, responseCode);
+				return false;
+			}
+
+			InputStream inputStream = connection.getInputStream();
+			int read = inputStream.read();
+			if (read == -1) {
+				logger.warn("PING error: leitura do stream da URL {} retornou o valor: {}", baseUrl, read);
+				return false;
+			}
+			IOUtils.closeQuietly(inputStream);
+
+			logger.info("PING successful!");
+			return true;
+		} catch (IOException exception) {
+			logger.warn("PING error: " + ExceptionUtils.getRootCauseMessage(exception), exception);
+			return false;
+		}
+	}
 
 	@Override
 	public Collection<Artista> consultarPor(Artista exemplo) throws ServiceException {

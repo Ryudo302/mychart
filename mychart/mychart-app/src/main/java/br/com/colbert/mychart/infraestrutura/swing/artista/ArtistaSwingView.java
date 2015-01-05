@@ -141,6 +141,7 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 
 		artistasTableModel = new ArtistaTableModel();
 		artistasTable = new JTable(artistasTableModel);
+		artistasTable.setAutoCreateRowSorter(true);
 		artistasTable.setFillsViewportHeight(true);
 		artistasTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 

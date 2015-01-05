@@ -1,5 +1,7 @@
 package br.com.colbert.mychart.ui.topmusical;
 
+import java.util.Optional;
+
 import br.com.colbert.mychart.dominio.topmusical.TopMusical;
 
 /**
@@ -23,5 +25,5 @@ public interface TopMusicalView {
 	 * @param topMusical
 	 *            o top musical
 	 */
-	void setTopMusical(TopMusical topMusical);
+	void setTopMusical(Optional<TopMusical> topMusical);
 }

@@ -72,16 +72,16 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	public void addElement(T element) {
 		if (!this.containsElement(element)) {
 			// inserindo
-			LOGGER.debug("Inserindo elemento: " + element);
+			LOGGER.trace("Inserindo elemento: " + element);
 			this.elements.add(element);
 		} else {
 			// atualizando
-			LOGGER.debug("Atualizando elemento: " + element);
+			LOGGER.trace("Atualizando elemento: " + element);
 			int index = this.elements.indexOf(element);
 			this.elements.set(index, element);
 		}
 
-		LOGGER.debug("Ordenando elementos por sua ordem natural");
+		LOGGER.trace("Ordenando elementos por sua ordem natural");
 		Collections.sort(elements);
 
 		fireTableDataChanged();
@@ -108,7 +108,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	public boolean removeElement(T element) {
 		boolean elementoExiste = elements.indexOf(element) != -1;
 		if (elementoExiste) {
-			LOGGER.debug("Removendo elemento da tabela: " + element);
+			LOGGER.trace("Removendo elemento da tabela: " + element);
 			this.elements.remove(element);
 			fireTableRowsDeleted(elements.indexOf(element), elements.indexOf(element));
 		}
@@ -165,7 +165,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 		clear();
 
 		if (CollectionUtils.isNotEmpty(elements)) {
-			LOGGER.debug("Adicionando elementos à tabela: {}", elements);
+			LOGGER.trace("Adicionando elementos à tabela: {}", elements);
 			this.elements.addAll(elements);
 		}
 
@@ -176,7 +176,7 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	 * Remove todos os elementos do modelo.
 	 */
 	public void clear() {
-		LOGGER.debug("Limpando tabela");
+		LOGGER.trace("Limpando tabela");
 		this.elements.clear();
 		fireTableDataChanged();
 	}

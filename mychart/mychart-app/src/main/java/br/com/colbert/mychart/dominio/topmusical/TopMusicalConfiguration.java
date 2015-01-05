@@ -41,20 +41,25 @@ public class TopMusicalConfiguration implements Serializable {
 
 	/**
 	 * Inicializa as configurações.
-	 * 
-	 * @throws IOException
-	 *             caso ocorra algum erro de I/O durante a operação
 	 */
 	@PostConstruct
-	protected void init() throws IOException {
+	protected void init() {
 		arquivoProperties = new File(diretorioBase, NOME_ARQUIVO_PROPRIEDADES);
 
 		if (!arquivoProperties.exists()) {
 			logger.debug("Copiando arquivo {} para: {}", NOME_ARQUIVO_PROPRIEDADES, arquivoProperties);
-			copiarArquivoPropertiesParaDiretorioBase(arquivoProperties);
+			try {
+				copiarArquivoPropertiesParaDiretorioBase(arquivoProperties);
+			} catch (IOException exception) {
+				throw new RuntimeException("Erro ao copiar arquivo de propriedades.", exception);
+			}
 		}
 
-		carregarPropriedades();
+		try {
+			carregarPropriedades();
+		} catch (IOException exception) {
+			throw new RuntimeException("Erro ao carregar arquivo de propriedades.", exception);
+		}
 	}
 
 	private void copiarArquivoPropertiesParaDiretorioBase(File arquivoProperties) throws IOException {

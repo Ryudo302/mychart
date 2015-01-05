@@ -58,7 +58,7 @@ public class CancaoControllerIT extends AbstractDbUnitTest {
 		doAnswer(invocation -> {
 			setCancoes(invocation.getArgumentAt(0, Collection.class));
 			return null;
-		}).when(view).setCancoes(anyCollectionOf(Cancao.class));
+		}).when(view).setCancoesDisponiveis(anyCollectionOf(Cancao.class));
 
 		artistaExistente = entityManager.find(Artista.class, "2");
 	}

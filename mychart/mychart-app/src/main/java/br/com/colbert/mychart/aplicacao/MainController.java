@@ -11,6 +11,7 @@ import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.slf4j.Logger;
 
 import br.com.colbert.mychart.infraestrutura.eventos.app.*;
+import br.com.colbert.mychart.infraestrutura.lastfm.LastFmWs;
 import br.com.colbert.mychart.ui.comum.messages.*;
 import br.com.colbert.mychart.ui.principal.MainWindow;
 
@@ -31,17 +32,26 @@ public class MainController implements Serializable {
 	private MainWindow mainWindow;
 	@Inject
 	private MessagesView messagesView;
-	
+
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
+
+	@Inject
+	private LastFmWs lastFmWs;
 
 	/**
 	 * Inicia a aplicação.
 	 */
 	public void iniciar(@Observes ContainerInitialized event) {
+		logger.info("Iniciando...");
+		entityManagerFactory.toString();
+
+		if (!lastFmWs.ping()) {
+			messagesView
+					.adicionarMensagemAlerta("Não foi possível acessar os serviços da LastFM. Verifique sua conexão com a internet e também se o site http://www.lastfm.com.br está respondendo.");
+		}
+
 		EventQueue.invokeLater(() -> {
-			logger.info("Iniciando...");
-			entityManagerFactory.toString();
 			mainWindow.show();
 		});
 	}
@@ -54,8 +64,9 @@ public class MainController implements Serializable {
 	 */
 	public void sair(@Observes @StatusAplicacao(TipoStatusAplicacao.ENCERRADA) MainWindow window) {
 		if (messagesView.exibirConfirmacao("Deseja realmente sair?") == RespostaConfirmacao.SIM) {
+			logger.info("Encerrando...");
+
 			EventQueue.invokeLater(() -> {
-				logger.info("Encerrando...");
 				mainWindow.close();
 				System.exit(0);
 			});
