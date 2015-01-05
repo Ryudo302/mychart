@@ -1,7 +1,7 @@
 package br.com.colbert.tests.support;
 
 import java.io.*;
-import java.sql.SQLException;
+import java.sql.*;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -10,6 +10,7 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.*;
 import org.dbunit.dataset.*;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.Session;
 import org.junit.*;
@@ -39,7 +40,7 @@ public abstract class AbstractDbUnitTest extends AbstractTest {
 		entityManager.unwrap(Session.class).doWork(connection -> {
 			IDatabaseConnection dbUnitConnection = null;
 			try {
-				dbUnitConnection = new DatabaseConnection(connection);
+				dbUnitConnection = createDbUnitH2Connection(connection);
 				DatabaseOperation.CLEAN_INSERT.execute(dbUnitConnection, getDataSet());
 			} catch (Exception exception) {
 				throw new RuntimeException("Erro ao carregar dados no DB", exception);
@@ -54,12 +55,18 @@ public abstract class AbstractDbUnitTest extends AbstractTest {
 		entityManager.unwrap(Session.class).doWork(connection -> {
 			IDatabaseConnection dbUnitConnection = null;
 			try {
-				dbUnitConnection = new DatabaseConnection(connection);
+				dbUnitConnection = createDbUnitH2Connection(connection);
 				DatabaseOperation.DELETE_ALL.execute(dbUnitConnection, getDataSet());
 			} catch (Exception exception) {
 				throw new RuntimeException("Erro ao limpar DB", exception);
 			}
 		});
+	}
+
+	private IDatabaseConnection createDbUnitH2Connection(Connection connection) throws DatabaseUnitException {
+		IDatabaseConnection dbUnitConnection = new DatabaseConnection(connection);
+		dbUnitConnection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
+		return dbUnitConnection;
 	}
 
 	/**

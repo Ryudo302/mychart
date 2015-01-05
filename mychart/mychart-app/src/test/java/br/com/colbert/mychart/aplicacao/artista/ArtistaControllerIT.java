@@ -4,8 +4,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import java.util.Collection;
 
@@ -21,7 +20,7 @@ import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.infraestrutura.jpa.ArtistaJpaRepository;
 import br.com.colbert.mychart.infraestrutura.lastfm.LastFmWs;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
-import br.com.colbert.mychart.ui.comum.messages.MessagesView;
+import br.com.colbert.mychart.ui.comum.messages.*;
 import br.com.colbert.tests.support.AbstractDbUnitTest;
 
 /**
@@ -109,11 +108,14 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 		Artista exemplo = new Artista("Rihanna", TipoArtista.FEMININO_SOLO);
 		controller.consultarExistentes(exemplo);
 
-		assertThat(artistas.stream().findFirst().get().getPersistente(), is(equalTo(true)));
+		Artista artista = artistas.stream().findFirst().get();
+		assertThat(artista.getPersistente(), is(equalTo(true)));
 
-		controller.removerExistente(artistas.stream().findFirst().get());
+		when(messages.exibirConfirmacao(anyString())).thenReturn(RespostaConfirmacao.SIM);
+
+		controller.removerExistente(artista);
+
 		controller.consultarExistentes(exemplo);
-
 		assertThat(artistas.stream().findFirst().get().getPersistente(), is(equalTo(false)));
 	}
 
@@ -121,8 +123,6 @@ public class ArtistaControllerIT extends AbstractDbUnitTest {
 	public void testRemoverArtistaInexistente() {
 		controller.removerExistente(new Artista("xxx", "Fulano", TipoArtista.MASCULINO_SOLO));
 
-		controller.consultarExistentes(new Artista(null, null));
-
-		assertThat(artistas.size(), is(equalTo(2)));
+		verify(messages).adicionarMensagemAlerta(anyString());
 	}
 }

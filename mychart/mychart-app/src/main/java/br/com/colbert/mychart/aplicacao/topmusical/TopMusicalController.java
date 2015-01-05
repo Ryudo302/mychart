@@ -1,6 +1,7 @@
 package br.com.colbert.mychart.aplicacao.topmusical;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -8,9 +9,10 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 
-import br.com.colbert.mychart.dominio.topmusical.TopMusical;
+import br.com.colbert.mychart.dominio.topmusical.*;
+import br.com.colbert.mychart.dominio.topmusical.repository.TopMusicalRepository;
 import br.com.colbert.mychart.infraestrutura.eventos.topmusical.*;
-import br.com.colbert.mychart.infraestrutura.exception.ElementoJaExistenteException;
+import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.infraestrutura.formatter.CancaoFormatter;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.mychart.ui.topmusical.TopMusicalView;
@@ -35,7 +37,39 @@ public class TopMusicalController implements Serializable {
 	private MessagesView messagesView;
 
 	@Inject
+	private TopMusicalRepository repositorio;
+
+	@Inject
+	private TopMusicalFactory topMusicalFactory;
+	@Inject
 	private CancaoFormatter cancaoFormatter;
+
+	public void carregarTopAtual(@Observes TopMusicalView topMusicalView) {
+		TopMusical topMusical;
+		Optional<TopMusical> topAtual = null;
+
+		try {
+			topAtual = repositorio.consultarAtual();
+		} catch (RepositoryException exception) {
+			logger.error("Erro ao carregar o top atual", exception);
+			messagesView.adicionarMensagemErro("Erro ao carregar o top atual", exception.getLocalizedMessage());
+			return;
+		}
+
+		if (topAtual.isPresent()) {
+			logger.debug("Top atual: {}", topAtual);
+			topMusical = topAtual.get();
+		} else {
+			logger.debug("Nenhum top ainda salvo. Criando um novo.");
+			messagesView
+					.adicionarMensagemSucesso("É a sua primeira vez aqui, portanto é necessário informar alguns dados do seu primeiro top musical.");
+			// TODO Criar tela de criação do primeiro top musical
+			// topMusical = topMusicalFactory.novo(dataInicial, cancoes);
+			topMusical = null;
+		}
+
+		topMusicalView.setTopMusical(topMusical);
+	}
 
 	public void estreia(@Observes @MudancaTopMusical(TipoMudancaTopMusical.ESTREIA) MudancaTopMusicalEvent event) {
 		logger.info("Estréia: {}", event);

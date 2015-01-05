@@ -8,6 +8,7 @@ import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -54,6 +55,10 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 	@OperacaoCrud(TipoOperacaoCrud.REMOCAO)
 	private Event<Artista> ouvintesRemocao;
 
+	@Inject
+	@Any
+	private Event<ArtistaView> ouvintesView;
+
 	public static void main(String[] args) {
 		new ArtistaSwingView().init();
 	}
@@ -62,6 +67,14 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 	protected void init() {
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+		panel.addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentShown(ComponentEvent event) {
+				ouvintesView.fire(ArtistaSwingView.this);
+			}
+		});
 
 		JPanel informacoesPanel = new JPanel();
 		informacoesPanel.setBorder(new TitledBorder(null, "Informa\u00E7\u00F5es", TitledBorder.LEFT, TitledBorder.TOP, null,

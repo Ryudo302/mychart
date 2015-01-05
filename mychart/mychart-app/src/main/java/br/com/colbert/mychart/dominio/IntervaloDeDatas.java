@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.time.*;
 import java.util.Objects;
 
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.builder.*;
+
+import br.com.colbert.mychart.infraestrutura.jpa.converter.LocalDatePersistenceConverter;
 
 /**
  * Um intervalo de tempo representado por duas datas - uma inicial e uma final. Esta classe é imutável.
@@ -19,7 +21,9 @@ public class IntervaloDeDatas implements Comparable<IntervaloDeDatas>, Serializa
 
 	private static final long serialVersionUID = 9056254908844013277L;
 
+	@Convert(converter = LocalDatePersistenceConverter.class)
 	private LocalDate dataInicial;
+	@Convert(converter = LocalDatePersistenceConverter.class)
 	private LocalDate dataFinal;
 
 	private IntervaloDeDatas(LocalDate dataInicial, LocalDate dataFinal) {

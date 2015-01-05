@@ -22,6 +22,7 @@ import br.com.colbert.mychart.infraestrutura.exception.ElementoJaExistenteExcept
  */
 @Entity
 @Table(name = "TB_TOP_MUSICAL")
+@NamedQueries({ @NamedQuery(name = "TopMusical.findAtual", query = "SELECT tm FROM TopMusical tm JOIN FETCH tm.posicoes WHERE tm.periodo.dataInicial = (SELECT MAX(tm1.periodo.dataInicial) FROM TopMusical tm1)") })
 public class TopMusical extends AbstractEntidade<Integer> {
 
 	private static final long serialVersionUID = -2569620277984255920L;
@@ -41,12 +42,11 @@ public class TopMusical extends AbstractEntidade<Integer> {
 			@AttributeOverride(name = "dataFinal", column = @Column(name = "DTA_FINAL", unique = false, nullable = true)) })
 	private IntervaloDeDatas periodo;
 
-	@NotNull
-	@OneToOne(cascade = {}, fetch = FetchType.LAZY, mappedBy = "proximo", optional = true)
+	@OneToOne(cascade = {}, fetch = FetchType.LAZY, mappedBy = "proximo", optional = true, targetEntity = TopMusical.class)
 	private TopMusical anterior;
 
-	@NotNull
-	@OneToOne(cascade = {}, fetch = FetchType.LAZY, optional = true)
+	@OneToOne(cascade = {}, fetch = FetchType.LAZY, optional = true, targetEntity = TopMusical.class)
+	@JoinColumn(name = "NUM_PROXIMO_TOP_MUSICAL", unique = false, nullable = true)
 	private TopMusical proximo;
 
 	@NotNull
@@ -58,8 +58,8 @@ public class TopMusical extends AbstractEntidade<Integer> {
 			Map<Integer, Posicao> posicoes) {
 		this.numero = numero;
 		this.periodo = periodo;
-		this.anterior = anterior.isPresent() ? anterior.get() : null;
-		this.proximo = proximo.isPresent() ? proximo.get() : null;
+		this.anterior = anterior.orElse(null);
+		this.proximo = proximo.orElse(null);
 		this.posicoes = new HashMap<>(posicoes);
 	}
 
@@ -71,7 +71,7 @@ public class TopMusical extends AbstractEntidade<Integer> {
 	 * Construtor <code>default</code> sem argumentos utilizado pelo framework ORM.
 	 */
 	TopMusical() {
-		this(null, null, null, null);
+		this(null, null, Optional.empty(), Optional.empty());
 	}
 
 	/**
