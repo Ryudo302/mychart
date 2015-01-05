@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.ui.principal;
+package br.com.colbert.mychart.infraestrutura.swing.principal;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -15,8 +15,11 @@ import org.slf4j.Logger;
 
 import br.com.colbert.mychart.infraestrutura.eventos.app.*;
 import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao;
-import br.com.colbert.mychart.ui.artista.ArtistaSwingView;
-import br.com.colbert.mychart.ui.comum.sobre.SobreDialog;
+import br.com.colbert.mychart.infraestrutura.swing.artista.ArtistaSwingView;
+import br.com.colbert.mychart.infraestrutura.swing.home.HomeSwingView;
+import br.com.colbert.mychart.infraestrutura.swing.sobre.SobreDialog;
+import br.com.colbert.mychart.infraestrutura.swing.topmusical.*;
+import br.com.colbert.mychart.ui.principal.MainWindow;
 import br.com.colbert.mychart.ui.topmusical.*;
 
 /**
@@ -48,7 +51,7 @@ public class SwingMainWindow implements MainWindow, Serializable {
 	private String tituloAplicacao;
 
 	@Inject
-	private InicioPanel inicioPanel;
+	private HomeSwingView homeSwingView;
 	@Inject
 	private ArtistaSwingView artistaView;
 	@Inject
@@ -158,7 +161,7 @@ public class SwingMainWindow implements MainWindow, Serializable {
 		frame.setTitle(tituloAplicacao);
 
 		Container contentPane = frame.getContentPane();
-		contentPane.add(inicioPanel.getContainer(), TELA_INICIAL);
+		contentPane.add(homeSwingView.getContainer(), TELA_INICIAL);
 		contentPane.add(artistaView.getContainer(), TELA_ARTISTAS);
 		contentPane.add(topMusicalView.getContainer(), TELA_TOP_PRINCIPAL);
 	}

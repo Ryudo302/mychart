@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.ui.principal;
+package br.com.colbert.mychart.infraestrutura.swing.home;
 
 import java.awt.Container;
 import java.io.Serializable;
@@ -15,7 +15,7 @@ import javax.swing.*;
  *
  */
 @ApplicationScoped
-public class InicioPanel implements Serializable {
+public class HomeSwingView implements Serializable {
 
 	private static final long serialVersionUID = -4417535149698487678L;
 
@@ -24,7 +24,7 @@ public class InicioPanel implements Serializable {
 	private JLabel nomeAppLabel;
 
 	public static void main(String[] args) {
-		new InicioPanel().init();
+		new HomeSwingView().init();
 	}
 
 	@PostConstruct

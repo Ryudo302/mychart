@@ -63,7 +63,7 @@ public class TopMusicalController implements Serializable {
 			logger.debug("Nenhum top ainda salvo. Criando um novo.");
 			messagesView
 					.adicionarMensagemSucesso("É a sua primeira vez aqui, portanto é necessário informar alguns dados do seu primeiro top musical.");
-			// TODO Criar tela de criação do primeiro top musical
+			// TODO Criar tela de configuração do primeiro top musical
 			// topMusical = topMusicalFactory.novo(dataInicial, cancoes);
 			topMusical = null;
 		}

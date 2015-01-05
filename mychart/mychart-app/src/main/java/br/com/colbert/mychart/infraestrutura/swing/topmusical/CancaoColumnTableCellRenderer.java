@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.ui.topmusical;
+package br.com.colbert.mychart.infraestrutura.swing.topmusical;
 
 import javax.inject.Inject;
 import javax.swing.table.*;

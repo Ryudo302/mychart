@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.ui.artista;
+package br.com.colbert.mychart.infraestrutura.swing.artista;
 
 import java.awt.Container;
 import java.awt.event.*;
@@ -18,6 +18,7 @@ import com.jgoodies.forms.layout.*;
 import br.com.colbert.base.ui.*;
 import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
+import br.com.colbert.mychart.ui.artista.ArtistaView;
 
 /**
  * Implementação de {@link ArtistaView} utilizando um {@link JPanel}.

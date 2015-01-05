@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.ui.topmusical;
+package br.com.colbert.mychart.infraestrutura.swing.topmusical;
 
 import java.awt.Container;
 import java.awt.event.*;
@@ -16,8 +16,9 @@ import com.jgoodies.forms.layout.*;
 
 import br.com.colbert.base.ui.ButtonFactory;
 import br.com.colbert.mychart.dominio.topmusical.*;
+import br.com.colbert.mychart.infraestrutura.swing.principal.SwingMainWindow;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
-import br.com.colbert.mychart.ui.principal.SwingMainWindow;
+import br.com.colbert.mychart.ui.topmusical.TopMusicalConfigView;
 
 /**
  * Implementação de {@link TopMusicalConfigView} utilizando Swing.

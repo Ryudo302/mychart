@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.ui.comum.sobre;
+package br.com.colbert.mychart.infraestrutura.swing.sobre;
 
 import java.awt.*;
 import java.awt.event.*;

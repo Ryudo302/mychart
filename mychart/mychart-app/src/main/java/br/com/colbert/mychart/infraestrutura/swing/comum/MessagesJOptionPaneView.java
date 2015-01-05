@@ -1,8 +1,10 @@
-package br.com.colbert.mychart.ui.comum.messages;
+package br.com.colbert.mychart.infraestrutura.swing.comum;
 
 import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
+
+import br.com.colbert.mychart.ui.comum.messages.*;
 
 /**
  * Implementação de {@link MessagesView} que utiliza {@link JOptionPane}.

@@ -1,4 +1,4 @@
-package br.com.colbert.mychart.ui.artista;
+package br.com.colbert.mychart.infraestrutura.swing.artista;
 
 import java.util.*;
 
