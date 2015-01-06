@@ -1,5 +1,7 @@
 package br.com.colbert.mychart.infraestrutura.formatter;
 
+import java.util.Objects;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -30,13 +32,16 @@ public class CancaoFormatter {
 	 * 
 	 * @param cancao
 	 *            a canção a ser formatada
+	 * @throws NullPointerException
+	 *             caso a canção informada seja <code>null</code>
 	 * @return a String gerada
 	 */
 	public String format(Cancao cancao) {
-		logger.debug("Formatando canção para exibição: {}", cancao);
+		Objects.requireNonNull(cancao, "A canção não pode ser nula");
+		logger.trace("Formatando canção para exibição: {}", cancao);
 
 		String artistasString = new ArtistaStringBuilder().appendAll(cancao.getArtistas()).toString();
-		logger.debug("Artista(s): {}", artistasString);
+		logger.trace("Artista(s): {}", artistasString);
 
 		return new StringBuilder().append(artistasString).append(SEPARADOR_ARTISTA_CANCAO).append(DELIMITADOR_TITULO_CANCAO)
 				.append(cancao.getTitulo()).append(DELIMITADOR_TITULO_CANCAO).toString();

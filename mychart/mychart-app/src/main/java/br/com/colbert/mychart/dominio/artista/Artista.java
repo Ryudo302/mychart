@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.builder.*;
 
-import br.com.colbert.base.dominio.AbstractEntidade;
+import br.com.colbert.base.dominio.*;
 import br.com.colbert.mychart.dominio.cancao.ArtistaCancao;
 import br.com.colbert.mychart.infraestrutura.validacao.Nome;
 
@@ -128,6 +128,11 @@ public class Artista extends AbstractEntidade<String> {
 	@Transient
 	public boolean getPossuiCancoes() {
 		return CollectionUtils.isNotEmpty(cancoesArtista);
+	}
+
+	@Override
+	protected boolean equalsWithNullId(Entidade<String> other) {
+		return new EqualsBuilder().append(getNome(), ((Artista) other).getNome()).isEquals();
 	}
 
 	@Override

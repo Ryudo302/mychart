@@ -23,10 +23,19 @@ public class ObjectListModel<E> extends AbstractListModel<E> {
 
 	private List<E> elements;
 
+	/**
+	 * Cria um novo modelo com os elementos informados.
+	 * 
+	 * @param elements
+	 *            os elementos a serem adicionados ao modelo
+	 */
 	public ObjectListModel(Collection<E> elements) {
 		this.elements = new ArrayList<E>(Objects.requireNonNull(elements, "A coleção de elementos não pode ser null"));
 	}
 
+	/**
+	 * Cria um novo modelo vazio.
+	 */
 	public ObjectListModel() {
 		this(CollectionUtils.emptyCollection());
 	}

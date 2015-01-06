@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.text.MaskFormatter;
@@ -22,12 +23,14 @@ public class LocalDateFormatter extends MaskFormatter {
 	private static final long serialVersionUID = 4713622658923090488L;
 
 	private static final String FORMATO_DATAS = "dd/MM/yyyy";
+	private static final String MASCARA_DATAS = "##/##/####";
 
 	@Inject
 	private Logger logger;
 
-	public LocalDateFormatter() throws ParseException {
-		setMask("##/##/####");
+	@PostConstruct
+	protected void init() throws ParseException {
+		setMask(MASCARA_DATAS);
 		setPlaceholderCharacter('0');
 		setAllowsInvalid(false);
 		setOverwriteMode(true);
@@ -35,7 +38,7 @@ public class LocalDateFormatter extends MaskFormatter {
 
 	@Override
 	public Object stringToValue(String text) throws ParseException {
-		logger.debug("Convertendo para LocalDate: {}", text);
+		logger.trace("Convertendo para LocalDate: {}", text);
 
 		if (StringUtils.isBlank(text)) {
 			return null;
@@ -52,7 +55,7 @@ public class LocalDateFormatter extends MaskFormatter {
 
 	@Override
 	public String valueToString(Object value) throws ParseException {
-		logger.debug("Convertendo para String: {}", value);
+		logger.trace("Convertendo para String: {}", value);
 		return value != null ? ((LocalDate) value).format(DateTimeFormatter.ofPattern(FORMATO_DATAS)) : StringUtils.EMPTY;
 	}
 }

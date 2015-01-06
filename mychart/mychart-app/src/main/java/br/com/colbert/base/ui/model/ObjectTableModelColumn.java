@@ -1,7 +1,7 @@
 package br.com.colbert.base.ui.model;
 
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.*;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -22,9 +22,9 @@ public final class ObjectTableModelColumn<T> implements Serializable {
 
 	private final String name;
 	private final Class<T> columnClass;
-	private final String propertyName;
+	private final Optional<String> propertyName;
 
-	private ObjectTableModelColumn(String name, Class<T> columnClass, String propertyName) {
+	private ObjectTableModelColumn(String name, Class<T> columnClass, Optional<String> propertyName) {
 		this.name = name;
 		this.columnClass = columnClass;
 		this.propertyName = propertyName;
@@ -48,13 +48,13 @@ public final class ObjectTableModelColumn<T> implements Serializable {
 	}
 
 	/**
-	 * Obtém o nome da propriedade mapeada para esta coluna. Pode ser retornado um único nome ou uma chamada encadeada
-	 * de propriedades, como <code>valor1.valor2.valor3</code>.
+	 * Obtém o nome da propriedade mapeada para esta coluna. Pode ser retornado um único nome ou uma chamada encadeada de
+	 * propriedades, como <code>valor1.valor2.valor3</code>.
 	 * 
 	 * @return o nome da propriedade mapeada pela coluna
 	 * @see #getPropertyNameChain()
 	 */
-	public String getPropertyName() {
+	public Optional<String> getPropertyName() {
 		return this.propertyName;
 	}
 
@@ -71,8 +71,8 @@ public final class ObjectTableModelColumn<T> implements Serializable {
 	 * 
 	 * @return array contendo as {@link String}s dos nomes das propriedades
 	 */
-	public String[] getPropertyNameChain() {
-		return getPropertyName().split(PROPERTY_SEPARATOR);
+	public Optional<String[]> getPropertyNameChain() {
+		return getPropertyName().isPresent() ? Optional.of(getPropertyName().get().split(PROPERTY_SEPARATOR)) : Optional.empty();
 	}
 
 	@Override
@@ -82,8 +82,8 @@ public final class ObjectTableModelColumn<T> implements Serializable {
 	}
 
 	/**
-	 * Classe utilizada para permitir o encadeamento de métodos na criação de uma {@link ObjectTableModelColumn}. Esta
-	 * necessita que seja definido o nome da coluna.
+	 * Classe utilizada para permitir o encadeamento de métodos na criação de uma {@link ObjectTableModelColumn}. Esta necessita
+	 * que seja definido o nome da coluna.
 	 * 
 	 * @author Thiago Colbert
 	 * @since 11/12/2014
@@ -109,8 +109,8 @@ public final class ObjectTableModelColumn<T> implements Serializable {
 	}
 
 	/**
-	 * Classe utilizada para permitir o encadeamento de métodos na criação de uma {@link ObjectTableModelColumn}. Esta
-	 * necessita que seja definido o nome da propriedade mapeada pela coluna.
+	 * Classe utilizada para permitir o encadeamento de métodos na criação de uma {@link ObjectTableModelColumn}. Esta necessita
+	 * que seja definido o nome da propriedade mapeada pela coluna.
 	 * 
 	 * @author Thiago Colbert
 	 * @since 11/12/2014
@@ -142,11 +142,20 @@ public final class ObjectTableModelColumn<T> implements Serializable {
 			Validate.notBlank(propertyName, "O nome da propriedade é obrigatório");
 			return new WithoutClass<T>(name, propertyName);
 		}
+
+		/**
+		 * Cria uma nova coluna que irá exibir apenas o número das linhas.
+		 * 
+		 * @return a coluna criada
+		 */
+		public ObjectTableModelColumn<Integer> ordinal() {
+			return new ObjectTableModelColumn<Integer>(name, Integer.class, Optional.empty());
+		}
 	}
 
 	/**
-	 * Classe utilizada para permitir o encadeamento de métodos na criação de uma {@link ObjectTableModelColumn}. Esta
-	 * necessita que seja definida a classe da propriedade mapeada pela coluna.
+	 * Classe utilizada para permitir o encadeamento de métodos na criação de uma {@link ObjectTableModelColumn}. Esta necessita
+	 * que seja definida a classe da propriedade mapeada pela coluna.
 	 * 
 	 * @author Thiago Colbert
 	 * @since 11/12/2014
@@ -175,8 +184,8 @@ public final class ObjectTableModelColumn<T> implements Serializable {
 		 *             caso a classe informada seja <code>null</code>
 		 */
 		public ObjectTableModelColumn<T> type(Class<T> targetClass) {
-			return new ObjectTableModelColumn<>(name,
-					Objects.requireNonNull(targetClass, "A classe-alvo é obrigatória"), propertyName);
+			return new ObjectTableModelColumn<>(name, Objects.requireNonNull(targetClass, "A classe-alvo é obrigatória"),
+					Optional.of(propertyName));
 		}
 	}
 }

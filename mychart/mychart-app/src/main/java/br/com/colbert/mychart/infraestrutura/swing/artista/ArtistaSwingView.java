@@ -103,7 +103,6 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 		nomeTextField.setColumns(40);
 		nomeTextField.setToolTipText("Nome artístico (completo)");
 		nomeTextField.setHorizontalAlignment(SwingConstants.LEFT);
-		nomeTextField.requestFocus();
 
 		informacoesPanel.add(nomeTextField, "4, 1, 3, 1, left, top");
 
@@ -170,6 +169,8 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 		tabelaScrollPane.setViewportView(artistasTable);
 		panel.add(tabelaScrollPane);
 
+		nomeTextField.requestFocusInWindow();
+
 		limparTela();
 	}
 
@@ -178,8 +179,13 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 	}
 
 	private Optional<Artista> getArtistaSelecionado() {
-		int modelIndex = artistasTable.convertRowIndexToModel(artistasTable.getSelectedRow());
-		return modelIndex != -1 ? Optional.of(artistasTableModel.getElement(modelIndex)) : Optional.empty();
+		int selectedRow = artistasTable.getSelectedRow();
+		if (selectedRow >= 0) {
+			int modelIndex = artistasTable.convertRowIndexToModel(selectedRow);
+			return modelIndex != -1 ? Optional.of(artistasTableModel.getElement(modelIndex)) : Optional.empty();
+		} else {
+			return Optional.empty();
+		}
 	}
 
 	@Override

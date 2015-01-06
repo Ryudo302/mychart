@@ -1,11 +1,13 @@
 package br.com.colbert.mychart.infraestrutura.swing.cancao;
 
-import java.awt.Container;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.swing.*;
@@ -26,6 +28,7 @@ import br.com.colbert.mychart.ui.comum.CausaSaidaDeView;
  * @author Thiago Colbert
  * @since 05/01/2015
  */
+@ApplicationScoped
 public class CancaoSwingView implements CancaoView, Serializable {
 
 	private static final long serialVersionUID = 8909053142047968045L;
@@ -42,6 +45,8 @@ public class CancaoSwingView implements CancaoView, Serializable {
 
 	@Inject
 	private SwingMainWindow mainWindow;
+	@Inject
+	private CancaoListCellRenderer cancaoListCellRenderer;
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.CONSULTA)
@@ -64,6 +69,7 @@ public class CancaoSwingView implements CancaoView, Serializable {
 		dialog = new JDialog(mainWindow != null ? mainWindow.getFrame() : null, "Consulta de Canções", true);
 		dialog.setResizable(false);
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		dialog.setPreferredSize(new Dimension(400, 270));
 		dialog.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -81,7 +87,7 @@ public class CancaoSwingView implements CancaoView, Serializable {
 				null));
 		informacoesPanel.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.PREF_COLSPEC,
 				FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("3dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-				FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("20px"), }));
+				FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("20px"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
 
 		JLabel tituloLabel = new JLabel("Título:");
 		informacoesPanel.add(tituloLabel, "2, 2, right, center");
@@ -109,18 +115,20 @@ public class CancaoSwingView implements CancaoView, Serializable {
 
 		CancoesListModel cancoesListModel = new CancoesListModel();
 		cancoesList = new JList<>(cancoesListModel);
-		cancoesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		JScrollPane cancoesListScrollPane = new JScrollPane();
+		JScrollPane cancoesListScrollPane = new JScrollPane(cancoesList);
 		cancoesListScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		cancoesListScrollPane.setViewportView(cancoesList);
 		contentPane.add(cancoesListScrollPane);
+
+		tituloTextField.requestFocusInWindow();
 
 		dialog.pack();
 	}
 
 	private void initComponents() {
 		cancaoAtual = Cancao.CANCAO_NULL;
+
+		cancoesList.setCellRenderer(cancaoListCellRenderer);
 	}
 
 	@Override
@@ -141,7 +149,6 @@ public class CancaoSwingView implements CancaoView, Serializable {
 
 	@Override
 	public void setCancoesDisponiveis(Collection<Cancao> cancoes) {
-		// TODO não atualizando lista na tela
 		((CancoesListModel) cancoesList.getModel()).setElements(cancoes);
 	}
 

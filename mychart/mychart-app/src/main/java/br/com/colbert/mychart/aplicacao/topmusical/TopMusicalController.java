@@ -1,7 +1,7 @@
 package br.com.colbert.mychart.aplicacao.topmusical;
 
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 
+import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.dominio.topmusical.*;
 import br.com.colbert.mychart.dominio.topmusical.repository.TopMusicalRepository;
 import br.com.colbert.mychart.infraestrutura.eventos.topmusical.*;
@@ -65,8 +66,13 @@ public class TopMusicalController implements Serializable {
 					.adicionarMensagemSucesso("É a sua primeira vez aqui, portanto é necessário informar alguns dados do seu primeiro top musical.");
 			CausaSaidaDeView causaSaida = primeiroTopMusicalView.show();
 			if (causaSaida == CausaSaidaDeView.CONFIRMACAO) {
-				topAtual = Optional.of(topMusicalFactory.novo(primeiroTopMusicalView.getDataInicial(),
-						primeiroTopMusicalView.getCancoes()));
+				List<Cancao> cancoes = primeiroTopMusicalView.getCancoes();
+				Integer quantidadePosicoes = topMusicalFactory.getConfig().getQuantidadePosicoes();
+				if (cancoes.size() == quantidadePosicoes) {
+					topAtual = Optional.of(topMusicalFactory.novo(primeiroTopMusicalView.getDataInicial(), cancoes));
+				} else {
+					messagesView.adicionarMensagemAlerta("Devem ser adicionadas " + quantidadePosicoes + " canções!");
+				}
 			} else {
 				topAtual = Optional.empty();
 			}

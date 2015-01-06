@@ -1,6 +1,6 @@
 package br.com.colbert.mychart.infraestrutura.swing.topmusical;
 
-import java.awt.Container;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.Serializable;
 import java.util.Optional;
@@ -16,6 +16,7 @@ import javax.swing.border.TitledBorder;
 import com.jgoodies.forms.layout.*;
 
 import br.com.colbert.base.ui.ButtonFactory;
+import br.com.colbert.mychart.dominio.IntervaloDeDatas;
 import br.com.colbert.mychart.dominio.topmusical.TopMusical;
 import br.com.colbert.mychart.infraestrutura.swing.cancao.CancaoColumnTableCellRenderer;
 import br.com.colbert.mychart.ui.topmusical.TopMusicalView;
@@ -46,6 +47,7 @@ public class TopMusicalSwingView implements TopMusicalView, Serializable {
 	@Any
 	private Event<TopMusicalView> ouvintesView;
 	private JButton salvarButton;
+	private JLabel dataInicioFimLabel;
 
 	public static void main(String[] args) {
 		new TopMusicalSwingView().initPanel();
@@ -75,8 +77,15 @@ public class TopMusicalSwingView implements TopMusicalView, Serializable {
 		JPanel infoPanel = new JPanel();
 		infoPanel.setBorder(new TitledBorder(null, "Informa\u00E7\u00F5es", TitledBorder.LEFT, TitledBorder.TOP, null, null));
 		panel.add(infoPanel);
-		infoPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("196px"), ColumnSpec.decode("57px"), },
-				new RowSpec[] { RowSpec.decode("21px"), RowSpec.decode("14px"), }));
+		infoPanel.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.PREF_COLSPEC,
+				FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.PREF_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] {
+				FormSpecs.PARAGRAPH_GAP_ROWSPEC, FormSpecs.PREF_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
+
+		JLabel periodoLabel = new JLabel("Período:");
+		infoPanel.add(periodoLabel, "2, 2, fill, top");
+
+		dataInicioFimLabel = new JLabel("-");
+		infoPanel.add(dataInicioFimLabel, "4, 2");
 
 		JPanel botoesPanel = new JPanel();
 		panel.add(botoesPanel);
@@ -97,9 +106,9 @@ public class TopMusicalSwingView implements TopMusicalView, Serializable {
 
 		JPanel posicoesPanel = new JPanel();
 		panel.add(posicoesPanel);
+		posicoesPanel.setLayout(new BorderLayout(0, 0));
 
 		JScrollPane posicoesTableScrollPane = new JScrollPane();
-		posicoesTableScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		posicoesTableScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		posicoesPanel.add(posicoesTableScrollPane);
 
@@ -125,6 +134,10 @@ public class TopMusicalSwingView implements TopMusicalView, Serializable {
 	public void setTopMusical(Optional<TopMusical> topMusical) {
 		topMusical.ifPresent(top -> {
 			topAtual = top;
+			
+			IntervaloDeDatas periodo = top.getPeriodo();
+			dataInicioFimLabel.setText(periodo.getDataInicial() + " à " + periodo.getDataFinal());
+			
 			salvarButton.setEnabled(true);
 			anteriorButton.setEnabled(topAtual.getAnterior().isPresent());
 			proximoButton.setEnabled(topAtual.getProximo().isPresent());

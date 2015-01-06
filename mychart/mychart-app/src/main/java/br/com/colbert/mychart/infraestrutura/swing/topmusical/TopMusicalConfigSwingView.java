@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.text.DefaultFormatter;
@@ -26,6 +27,7 @@ import br.com.colbert.mychart.ui.topmusical.TopMusicalConfigView;
  * @author Thiago Colbert
  * @since 04/01/2015
  */
+@ApplicationScoped
 public class TopMusicalConfigSwingView implements TopMusicalConfigView, Serializable {
 
 	private static final long serialVersionUID = -3162266008710325966L;
@@ -122,10 +124,10 @@ public class TopMusicalConfigSwingView implements TopMusicalConfigView, Serializ
 			close();
 		});
 		botoesPanel.add(cancelarButton);
-		
+
 		panel.add(infoPanel);
 		panel.add(botoesPanel);
-		
+
 		dialog.pack();
 	}
 

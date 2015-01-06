@@ -88,6 +88,16 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	}
 
 	/**
+	 * Adiciona todos os elementos informados ao modelo. Caso algum dos elementos já exista, ele será atualizado.
+	 *
+	 * @param elements
+	 *            os elementos a serem adicionados
+	 */
+	public void addAllElements(List<T> elements) {
+		elements.forEach(element -> addElement(element));
+	}
+
+	/**
 	 * Verifica se um elemento existe dentro do modelo.
 	 *
 	 * @param element
@@ -203,7 +213,16 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		String[] properties = getColumn(columnIndex).getPropertyNameChain();
+		Optional<String[]> optionalProperties = getColumn(columnIndex).getPropertyNameChain();
+		if (optionalProperties.isPresent()) {
+			String[] properties = optionalProperties.get();
+			return getPropertyChainValue(rowIndex, properties);
+		} else {
+			return rowIndex + 1;
+		}
+	}
+
+	private Object getPropertyChainValue(int rowIndex, String[] properties) {
 		Object value = getElement(rowIndex);
 
 		for (String currentProperty : properties) {
@@ -248,7 +267,8 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	@Override
 	public void setValueAt(Object newValue, int rowIndex, int columnIndex) {
 		if (isCellEditable(rowIndex, columnIndex)) {
-			invokeMethod(getElement(rowIndex), "set" + StringUtils.capitalize(getColumn(columnIndex).getPropertyName()), newValue);
+			getColumn(columnIndex).getPropertyName().ifPresent(
+					propertyName -> invokeMethod(getElement(rowIndex), "set" + StringUtils.capitalize(propertyName), newValue));
 		}
 	}
 

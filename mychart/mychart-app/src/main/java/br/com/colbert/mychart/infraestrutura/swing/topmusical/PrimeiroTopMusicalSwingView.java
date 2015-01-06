@@ -136,7 +136,7 @@ public class PrimeiroTopMusicalSwingView implements PrimeiroTopMusicalView, Seri
 		adicionarCancaoButton.addActionListener(event -> {
 			CausaSaidaDeView causaFechamento = cancaoView.show();
 			if (causaFechamento == CausaSaidaDeView.CONFIRMACAO) {
-				((CancaoTableModel) cancoesTable.getModel()).setElements(cancaoView.getCancoesSelecionadas());
+				((CancaoTableModel) cancoesTable.getModel()).addAllElements(cancaoView.getCancoesSelecionadas());
 			}
 		});
 		adicionarCancaoButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -165,7 +165,9 @@ public class PrimeiroTopMusicalSwingView implements PrimeiroTopMusicalView, Seri
 		infoPanel.add(previewLabel, "2, 8, left, top");
 
 		CancaoTableModel model = new CancaoTableModel();
+		// TODO Selection listeners
 		cancoesTable = new JTable();
+		cancoesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		cancoesTable.setEnabled(false);
 		cancoesTable.setModel(model);
 		cancoesTable.setFillsViewportHeight(true);
@@ -193,6 +195,8 @@ public class PrimeiroTopMusicalSwingView implements PrimeiroTopMusicalView, Seri
 		contentPane.add(infoPanel);
 		contentPane.add(botoesPanel);
 
+		dataInicialFormattedTextField.requestFocusInWindow();
+
 		dialog.pack();
 	}
 
@@ -204,7 +208,7 @@ public class PrimeiroTopMusicalSwingView implements PrimeiroTopMusicalView, Seri
 				.toLowerCase()));
 		observacaoLabel.setToolTipText(observacaoLabel.getText());
 
-		cancoesTable.getColumnModel().getColumn(1).setCellRenderer(artistaColumnTableCellRenderer);
+		cancoesTable.getColumnModel().getColumn(2).setCellRenderer(artistaColumnTableCellRenderer);
 	}
 
 	@Override

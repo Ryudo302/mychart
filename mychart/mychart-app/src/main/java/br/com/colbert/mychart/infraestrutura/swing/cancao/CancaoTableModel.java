@@ -18,8 +18,8 @@ public class CancaoTableModel extends ObjectTableModel<Cancao> {
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected List<ObjectTableModelColumn<?>> makeColumns() {
-		return Arrays.asList(
-				ObjectTableModelColumn.<String> newColumn().withName("Título").withTheValueOf("titulo").type(String.class),
-				ObjectTableModelColumn.<List> newColumn().withName("Artista(s)").withTheValueOf("artista").type(List.class));
+		return Arrays.asList(ObjectTableModelColumn.<String> newColumn().withName("#").ordinal(), ObjectTableModelColumn
+				.<String> newColumn().withName("Título").withTheValueOf("titulo").type(String.class), ObjectTableModelColumn
+				.<List> newColumn().withName("Artista(s)").withTheValueOf("artistas").type(List.class));
 	}
 }

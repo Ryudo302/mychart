@@ -1,6 +1,6 @@
 package br.com.colbert.mychart.infraestrutura.lastfm;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
@@ -8,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -53,18 +52,10 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 		try {
 			URLConnection connection = new URL(baseUrl).openConnection();
 			int responseCode = ((HttpURLConnection) connection).getResponseCode();
-			if (responseCode != 200) {
+			if (responseCode != 400) {
 				logger.warn("PING error: a conexão com a URL {} retornou o código HTTP: {}", baseUrl, responseCode);
 				return false;
 			}
-
-			InputStream inputStream = connection.getInputStream();
-			int read = inputStream.read();
-			if (read == -1) {
-				logger.warn("PING error: leitura do stream da URL {} retornou o valor: {}", baseUrl, read);
-				return false;
-			}
-			IOUtils.closeQuietly(inputStream);
 
 			logger.info("PING successful!");
 			return true;
@@ -85,6 +76,7 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 		Collection<Artist> resultadosConsulta;
 		try {
 			resultadosConsulta = Artist.search(exemplo.getNome(), apiKey);
+			logger.debug("Resultado da consulta: {}", resultadosConsulta);
 		} catch (CallException exception) {
 			throw tratarExcecao(exception, exemplo);
 		}
@@ -94,7 +86,6 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 
 		if (result.isSuccessful()) {
 			List<Artista> artistas = new ArrayList<>(resultadosConsulta.size() / 2);
-			logger.debug("Artistas encontrados: {}", resultadosConsulta);
 			resultadosConsulta.stream().filter(artist -> StringUtils.isNotBlank(artist.getMbid()))
 					.forEach(artist -> artistas.add(new Artista(artist.getMbid(), artist.getName(), TipoArtista.DESCONHECIDO)));
 			return artistas;
@@ -110,6 +101,7 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 		Collection<Track> resultadosConsulta;
 		try {
 			resultadosConsulta = Track.search(exemplo.getNomeArtistaPrincipal(), exemplo.getTitulo(), Integer.MAX_VALUE, apiKey);
+			logger.debug("Resultado da consulta: {}", resultadosConsulta);
 		} catch (CallException exception) {
 			throw tratarExcecao(exception, exemplo);
 		}

@@ -3,6 +3,8 @@ package br.com.colbert.mychart.infraestrutura.swing.cancao;
 import javax.inject.Inject;
 import javax.swing.table.*;
 
+import org.slf4j.Logger;
+
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.formatter.CancaoFormatter;
 
@@ -18,9 +20,12 @@ public class CancaoColumnTableCellRenderer extends DefaultTableCellRenderer {
 
 	@Inject
 	private CancaoFormatter cancaoFormatter;
+	@Inject
+	private Logger logger;
 
 	@Override
 	protected void setValue(Object value) {
-		super.setValue(cancaoFormatter.format((Cancao) value));
+		logger.trace("Formatando para exibição: {}", value);
+		super.setValue(value != null ? cancaoFormatter.format((Cancao) value) : value);
 	}
 }

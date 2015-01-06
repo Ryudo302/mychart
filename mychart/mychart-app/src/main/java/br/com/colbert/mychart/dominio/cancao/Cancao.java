@@ -13,7 +13,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.annotations.*;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import br.com.colbert.base.dominio.AbstractEntidade;
+import br.com.colbert.base.dominio.*;
 import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.infraestrutura.validacao.TituloMusical;
 
@@ -166,6 +166,11 @@ public class Cancao extends AbstractEntidade<String> {
 	@Transient
 	public String getNomeArtistaPrincipal() {
 		return getArtistaPrincipal().isPresent() ? getArtistaPrincipal().get().getNome() : null;
+	}
+
+	@Override
+	protected boolean equalsWithNullId(Entidade<String> other) {
+		return new EqualsBuilder().append(getTitulo(), ((Cancao) other).getTitulo()).isEquals();
 	}
 
 	@Override

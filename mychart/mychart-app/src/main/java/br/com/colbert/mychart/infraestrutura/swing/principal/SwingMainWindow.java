@@ -20,7 +20,6 @@ import br.com.colbert.mychart.infraestrutura.swing.home.HomeSwingView;
 import br.com.colbert.mychart.infraestrutura.swing.sobre.SobreDialog;
 import br.com.colbert.mychart.infraestrutura.swing.topmusical.*;
 import br.com.colbert.mychart.ui.principal.MainWindow;
-import br.com.colbert.mychart.ui.topmusical.*;
 
 /**
  * A tela principal da aplicação implementada como um {@link JFrame}.
