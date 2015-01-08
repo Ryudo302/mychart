@@ -23,6 +23,6 @@ public class NumeroPosicaoValidator implements ConstraintValidator<NumeroPosicao
 
 	@Override
 	public boolean isValid(Integer value, ConstraintValidatorContext context) {
-		return Objects.isNull(value) || (value > 0 && value <= quantidadePosicoes);
+		return Objects.isNull(value) || value > 0 && value <= quantidadePosicoes;
 	}
 }

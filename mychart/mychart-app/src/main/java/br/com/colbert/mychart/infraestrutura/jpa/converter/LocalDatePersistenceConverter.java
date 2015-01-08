@@ -20,7 +20,7 @@ public class LocalDatePersistenceConverter implements AttributeConverter<LocalDa
 	private static final long serialVersionUID = -4626293424948731887L;
 
 	@Override
-	public java.sql.Date convertToDatabaseColumn(LocalDate entityValue) {
+	public Date convertToDatabaseColumn(LocalDate entityValue) {
 		if (entityValue != null) {
 			return Date.valueOf(entityValue);
 		}

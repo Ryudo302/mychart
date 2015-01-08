@@ -95,6 +95,7 @@ public class CancaoSwingView implements CancaoView, Serializable {
 		contentPane.add(informacoesPanel);
 
 		tituloTextField = new JTextField();
+		tituloTextField.addActionListener(event -> consultarButton.doClick());
 		informacoesPanel.add(tituloTextField, "4, 2, fill, default");
 
 		JPanel botoesPanel = new JPanel();

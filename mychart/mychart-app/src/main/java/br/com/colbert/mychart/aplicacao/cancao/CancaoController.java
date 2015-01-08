@@ -31,11 +31,12 @@ public class CancaoController implements Serializable {
 
 	private static final long serialVersionUID = -444876850735933938L;
 
-	private static final class CancoesPorTituloComparator implements Comparator<Cancao> {
+	private static final class CancoesPorArtistaComparator implements Comparator<Cancao> {
 
 		@Override
 		public int compare(Cancao cancao1, Cancao cancao2) {
-			return new CompareToBuilder().append(cancao1.getTitulo(), cancao2.getTitulo()).toComparison();
+			return new CompareToBuilder().append(cancao1.getArtistaPrincipal().get().getNome(),
+					cancao2.getArtistaPrincipal().get().getNome()).toComparison();
 		}
 	}
 
@@ -69,7 +70,7 @@ public class CancaoController implements Serializable {
 			cancoesUniqueList.addAll(cancaoWs.consultarPor(exemplo));
 
 			logger.debug("Ordenando canções");
-			cancoes.sort(new CancoesPorTituloComparator());
+			cancoes.sort(new CancoesPorArtistaComparator());
 
 			logger.debug("Definindo canções na visão: {}", cancoesUniqueList);
 			view.setCancoesDisponiveis(cancoesUniqueList);

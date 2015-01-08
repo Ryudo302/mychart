@@ -5,13 +5,12 @@ import static javax.transaction.Transactional.TxType.REQUIRED;
 import javax.inject.Inject;
 import javax.interceptor.*;
 import javax.transaction.*;
-import javax.transaction.Transactional.TxType;
 
 import org.slf4j.Logger;
 
 /**
- * {@link Interceptor} responsável pelo gerenciamento de transações de métodos marcados com {@link Transactional} e com o tipo
- * {@link TxType#REQUIRED}.
+ * {@link Interceptor} responsável pelo gerenciamento de transações de métodos marcados com {@link Transactional} e que estão
+ * configurados como necessitando de uma transação ativa.
  * 
  * @author Thiago Colbert
  * @since 15/12/2014

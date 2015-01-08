@@ -95,6 +95,7 @@ public class SwingMainWindow implements MainWindow, Serializable {
 
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		frame.setBounds(100, 100, 600, 350);
+		frame.setLocationRelativeTo(null);
 
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);

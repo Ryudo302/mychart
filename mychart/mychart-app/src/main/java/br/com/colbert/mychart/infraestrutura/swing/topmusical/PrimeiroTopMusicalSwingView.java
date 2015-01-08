@@ -165,12 +165,24 @@ public class PrimeiroTopMusicalSwingView implements PrimeiroTopMusicalView, Seri
 		infoPanel.add(previewLabel, "2, 8, left, top");
 
 		CancaoTableModel model = new CancaoTableModel();
-		// TODO Selection listeners
+		model.addTableModelListener(event -> adicionarCancaoButton.setEnabled(model.getRowCount() < configuration
+				.getQuantidadePosicoes()));
+
 		cancoesTable = new JTable();
+		cancoesTable.setToolTipText("Preview de como ficará o seu primeiro top musical");
 		cancoesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		cancoesTable.setEnabled(false);
 		cancoesTable.setModel(model);
 		cancoesTable.setFillsViewportHeight(true);
+
+		cancoesTable.getSelectionModel().addListSelectionListener(event -> {
+			if (!event.getValueIsAdjusting()) {
+				boolean algumaLinhaSelecionada = cancoesTable.getSelectedRowCount() > 0;
+				removerCancaoButton.setEnabled(algumaLinhaSelecionada);
+				upButton.setEnabled(algumaLinhaSelecionada);
+				downButton.setEnabled(algumaLinhaSelecionada);
+			}
+		});
 
 		JScrollPane cancoesTableScrollPane = new JScrollPane();
 		cancoesTableScrollPane.setViewportView(cancoesTable);
@@ -201,6 +213,8 @@ public class PrimeiroTopMusicalSwingView implements PrimeiroTopMusicalView, Seri
 	}
 
 	private void initComponents() {
+		dialog.setLocationRelativeTo(mainWindow.getFrame());
+
 		dataInicialFormattedTextField.setFormatterFactory(new DefaultFormatterFactory(localDateFormatter));
 		dataInicialFormattedTextField.setValue(LocalDate.now());
 

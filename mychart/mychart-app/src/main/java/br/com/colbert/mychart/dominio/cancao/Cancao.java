@@ -4,13 +4,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.*;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import br.com.colbert.base.dominio.*;

@@ -1,6 +1,6 @@
 package br.com.colbert.mychart.infraestrutura.lastfm;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -27,7 +27,9 @@ import br.com.colbert.mychart.infraestrutura.exception.ServiceException;
  * @since 22/12/2014
  */
 @ApplicationScoped
-public class LastFmWs implements ArtistaWs, CancaoWs {
+public class LastFmWs implements ArtistaWs, CancaoWs, Serializable {
+
+	private static final long serialVersionUID = -718202376554630609L;
 
 	@Inject
 	private transient Logger logger;
@@ -38,7 +40,6 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 	@Inject
 	@ApiKey
 	private transient String apiKey;
-
 	@Inject
 	@WsBaseUrl
 	private transient String baseUrl;
@@ -87,11 +88,15 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 		if (result.isSuccessful()) {
 			List<Artista> artistas = new ArrayList<>(resultadosConsulta.size() / 2);
 			resultadosConsulta.stream().filter(artist -> StringUtils.isNotBlank(artist.getMbid()))
-					.forEach(artist -> artistas.add(new Artista(artist.getMbid(), artist.getName(), TipoArtista.DESCONHECIDO)));
+					.forEach(artist -> artistas.add(criarArtista(artist)));
 			return artistas;
 		} else {
 			throw new LastFmException(result);
 		}
+	}
+
+	private Artista criarArtista(Artist artist) {
+		return new Artista(artist.getMbid(), artist.getName(), TipoArtista.DESCONHECIDO);
 	}
 
 	@Override
@@ -111,16 +116,45 @@ public class LastFmWs implements ArtistaWs, CancaoWs {
 
 		if (result.isSuccessful()) {
 			List<Cancao> cancoes = new ArrayList<>(resultadosConsulta.size() / 2);
-			resultadosConsulta
-					.stream()
-					.filter(track -> StringUtils.isNotBlank(track.getMbid()))
-					.forEach(
-							track -> cancoes.add(new Cancao(track.getName(), new Artista(null, track.getArtist(),
-									TipoArtista.DESCONHECIDO))));
+			resultadosConsulta.stream().filter(track -> StringUtils.isNotBlank(track.getMbid())).forEach(track -> {
+				try {
+					cancoes.add(criarCancao(track));
+				} catch (LastFmException exception) {
+					throw new RuntimeException("Erro ao converter canção: " + track, exception);
+				}
+			});
 			return cancoes;
 		} else {
 			throw new LastFmException(result);
 		}
+	}
+
+	private Cancao criarCancao(Track track) throws LastFmException {
+		return new Cancao(track.getMbid(), track.getName(), new Artista(getArtistId(track), track.getArtist(),
+				TipoArtista.DESCONHECIDO));
+	}
+
+	private String getArtistId(Track track) throws LastFmException {
+		logger.debug("Obtendo informações da canção através do seu MBID: {} - {}", track.getName(), track.getMbid());
+		Track info = Track.getInfo(null, track.getMbid(), apiKey);
+
+		Result result = caller.getLastResult();
+		logger.debug("Resultado da operação: {}", result.getStatus());
+
+		if (result.isSuccessful()) {
+			return info.getArtistMbid();
+		} else {
+			logger.debug("Falhou. Obtendo informações da canção através do artista e do título: {} - {}", track.getName(),
+					track.getArtist());
+			info = Track.getInfo(track.getArtist(), track.getName(), apiKey);
+		}
+
+		if (!StringUtils.equals(track.getArtist(), info.getArtist())) {
+			throw new LastFmException("Track.search e Track.getInfo retornaram artistas diferentes para a canção: "
+					+ track.getName(), null);
+		}
+
+		return info.getArtistMbid();
 	}
 
 	private <T> ServiceException tratarExcecao(CallException exception, T exemplo) throws ServicoInacessivelException,

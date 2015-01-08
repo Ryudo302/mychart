@@ -131,6 +131,11 @@ public class Artista extends AbstractEntidade<String> {
 	}
 
 	@Override
+	protected int compareToNullId(Entidade<String> other) {
+		return new CompareToBuilder().append(nome, ((Artista) other).nome).toComparison();
+	}
+
+	@Override
 	protected boolean equalsWithNullId(Entidade<String> other) {
 		return new EqualsBuilder().append(getNome(), ((Artista) other).getNome()).isEquals();
 	}
