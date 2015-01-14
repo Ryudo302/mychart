@@ -1,7 +1,7 @@
-package br.com.colbert.mychart.aplicacao;
+package br.com.colbert.mychart.aplicacao.principal;
 
-import java.awt.EventQueue;
 import java.io.Serializable;
+import java.lang.Thread.UncaughtExceptionHandler;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ import br.com.colbert.mychart.ui.principal.MainWindow;
  * @author Thiago Colbert
  * @since 18/12/2014
  */
-public class MainController implements Serializable {
+public class MainController implements UncaughtExceptionHandler, Serializable {
 
 	private static final long serialVersionUID = 9104572255370820023L;
 
@@ -51,9 +51,7 @@ public class MainController implements Serializable {
 					.adicionarMensagemAlerta("Não foi possível acessar os serviços da LastFM. Verifique sua conexão com a internet e também se o site http://www.lastfm.com.br está respondendo.");
 		}
 
-		EventQueue.invokeLater(() -> {
-			mainWindow.show();
-		});
+		mainWindow.show();
 	}
 
 	/**
@@ -65,11 +63,13 @@ public class MainController implements Serializable {
 	public void sair(@Observes @StatusAplicacao(TipoStatusAplicacao.ENCERRADA) MainWindow window) {
 		if (messagesView.exibirConfirmacao("Deseja realmente sair?") == RespostaConfirmacao.SIM) {
 			logger.info("Encerrando...");
-
-			EventQueue.invokeLater(() -> {
-				mainWindow.close();
-				System.exit(0);
-			});
+			mainWindow.close();
 		}
+	}
+
+	@Override
+	public void uncaughtException(Thread thread, Throwable thrown) {
+		logger.error("Erro não tratado (thread: {})", thread.getName(), thrown);
+		messagesView.adicionarMensagemErro("Ocorreu um erro não tratado", thrown.getLocalizedMessage());
 	}
 }

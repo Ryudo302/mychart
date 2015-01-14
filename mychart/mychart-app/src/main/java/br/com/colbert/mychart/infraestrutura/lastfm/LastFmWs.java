@@ -76,7 +76,7 @@ public class LastFmWs implements ArtistaWs, CancaoWs, Serializable {
 
 		Collection<Artist> resultadosConsulta;
 		try {
-			resultadosConsulta = Artist.search(exemplo.getNome(), apiKey);
+			resultadosConsulta = Artist.search(exemplo.getNome().toLowerCase(), apiKey);
 			logger.debug("Resultado da consulta: {}", resultadosConsulta);
 		} catch (CallException exception) {
 			throw tratarExcecao(exception, exemplo);

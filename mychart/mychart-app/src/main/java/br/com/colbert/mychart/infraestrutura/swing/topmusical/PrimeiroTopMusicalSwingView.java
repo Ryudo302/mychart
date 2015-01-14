@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.FutureTask;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -23,6 +24,7 @@ import br.com.colbert.mychart.infraestrutura.swing.cancao.*;
 import br.com.colbert.mychart.infraestrutura.swing.principal.SwingMainWindow;
 import br.com.colbert.mychart.infraestrutura.swing.support.LocalDateFormatter;
 import br.com.colbert.mychart.ui.comum.CausaSaidaDeView;
+import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.mychart.ui.topmusical.PrimeiroTopMusicalView;
 
 /**
@@ -44,6 +46,8 @@ public class PrimeiroTopMusicalSwingView implements PrimeiroTopMusicalView, Seri
 	private SwingMainWindow mainWindow;
 	@Inject
 	private CancaoSwingView cancaoView;
+	@Inject
+	private MessagesView messagesView;
 
 	private JPanel infoPanel;
 	private JFormattedTextField dataInicialFormattedTextField;
@@ -134,9 +138,13 @@ public class PrimeiroTopMusicalSwingView implements PrimeiroTopMusicalView, Seri
 
 		adicionarCancaoButton = new JButton("Adicionar");
 		adicionarCancaoButton.addActionListener(event -> {
-			CausaSaidaDeView causaFechamento = cancaoView.show();
-			if (causaFechamento == CausaSaidaDeView.CONFIRMACAO) {
-				((CancaoTableModel) cancoesTable.getModel()).addAllElements(cancaoView.getCancoesSelecionadas());
+			FutureTask<CausaSaidaDeView> causaFechamento = cancaoView.show();
+			try {
+				if (causaFechamento.get() == CausaSaidaDeView.CONFIRMACAO) {
+					((CancaoTableModel) cancoesTable.getModel()).addAllElements(cancaoView.getCancoesSelecionadas());
+				}
+			} catch (Exception exception) {
+				messagesView.adicionarMensagemErro("Erro na seleção de canções", exception.getLocalizedMessage());
 			}
 		});
 		adicionarCancaoButton.setFont(new Font("Tahoma", Font.PLAIN, 10));

@@ -5,10 +5,11 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import javax.swing.*;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
 
 /**
  * Classe que provê acesso a imagens.
@@ -21,16 +22,15 @@ public class ImagesProvider {
 
 	private static final String IMAGES_DIR = "images";
 
-	/**
-	 * Obtém a imagem de <em>chart</em>.
-	 * 
-	 * @return a imagem carregada
-	 * @throws IOException
-	 *             caso ocorra algum erro durante a operação
-	 */
-	@Produces
+	@Inject
+	private Logger logger;
+
 	public Icon chart() throws IOException {
 		return loadImageAsIcon("chart.png");
+	}
+
+	public Icon loading() throws IOException {
+		return loadImageAsIcon("carregando.gif");
 	}
 
 	private Image loadImage(String fileName) throws IOException {
@@ -38,6 +38,7 @@ public class ImagesProvider {
 	}
 
 	private Icon loadImageAsIcon(String fileName) throws IOException {
+		logger.trace("Carregando imagem: {}", fileName);
 		return new ImageIcon(FileUtils.toFile(
 				Thread.currentThread().getContextClassLoader().getResource(IMAGES_DIR + '/' + fileName)).getPath());
 	}

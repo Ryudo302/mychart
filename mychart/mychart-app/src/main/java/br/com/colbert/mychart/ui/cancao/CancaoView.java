@@ -1,6 +1,7 @@
 package br.com.colbert.mychart.ui.cancao;
 
 import java.util.*;
+import java.util.concurrent.FutureTask;
 
 import br.com.colbert.base.ui.View;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
@@ -19,7 +20,7 @@ public interface CancaoView extends View {
 	 * 
 	 * @return a causa do fechamento da janela
 	 */
-	CausaSaidaDeView show();
+	FutureTask<CausaSaidaDeView> show();
 
 	/**
 	 * Fecha a janela.

@@ -2,6 +2,7 @@ package br.com.colbert.mychart.infraestrutura.swing.sobre;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -10,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 
 import br.com.colbert.mychart.infraestrutura.info.*;
 import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao.Formato;
+import br.com.colbert.mychart.infraestrutura.providers.ImagesProvider;
 
 /**
  * Janela que exibe informações sobre a aplicação.
@@ -22,11 +24,10 @@ public class SobreDialog extends JDialog {
 	private static final long serialVersionUID = 6664156130970313272L;
 
 	private final JPanel contentPanel;
-
 	private JLabel imagemLabel;
 
 	@Inject
-	private Icon chartImage;
+	private ImagesProvider images;
 
 	@Inject
 	@TituloAplicacao(Formato.APENAS_NOME)
@@ -93,9 +94,9 @@ public class SobreDialog extends JDialog {
 	}
 
 	@PostConstruct
-	public void init() {
+	public void init() throws IOException {
 		setTitle("Sobre " + tituloAplicacaoSimples);
-		imagemLabel.setIcon(chartImage);
+		imagemLabel.setIcon(images.chart());
 		textoLabel.setText(tituloAplicacaoCompleto);
 	}
 }

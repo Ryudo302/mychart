@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 
 import br.com.colbert.mychart.infraestrutura.eventos.app.*;
 import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao;
+import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
 import br.com.colbert.mychart.infraestrutura.swing.artista.ArtistaSwingView;
 import br.com.colbert.mychart.infraestrutura.swing.home.HomeSwingView;
 import br.com.colbert.mychart.infraestrutura.swing.sobre.SobreDialog;
@@ -168,12 +169,12 @@ public class SwingMainWindow implements MainWindow, Serializable {
 
 	@Override
 	public void show() {
-		frame.setVisible(true);
+		SwingUtils.invokeLater(() -> frame.setVisible(true));
 	}
 
 	@Override
 	public void close() {
-		frame.dispose();
+		SwingUtils.invokeLater(() -> frame.dispose());
 	}
 
 	private void mudarTela(String tela) {

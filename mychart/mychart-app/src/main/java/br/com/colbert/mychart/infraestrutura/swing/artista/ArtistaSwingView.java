@@ -8,7 +8,7 @@ import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.Any;
+import javax.enterprise.inject.*;
 import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -16,6 +16,7 @@ import javax.swing.border.TitledBorder;
 import com.jgoodies.forms.layout.*;
 
 import br.com.colbert.base.ui.*;
+import br.com.colbert.mychart.aplicacao.artista.*;
 import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
 import br.com.colbert.mychart.ui.artista.ArtistaView;
@@ -45,12 +46,9 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 	private JButton removerButton;
 
 	@Inject
-	@OperacaoCrud(TipoOperacaoCrud.CONSULTA)
-	private Event<Artista> ouvintesConsulta;
-
+	private Instance<ConsultaArtistasWorker> consultaArtistasWorker;
 	@Inject
-	@OperacaoCrud(TipoOperacaoCrud.INSERCAO)
-	private Event<Artista> ouvintesInclusao;
+	private Instance<SalvarArtistaWorker> salvarArtistaWorker;
 
 	@Inject
 	@OperacaoCrud(TipoOperacaoCrud.REMOCAO)
@@ -61,11 +59,16 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 	private Event<ArtistaView> ouvintesView;
 
 	public static void main(String[] args) {
-		new ArtistaSwingView().init();
+		new ArtistaSwingView().initPanel();
 	}
 
 	@PostConstruct
 	protected void init() {
+		initPanel();
+		initComponents();
+	}
+
+	private void initPanel() {
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -119,13 +122,18 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 
 		salvarButton = ButtonFactory.createJButton("Salvar", "Salva o artista selecionado");
 		salvarButton.addActionListener(event -> {
-			ouvintesInclusao.fire(getArtistaAtual());
-			limparTela();
+			SalvarArtistaWorker worker = salvarArtistaWorker.get();
+			worker.setArtista(getArtistaAtual());
+			worker.execute();
 		});
 
 		consultarButton = ButtonFactory.createJButton("Consultar",
 				"Procura por artistas que atendam aos critérios informados acima");
-		consultarButton.addActionListener(event -> ouvintesConsulta.fire(getArtistaAtual()));
+		consultarButton.addActionListener(event -> {
+			ConsultaArtistasWorker worker = consultaArtistasWorker.get();
+			worker.setExemplo(getArtistaAtual());
+			worker.execute();
+		});
 		botoesPanel.add(consultarButton);
 
 		botoesPanel.add(salvarButton);
@@ -174,6 +182,10 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 		limparTela();
 	}
 
+	private void initComponents() {
+
+	}
+
 	private Artista getArtistaAtual() {
 		return new Artista(idTextField.getText(), nomeTextField.getText(), (TipoArtista) tipoComboBox.getSelectedItem());
 	}
@@ -190,14 +202,16 @@ public class ArtistaSwingView implements ArtistaView, Serializable {
 
 	@Override
 	public void setArtistaAtual(Artista artista) {
-		idTextField.setText(artista.getId());
-		nomeTextField.setText(artista.getNome());
-		tipoComboBox.setSelectedItem(artista.getTipo());
+		SwingUtilities.invokeLater(() -> {
+			idTextField.setText(artista.getId());
+			nomeTextField.setText(artista.getNome());
+			tipoComboBox.setSelectedItem(artista.getTipo());
+		});
 	}
 
 	@Override
 	public void setArtistas(Collection<Artista> artistas) {
-		artistasTableModel.setElements(artistas);
+		SwingUtilities.invokeLater(() -> artistasTableModel.setElements(artistas));
 	}
 
 	private void setEstadoAtual(EstadoTelaCrud estadoAtual) {

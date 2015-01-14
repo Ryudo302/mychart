@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.Serializable;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.FutureTask;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -18,6 +19,7 @@ import com.jgoodies.forms.layout.*;
 import br.com.colbert.base.ui.ButtonFactory;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
+import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
 import br.com.colbert.mychart.infraestrutura.swing.principal.SwingMainWindow;
 import br.com.colbert.mychart.ui.cancao.CancaoView;
 import br.com.colbert.mychart.ui.comum.CausaSaidaDeView;
@@ -133,30 +135,34 @@ public class CancaoSwingView implements CancaoView, Serializable {
 	}
 
 	@Override
-	public CausaSaidaDeView show() {
-		dialog.setVisible(true);
-		return causaFechamento;
+	public FutureTask<CausaSaidaDeView> show() {
+		return SwingUtils.invokeLater(() -> {
+			dialog.setVisible(true);
+			return causaFechamento;
+		});
 	}
 
 	@Override
 	public void close() {
-		dialog.setVisible(false);
+		SwingUtils.invokeLater(() -> dialog.setVisible(false));
 	}
 
 	@Override
 	public List<Cancao> getCancoesSelecionadas() {
-		return cancoesList.getSelectedValuesList();
+		return SwingUtils.invokeAndWait(() -> cancoesList.getSelectedValuesList());
 	}
 
 	@Override
 	public void setCancoesDisponiveis(Collection<Cancao> cancoes) {
-		((CancoesListModel) cancoesList.getModel()).setElements(cancoes);
+		SwingUtils.invokeLater(() -> ((CancoesListModel) cancoesList.getModel()).setElements(cancoes));
 	}
 
 	@Override
 	public Optional<Cancao> getCancaoAtual() {
-		cancaoAtual.setTitulo(tituloTextField.getText());
-		return Optional.of(cancaoAtual);
+		return SwingUtils.invokeAndWait(() -> {
+			cancaoAtual.setTitulo(tituloTextField.getText());
+			return Optional.of(cancaoAtual);
+		});
 	}
 
 	public void setCancaoAtual(Cancao cancao) {
