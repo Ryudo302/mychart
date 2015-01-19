@@ -79,6 +79,7 @@ public class Artista extends AbstractEntidade<String> {
 	 * Construtor <code>default</code> sem argumentos utilizado pelo framework ORM.
 	 */
 	Artista() {
+		this(null, null);
 	}
 
 	@Override
@@ -128,6 +129,11 @@ public class Artista extends AbstractEntidade<String> {
 	@Transient
 	public boolean getPossuiCancoes() {
 		return CollectionUtils.isNotEmpty(cancoesArtista);
+	}
+
+	@Transient
+	public List<TipoArtista> getTiposArtistas() {
+		return Arrays.asList(TipoArtista.values());
 	}
 
 	@Override

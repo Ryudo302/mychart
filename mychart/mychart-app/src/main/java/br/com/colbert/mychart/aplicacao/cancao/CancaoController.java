@@ -18,7 +18,7 @@ import br.com.colbert.mychart.dominio.cancao.repository.CancaoRepository;
 import br.com.colbert.mychart.dominio.cancao.service.CancaoWs;
 import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
 import br.com.colbert.mychart.infraestrutura.exception.*;
-import br.com.colbert.mychart.ui.cancao.CancaoView;
+import br.com.colbert.mychart.ui.cancao.CancaoDialog;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 
 /**
@@ -44,7 +44,7 @@ public class CancaoController implements Serializable {
 	private Logger logger;
 
 	@Inject
-	private CancaoView view;
+	private CancaoDialog view;
 	@Inject
 	private MessagesView messagesView;
 

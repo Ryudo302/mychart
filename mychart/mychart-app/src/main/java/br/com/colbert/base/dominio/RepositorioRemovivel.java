@@ -18,16 +18,15 @@ import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
 public interface RepositorioRemovivel<E extends Entidade<ID>, ID extends Serializable> extends Repository<E, ID> {
 
 	/**
-	 * Remove um elemento do repositório. A tentativa de remover um artista inexistente é uma <em>no-op</em>.
+	 * Remove um elemento do repositório a partir de seu ID. A tentativa de remover um ID inexistente é uma <em>no-op</em>.
 	 * 
-	 * @param elemento
-	 *            a ser removido
+	 * @param id
+	 *            ID do elemento a ser removido
 	 * @return <code>true</code> caso o elemento existia no repositório, <code>false</code> caso contrário
 	 * @throws NullPointerException
-	 *             caso o elemento seja <code>null</code>
+	 *             caso o <code>id</code> seja <code>null</code>
 	 * @throws RepositoryException
 	 *             caso ocorra algum erro não tratado durante a operação
 	 */
-	boolean remover(E elemento) throws RepositoryException;
-
+	boolean remover(ID id) throws RepositoryException;
 }

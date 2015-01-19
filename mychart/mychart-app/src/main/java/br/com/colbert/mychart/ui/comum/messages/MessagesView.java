@@ -1,35 +1,39 @@
 package br.com.colbert.mychart.ui.comum.messages;
 
-import br.com.colbert.base.ui.View;
+import java.io.Serializable;
+import java.text.MessageFormat;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.swing.JOptionPane;
+
+import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
 
 /**
- * {@link View} que exibe mensagens geradas pela aplicação.
+ * Classe que permite a exibição de mensagens na tela.
  * 
  * @author Thiago Colbert
  * @since 08/12/2014
  */
-public interface MessagesView extends View {
+@ApplicationScoped
+public class MessagesView implements Serializable {
 
-	void adicionarMensagemSucesso(String sumario);
+	private static final long serialVersionUID = -4294537871800655560L;
 
-	void adicionarMensagemAlerta(String mensagem);
+	public void adicionarMensagemSucesso(String mensagem) {
+		SwingUtils.invokeLater(() -> JOptionPane.showMessageDialog(null, mensagem, "Info", JOptionPane.INFORMATION_MESSAGE));
+	}
 
-	/**
-	 * Adiciona uma mensagem de erro à tela.
-	 * 
-	 * @param resumo
-	 *            da mensagem de erro
-	 * @param detalhes
-	 *            da mensagem de erro
-	 */
-	void adicionarMensagemErro(String resumo, String detalhes);
+	public void adicionarMensagemAlerta(String mensagem) {
+		SwingUtils.invokeLater(() -> JOptionPane.showMessageDialog(null, mensagem, "Alerta", JOptionPane.WARNING_MESSAGE));
+	}
 
-	/**
-	 * Exibe uma mensagem de confirmação na tela.
-	 * 
-	 * @param mensagem
-	 *            conteúdo da mensagem
-	 * @return a resposta do usuário
-	 */
-	RespostaConfirmacao exibirConfirmacao(String mensagem);
+	public void adicionarMensagemErro(String resumo, String detalhes) {
+		SwingUtils.invokeLater(() -> JOptionPane.showMessageDialog(null,
+				MessageFormat.format("{0}:\n\n{1}\n\n", resumo, detalhes), "Erro", JOptionPane.ERROR_MESSAGE));
+	}
+
+	public RespostaConfirmacao exibirConfirmacao(String mensagem) {
+		return JOptionPane.showConfirmDialog(null, mensagem, "Confirmação", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION ? RespostaConfirmacao.SIM
+				: RespostaConfirmacao.NAO;
+	}
 }

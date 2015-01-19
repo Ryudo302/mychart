@@ -80,25 +80,27 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	}
 
 	@Override
-	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao remover artista: {0}")
-	public boolean remover(Artista artista) throws RepositoryException {
-		Objects.requireNonNull(artista, "O artista a ser removido é obrigatório");
+	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao remover artista pelo ID: {0}")
+	public boolean remover(String id) throws RepositoryException {
+		Validate.notEmpty(id, "O ID do artista a ser removido é obrigatório");
 
-		if (artista.getPossuiCancoes()) {
-			throw new RepositoryException("O artista não pode ser removido pois existem canções que o referenciam");
-		} else {
-			logger.debug("Removendo artista");
-			EntityManager entityManager = getEntityManager();
+		boolean removido = false;
+		EntityManager entityManager = getEntityManager();
 
-			try {
-				logger.debug("Verificando se o artista existe no repositório: {}", artista);
-				Artista artistaRemover = entityManager.getReference(Artista.class, artista.getId());
-				entityManager.remove(artistaRemover);
-				return true;
-			} catch (EntityNotFoundException exception) {
-				logger.debug("O artista já não existia no repositório");
-				return false;
+		logger.debug("Verificando se existe um artista no repositório com o ID: {}", id);
+		Artista artista = entityManager.find(Artista.class, id);
+
+		if (artista != null) {
+			logger.debug("Verificando se o artista possui canções salvas");
+			if (artista.getPossuiCancoes()) {
+				throw new RepositoryException("O artista não pode ser removido pois existem canções que o referenciam");
+			} else {
+				logger.debug("Removendo artista");
+				entityManager.remove(artista);
+				removido = true;
 			}
 		}
+
+		return removido;
 	}
 }

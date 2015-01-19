@@ -25,7 +25,7 @@ import br.com.colbert.mychart.ui.topmusical.*;
  * @author Thiago Colbert
  * @since 09/12/2014
  */
-@ApplicationScoped
+//@ApplicationScoped
 public class TopMusicalController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -64,7 +64,7 @@ public class TopMusicalController implements Serializable {
 			logger.debug("Nenhum top ainda salvo. Criando um novo.");
 			messagesView
 					.adicionarMensagemSucesso("É a sua primeira vez aqui, portanto é necessário informar alguns dados do seu primeiro top musical.");
-			CausaSaidaDeView causaSaida = primeiroTopMusicalView.show();
+			String causaSaida = primeiroTopMusicalView.show();
 			if (causaSaida == CausaSaidaDeView.CONFIRMACAO) {
 				List<Cancao> cancoes = primeiroTopMusicalView.getCancoes();
 				Integer quantidadePosicoes = topMusicalFactory.getConfig().getQuantidadePosicoes();

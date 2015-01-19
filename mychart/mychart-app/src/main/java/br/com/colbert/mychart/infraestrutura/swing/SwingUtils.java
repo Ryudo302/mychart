@@ -1,10 +1,16 @@
 package br.com.colbert.mychart.infraestrutura.swing;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import javax.swing.table.*;
+import javax.swing.text.JTextComponent;
 
+import org.apache.commons.lang3.StringUtils;
+
+import br.com.colbert.base.ui.model.ObjectTableModel;
 import br.com.colbert.mychart.infraestrutura.exception.ViewException;
 
 /**
@@ -17,6 +23,51 @@ public final class SwingUtils {
 
 	private SwingUtils() {
 
+	}
+
+	/**
+	 * Limpa todos os dados presentes nos componentes do contêiner informado.
+	 * 
+	 * @param container
+	 *            o contêiner
+	 */
+	public static void clearAllData(Container container) {
+		invokeLater(() -> {
+			_clearAllInputs(container);
+		});
+	}
+
+	private static void _clearAllInputs(Container container) {
+		Component[] componentes = container.getComponents();
+		for (Component componente : componentes) {
+			if (componente instanceof JTextComponent) {
+				((JTextComponent) componente).setText(StringUtils.EMPTY);
+			} else if (componente instanceof JComboBox) {
+				((JComboBox<?>) componente).setSelectedIndex(-1);
+			} else if (componente instanceof JToggleButton) {
+				((JToggleButton) componente).setSelected(false);
+			} else if (componente instanceof JTable) {
+				clearJTable((JTable) componente);
+			} else if (componente instanceof Container) {
+				_clearAllInputs((Container) componente);
+			}
+		}
+	}
+
+	private static void clearJTable(JTable componente) {
+		TableModel tableModel = componente.getModel();
+		if (tableModel instanceof DefaultTableModel) {
+			((DefaultTableModel) tableModel).setRowCount(0);
+		} else if (tableModel instanceof ObjectTableModel<?>) {
+			((ObjectTableModel<?>) tableModel).clear();
+		} else {
+			try {
+				TableModel newModel = tableModel.getClass().newInstance();
+				componente.setModel(newModel);
+			} catch (InstantiationException | IllegalAccessException exception) {
+				throw new ViewException("Erro ao limpar tabela", exception);
+			}
+		}
 	}
 
 	/**

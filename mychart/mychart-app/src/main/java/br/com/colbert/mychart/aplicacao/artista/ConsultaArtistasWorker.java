@@ -14,13 +14,13 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.validacao.Validador;
-import br.com.colbert.mychart.aplicacao.AbstractWorker;
 import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepository;
 import br.com.colbert.mychart.dominio.artista.service.ArtistaWs;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.infraestrutura.lastfm.ServicoInacessivelException;
-import br.com.colbert.mychart.ui.artista.ArtistaView;
+import br.com.colbert.mychart.infraestrutura.swing.worker.AbstractWorker;
+import br.com.colbert.mychart.ui.artista.ArtistaPanel;
 
 /**
  * Executor de consulta de artistas.
@@ -42,7 +42,7 @@ public class ConsultaArtistasWorker extends AbstractWorker<Collection<Artista>, 
 	private Logger logger;
 
 	@Inject
-	private ArtistaView view;
+	private ArtistaPanel view;
 
 	@Inject
 	private ArtistaRepository repositorio;

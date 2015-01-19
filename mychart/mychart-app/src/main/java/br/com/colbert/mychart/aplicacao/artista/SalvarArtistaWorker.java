@@ -11,10 +11,10 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.validacao.*;
-import br.com.colbert.mychart.aplicacao.AbstractWorker;
 import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepository;
 import br.com.colbert.mychart.infraestrutura.exception.*;
+import br.com.colbert.mychart.infraestrutura.swing.worker.AbstractWorker;
 
 /**
  * Executor de salvamento de artistas.

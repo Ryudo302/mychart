@@ -22,7 +22,7 @@ import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.jpa.CancaoJpaRepository;
 import br.com.colbert.mychart.infraestrutura.lastfm.LastFmWs;
-import br.com.colbert.mychart.ui.cancao.CancaoView;
+import br.com.colbert.mychart.ui.cancao.CancaoDialog;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.tests.support.AbstractDbUnitTest;
 
@@ -41,7 +41,7 @@ public class CancaoControllerIT extends AbstractDbUnitTest {
 	@Produces
 	@ProducesAlternative
 	@Mock
-	private CancaoView view;
+	private CancaoDialog view;
 
 	@Produces
 	@ProducesAlternative
