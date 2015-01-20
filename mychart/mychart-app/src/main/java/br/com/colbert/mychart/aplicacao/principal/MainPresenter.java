@@ -43,7 +43,7 @@ public class MainPresenter implements UncaughtExceptionHandler, Serializable {
 	private TopMusicalConfigView topMusicalConfigView;
 	@Inject
 	private SobreDialog sobreDialog;
-	
+
 	@Inject
 	private ArtistaPresenter artistaPresenter;
 
@@ -63,6 +63,8 @@ public class MainPresenter implements UncaughtExceptionHandler, Serializable {
 	 */
 	public void iniciar(@Observes ContainerInitialized event) {
 		logger.info("Iniciando...");
+		Thread.setDefaultUncaughtExceptionHandler(this);
+
 		entityManagerFactory.toString();
 
 		if (!lastFmWs.ping()) {

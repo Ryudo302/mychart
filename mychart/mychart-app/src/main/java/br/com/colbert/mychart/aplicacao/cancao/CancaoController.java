@@ -86,14 +86,11 @@ public class CancaoController implements Serializable {
 
 		try {
 			validar(cancao);
-			repositorio.adicionar(cancao);
+			repositorio.incluirOuAlterar(cancao);
 			messagesView.adicionarMensagemSucesso("Canção incluída com sucesso!");
 		} catch (ValidacaoException exception) {
 			logger.debug("Erros de validação", exception);
 			messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
-		} catch (ElementoJaExistenteException exception) {
-			logger.debug("Canção já existente", exception);
-			messagesView.adicionarMensagemAlerta("Já existe uma canção com o título e artista(s) informados.");
 		} catch (RepositoryException exception) {
 			logger.error("Erro ao adicionar canção: " + cancao, exception);
 			messagesView.adicionarMensagemErro("Erro ao adicionar artista", exception.getLocalizedMessage());

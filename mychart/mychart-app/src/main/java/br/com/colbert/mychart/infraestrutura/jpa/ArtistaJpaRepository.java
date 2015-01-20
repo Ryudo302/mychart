@@ -62,21 +62,12 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	}
 
 	@Override
-	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao adicionar artista: {0}")
-	public void adicionar(Artista artista) throws ElementoJaExistenteException, RepositoryException {
+	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao salvar artista: {0}")
+	public void incluirOuAlterar(Artista artista) throws RepositoryException {
 		Objects.requireNonNull(artista, "O artista a ser adicionado é obrigatório");
 
-		logger.debug("Verificando se já existe um artista com o mesmo nome: {}", artista);
-		if (!consultarPorNomeExato(artista.getNome()).isEmpty()) {
-			throw new ElementoJaExistenteException(artista);
-		}
-
-		try {
-			logger.debug("Persistindo artista");
-			getEntityManager().persist(artista);
-		} catch (EntityExistsException exception) {
-			throw new ElementoJaExistenteException(artista);
-		}
+		logger.debug("Persistindo artista");
+		getEntityManager().merge(artista);
 	}
 
 	@Override

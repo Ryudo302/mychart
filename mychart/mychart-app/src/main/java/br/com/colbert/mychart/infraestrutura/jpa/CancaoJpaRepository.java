@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 
 import br.com.colbert.mychart.dominio.cancao.*;
 import br.com.colbert.mychart.dominio.cancao.repository.CancaoRepository;
-import br.com.colbert.mychart.infraestrutura.exception.*;
+import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
 import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapper;
 
 /**
@@ -64,34 +64,12 @@ public class CancaoJpaRepository implements CancaoRepository {
 	}
 
 	@Override
-	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao adicionar canção: {0}")
-	public void adicionar(Cancao cancao) throws ElementoJaExistenteException, RepositoryException {
+	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao salvar canção: {0}")
+	public void incluirOuAlterar(Cancao cancao) throws RepositoryException {
 		Objects.requireNonNull(cancao, "A canção a ser adicionada é obrigatória");
 
-		logger.debug("Verificando se já existe uma canção com o mesmo título e do(s) mesmo(s) artista(s): {}", cancao);
-		if (!consultarPorTituloEArtistaExatos(cancao).isEmpty()) {
-			throw new ElementoJaExistenteException(cancao);
-		}
-
-		try {
-			logger.debug("Persistindo cancao");
-			getEntityManager().persist(cancao);
-		} catch (EntityExistsException exception) {
-			throw new ElementoJaExistenteException(cancao);
-		}
-	}
-
-	@Override
-	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao alterar canção: {0}")
-	public void alterar(Cancao cancao) throws ElementoNaoExistenteException, RepositoryException {
-		Objects.requireNonNull(cancao, "A canção a ser alterada é obrigatória");
-
-		if (cancao.getId() != null) {
-			logger.debug("Alterando canção");
-			getEntityManager().merge(cancao);
-		} else {
-			throw new ElementoNaoExistenteException("Canção", cancao);
-		}
+		logger.debug("Salvando canção");
+		getEntityManager().merge(cancao);
 	}
 
 	@Override

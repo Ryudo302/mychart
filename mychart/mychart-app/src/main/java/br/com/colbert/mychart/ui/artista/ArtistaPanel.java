@@ -132,8 +132,6 @@ public class ArtistaPanel implements Serializable {
 		tabelaScrollPane.setViewportView(artistasTable);
 		panel.add(tabelaScrollPane);
 
-		nomeTextField.requestFocusInWindow();
-
 		limparTela();
 	}
 
@@ -222,6 +220,7 @@ public class ArtistaPanel implements Serializable {
 	public void limparTela() {
 		SwingUtils.clearAllData(panel);
 		setEstadoAtual(EstadoTelaCrud.CONSULTA);
+		nomeTextField.requestFocusInWindow();
 	}
 
 	/**

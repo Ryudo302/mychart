@@ -4,6 +4,7 @@ import java.awt.Window;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.swing.*;
 import javax.swing.SwingWorker.StateValue;
 
 import org.slf4j.Logger;
@@ -30,8 +31,8 @@ public class WorkerWaitListener implements WorkerStateListener {
 	private boolean exibindo;
 
 	@Override
-	public void stateChange(StateValue oldState, StateValue newState) {
-		logger.trace("Estado atual = {}", newState);
+	public void stateChange(SwingWorker<?, ?> source, StateValue oldState, StateValue newState) {
+		logger.trace("Mudança de estado do worker {} de {} para {}", source, oldState, newState);
 		switch (newState) {
 		case STARTED:
 			showView();
@@ -54,7 +55,7 @@ public class WorkerWaitListener implements WorkerStateListener {
 
 	private void showView() {
 		if (!exibindo) {
-			logger.debug("Exibindo tela");
+			logger.trace("Exibindo tela");
 			SwingUtils.invokeLater(() -> loadingView.setVisible(true));
 			exibindo = true;
 		}

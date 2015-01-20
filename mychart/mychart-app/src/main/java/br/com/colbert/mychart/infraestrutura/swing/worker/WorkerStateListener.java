@@ -21,17 +21,19 @@ public interface WorkerStateListener extends PropertyChangeListener {
 	@Override
 	default void propertyChange(PropertyChangeEvent event) {
 		if (StringUtils.equals(event.getPropertyName(), "state")) {
-			stateChange((StateValue) event.getOldValue(), (StateValue) event.getNewValue());
+			stateChange((SwingWorker<?, ?>) event.getSource(), (StateValue) event.getOldValue(), (StateValue) event.getNewValue());
 		}
 	}
 
 	/**
 	 * Método invocado quando o estado do <em>worker</em> é alterado.
 	 * 
+	 * @param source
+	 *            a instância de {@link SwingWorker} que originou o evento
 	 * @param oldState
 	 *            o estado anterior
 	 * @param newState
 	 *            o novo estado
 	 */
-	void stateChange(StateValue oldState, StateValue newState);
+	void stateChange(SwingWorker<?, ?> source, StateValue oldState, StateValue newState);
 }

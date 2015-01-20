@@ -12,7 +12,8 @@ import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
  * @author Thiago Colbert
  * @since 08/12/2014
  */
-public interface ArtistaRepository extends RepositorioAdicionavel<Artista, String>, RepositorioRemovivel<Artista, String> {
+public interface ArtistaRepository extends RepositorioIncluivelAlteravel<Artista, String>, RepositorioRemovivel<Artista, String>,
+		RepositorioConsultavel<Artista, String> {
 
 	/**
 	 * Consulta por artistas que tenham o nome exatamente igual ao informado. A consulta não é <em>case-sensitive</em> (uma
@@ -29,17 +30,4 @@ public interface ArtistaRepository extends RepositorioAdicionavel<Artista, Strin
 	 *             caso ocorra algum erro não-tratado durante a operação
 	 */
 	Collection<Artista> consultarPorNomeExato(String nome) throws RepositoryException;
-
-	/**
-	 * Faz uma consulta por artistas a partir de um artista de exemplo.
-	 * 
-	 * @param exemplo
-	 *            a ser utilizada na consulta
-	 * @return os artistas encontradas (pode ser uma lista vazia)
-	 * @throws NullPointerException
-	 *             caso o exemplo seja <code>null</code>
-	 * @throws RepositoryException
-	 *             caso ocorra algum erro não tratado durante a operação
-	 */
-	Collection<Artista> consultarPor(Artista exemplo) throws RepositoryException;
 }

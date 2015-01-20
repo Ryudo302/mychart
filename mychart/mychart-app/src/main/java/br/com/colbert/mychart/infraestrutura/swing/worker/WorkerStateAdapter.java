@@ -2,6 +2,7 @@ package br.com.colbert.mychart.infraestrutura.swing.worker;
 
 import java.io.Serializable;
 
+import javax.swing.*;
 import javax.swing.SwingWorker.StateValue;
 
 /**
@@ -15,16 +16,16 @@ public abstract class WorkerStateAdapter implements WorkerStateListener, Seriali
 	private static final long serialVersionUID = -8509761758928914385L;
 
 	@Override
-	public void stateChange(StateValue oldState, StateValue newState) {
+	public void stateChange(SwingWorker<?, ?> source, StateValue oldState, StateValue newState) {
 		switch (newState) {
 		case STARTED:
-			started();
+			started(source);
 			break;
 		case PENDING:
-			pending();
+			pending(source);
 			break;
 		case DONE:
-			done();
+			done(source);
 			break;
 		default:
 			break;
@@ -32,23 +33,26 @@ public abstract class WorkerStateAdapter implements WorkerStateListener, Seriali
 	}
 
 	/**
+	 * @param source
 	 * @see StateValue#PENDING
 	 */
-	public void pending() {
+	public void pending(SwingWorker<?, ?> source) {
 
 	}
 
 	/**
+	 * @param source
 	 * @see StateValue#STARTED
 	 */
-	public void started() {
+	public void started(SwingWorker<?, ?> source) {
 
 	}
 
 	/**
+	 * @param source
 	 * @see StateValue#DONE
 	 */
-	public void done() {
+	public void done(SwingWorker<?, ?> source) {
 
 	}
 }

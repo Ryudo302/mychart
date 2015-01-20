@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 
 import org.mvp4j.AppController;
@@ -14,8 +15,9 @@ import org.mvp4j.adapter.MVPBinding;
 
 import br.com.colbert.base.ui.EstadoTelaCrud;
 import br.com.colbert.mychart.dominio.artista.*;
-import br.com.colbert.mychart.infraestrutura.swing.worker.WorkerStateAdapter;
+import br.com.colbert.mychart.infraestrutura.swing.worker.WorkerDoneAdapter;
 import br.com.colbert.mychart.ui.artista.ArtistaPanel;
+import br.com.colbert.mychart.ui.comum.messages.*;
 
 /**
  * <em>Presenter</em> de {@link Artista}.
@@ -28,13 +30,19 @@ public class ArtistaPresenter implements Serializable {
 
 	private static final long serialVersionUID = 8111564698178618449L;
 
-	private final class LimparTelaWorkerListener extends WorkerStateAdapter {
+	private final class LimparTelaWorkerDoneListener extends WorkerDoneAdapter {
 
 		private static final long serialVersionUID = -200308075599872055L;
 
 		@Override
-		public void done() {
+		public void doneWithSuccess(SwingWorker<?, ?> worker) {
+			messagesView.adicionarMensagemSucesso("Artista removido com sucesso!");
 			view.limparTela();
+		}
+
+		@Override
+		public void doneWithError(SwingWorker<?, ?> worker, String errorMessage) {
+			messagesView.adicionarMensagemErro("Erro ao remover artista", errorMessage);
 		}
 	}
 
@@ -43,6 +51,8 @@ public class ArtistaPresenter implements Serializable {
 
 	@Inject
 	private ArtistaPanel view;
+	@Inject
+	private MessagesView messagesView;
 
 	@Inject
 	private Instance<ConsultaArtistasWorker> consultaArtistasWorker;
@@ -64,22 +74,24 @@ public class ArtistaPresenter implements Serializable {
 
 	public void consultarArtistas() {
 		ConsultaArtistasWorker worker = consultaArtistasWorker.get();
-		worker.setExemplo(criarArtista(view.getNomeArtista(), view.getTipoArtista()));
+		worker.setExemplo(criarArtista(null, view.getNomeArtista(), view.getTipoArtista()));
 		worker.execute();
 	}
 
 	public void salvarArtista() {
 		SalvarArtistaWorker worker = salvarArtistaWorker.get();
-		worker.setArtista(criarArtista(view.getNomeArtista(), view.getTipoArtista()));
+		worker.setArtista(criarArtista(view.getIdArtista(), view.getNomeArtista(), view.getTipoArtista()));
 		worker.execute();
-		worker.addWorkerStateListener(new LimparTelaWorkerListener());
+		worker.addWorkerDoneListener(new LimparTelaWorkerDoneListener());
 	}
 
 	public void removerArtista() {
-		RemoverArtistaWorker worker = removerArtistaWorker.get();
-		worker.setIdArtista(view.getIdArtista());
-		worker.execute();
-		worker.addWorkerStateListener(new LimparTelaWorkerListener());
+		if (messagesView.exibirConfirmacao("Deseja realmente excluir o artista selecionado?") == RespostaConfirmacao.SIM) {
+			RemoverArtistaWorker worker = removerArtistaWorker.get();
+			worker.setIdArtista(view.getIdArtista());
+			worker.execute();
+			worker.addWorkerDoneListener(new LimparTelaWorkerDoneListener());
+		}
 	}
 
 	public void teclaPressionada(KeyEvent evento) {
@@ -94,11 +106,12 @@ public class ArtistaPresenter implements Serializable {
 	public void artistaSelecionado(ListSelectionEvent evento) {
 		view.getArtistaSelecionado().ifPresent(artista -> {
 			binding.setModel(artista);
+			view.getContainer().revalidate();
 			view.setEstadoAtual(EstadoTelaCrud.INCLUSAO_OU_ALTERACAO);
 		});
 	}
 
-	private Artista criarArtista(String nome, TipoArtista tipo) {
-		return new Artista(nome, tipo);
+	private Artista criarArtista(String id, String nome, TipoArtista tipo) {
+		return new Artista(id, nome, tipo);
 	}
 }

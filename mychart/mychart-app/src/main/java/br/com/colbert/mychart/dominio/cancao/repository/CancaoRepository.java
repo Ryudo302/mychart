@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import br.com.colbert.base.dominio.*;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
-import br.com.colbert.mychart.infraestrutura.exception.*;
+import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
 
 /**
  * Repositório de {@link Cancao}.
@@ -12,7 +12,8 @@ import br.com.colbert.mychart.infraestrutura.exception.*;
  * @author Thiago Colbert
  * @since 08/12/2014
  */
-public interface CancaoRepository extends RepositorioAdicionavel<Cancao, String>, RepositorioRemovivel<Cancao, String> {
+public interface CancaoRepository extends RepositorioIncluivelAlteravel<Cancao, String>, RepositorioRemovivel<Cancao, String>,
+		RepositorioConsultavel<Cancao, String> {
 
 	/**
 	 * Consulta por canções que tenham o título e artista(s) exatamente iguais aos informados. A consulta não é
@@ -27,31 +28,4 @@ public interface CancaoRepository extends RepositorioAdicionavel<Cancao, String>
 	 *             caso ocorra algum erro não-tratado durante a operação
 	 */
 	Collection<Cancao> consultarPorTituloEArtistaExatos(Cancao exemplo) throws RepositoryException;
-
-	/**
-	 * Faz uma consulta por canções a partir de uma canção de exemplo.
-	 * 
-	 * @param exemplo
-	 *            a ser utilizada na consulta
-	 * @return as canções encontradas (pode ser uma lista vazia)
-	 * @throws NullPointerException
-	 *             caso o o exemplo seja <code>null</code>
-	 * @throws RepositoryException
-	 *             caso ocorra algum erro não tratado durante a operação
-	 */
-	Collection<Cancao> consultarPor(Cancao exemplo) throws RepositoryException;
-
-	/**
-	 * Altera uma canção existente no repositório.
-	 * 
-	 * @param cancao
-	 *            a ser alterada
-	 * @throws NullPointerException
-	 *             caso o a canção seja <code>null</code>
-	 * @throws ElementoNaoExistenteException
-	 *             caso a canção informada não exista no repositório
-	 * @throws RepositoryException
-	 *             caso ocorra algum erro não tratado durante a operação
-	 */
-	void alterar(Cancao cancao) throws ElementoNaoExistenteException, RepositoryException;
 }
