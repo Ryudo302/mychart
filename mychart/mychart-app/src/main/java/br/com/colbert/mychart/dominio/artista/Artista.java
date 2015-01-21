@@ -76,6 +76,17 @@ public class Artista extends AbstractEntidade<String> {
 	}
 
 	/**
+	 * Cria um novo artista a partir das informações de outro.
+	 * 
+	 * @param artista
+	 *            o outro artista
+	 */
+	public Artista(Artista artista) {
+		this(artista.id, artista.nome, artista.tipo);
+		persistente = artista.persistente;
+	}
+
+	/**
 	 * Construtor <code>default</code> sem argumentos utilizado pelo framework ORM.
 	 */
 	Artista() {

@@ -148,7 +148,7 @@ public class ArtistaPanel implements Serializable {
 		int selectedRow = artistasTable.getSelectedRow();
 		if (selectedRow >= 0) {
 			int modelIndex = artistasTable.convertRowIndexToModel(selectedRow);
-			return modelIndex != -1 ? Optional.of(artistasTableModel.getElement(modelIndex)) : Optional.empty();
+			return modelIndex != -1 ? Optional.of(new Artista(artistasTableModel.getElement(modelIndex))) : Optional.empty();
 		} else {
 			return Optional.empty();
 		}
@@ -209,7 +209,7 @@ public class ArtistaPanel implements Serializable {
 			nomeTextField.setEditable(false);
 			tipoComboBox.setEnabled(true);
 			salvarButton.setEnabled(true);
-			removerButton.setEnabled(true);
+			removerButton.setEnabled(getArtistaSelecionado().filter(artista -> artista.getPersistente()).isPresent());
 			break;
 		}
 	}

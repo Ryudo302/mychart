@@ -1,5 +1,7 @@
 package br.com.colbert.mychart.infraestrutura.swing.worker;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -63,6 +65,20 @@ public abstract class AbstractWorker<T, V> extends SwingWorker<T, V> {
 	 */
 	public void addWorkerDoneListener(WorkerDoneListener listener) {
 		addPropertyChangeListener(listener);
+	}
+
+	/**
+	 * Obtém o resultado da execução da tarefa. Este método só deve ser chamado após a tarefa ter sido finalizada, pois caso o
+	 * método {@link #get()} lance alguma exceção, ela será relançada como uma {@link IllegalStateException}.
+	 * 
+	 * @return o resultado da execução
+	 */
+	public T getResult() {
+		try {
+			return get();
+		} catch (InterruptedException | ExecutionException exception) {
+			throw new IllegalStateException("Erro ao processar resultado", exception);
+		}
 	}
 
 	public boolean isDoneWithSuccess() {

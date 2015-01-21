@@ -1,10 +1,7 @@
 package br.com.colbert.mychart.infraestrutura.swing.worker;
 
-import java.beans.*;
-
-import javax.swing.SwingWorker;
-
-import org.apache.commons.lang3.*;
+import javax.swing.*;
+import javax.swing.SwingWorker.StateValue;
 
 /**
  * TODO
@@ -12,17 +9,15 @@ import org.apache.commons.lang3.*;
  * @author Thiago Colbert
  * @since 20/01/2015
  */
-public interface WorkerDoneListener extends PropertyChangeListener {
+public interface WorkerDoneListener extends WorkerStateListener {
 
 	@Override
-	default void propertyChange(PropertyChangeEvent event) {
-		if (StringUtils.equals(event.getPropertyName(), "doneWithSuccess")) {
-			AbstractWorker<?, ?> source = (AbstractWorker<?, ?>) event.getSource();
-			if (BooleanUtils.isTrue((Boolean) event.getNewValue())) {
-				doneWithSuccess(source);
-			} else {
-				doneWithError(source, source.getErrorMessage());
-			}
+	default void stateChange(SwingWorker<?, ?> source, StateValue oldState, StateValue newState) {
+		AbstractWorker<?, ?> worker = (AbstractWorker<?, ?>) source;
+		if (newState == StateValue.DONE && worker.isDoneWithSuccess()) {
+			doneWithSuccess(worker);
+		} else if (newState == StateValue.DONE) {
+			doneWithError(worker, worker.getErrorMessage());
 		}
 	}
 
