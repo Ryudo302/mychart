@@ -2,6 +2,7 @@ package br.com.colbert.mychart.infraestrutura.providers;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.validation.*;
 
@@ -11,6 +12,7 @@ import javax.validation.*;
  * @author Thiago Colbert
  * @since 13/12/2014
  */
+@ApplicationScoped
 public final class ValidationProvider implements Serializable {
 
 	private static final long serialVersionUID = -730796206381622321L;
@@ -21,6 +23,7 @@ public final class ValidationProvider implements Serializable {
 	 * @return a instância criada
 	 */
 	@Produces
+	@ApplicationScoped
 	public ValidatorFactory validatorFactory() {
 		return Validation.buildDefaultValidatorFactory();
 	}
