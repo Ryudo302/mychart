@@ -128,8 +128,14 @@ public class Artista extends AbstractEntidade<String> {
 	}
 
 	@PostLoad
-	protected void setPersistente() {
+	@PostPersist
+	protected void persistente() {
 		persistente = true;
+	}
+
+	@PostRemove
+	protected void transiente() {
+		persistente = false;
 	}
 
 	/**

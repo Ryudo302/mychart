@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 
 import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepository;
-import br.com.colbert.mychart.infraestrutura.exception.*;
+import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
 import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapper;
 
 /**
@@ -63,11 +63,11 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao salvar artista: {0}")
-	public void incluirOuAlterar(Artista artista) throws RepositoryException {
+	public Artista incluirOuAlterar(Artista artista) throws RepositoryException {
 		Objects.requireNonNull(artista, "O artista a ser adicionado é obrigatório");
 
 		logger.debug("Persistindo artista");
-		getEntityManager().merge(artista);
+		return getEntityManager().merge(artista);
 	}
 
 	@Override
@@ -92,6 +92,7 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 			}
 		}
 
+		logger.debug("Algum artista foi removido? {}", removido);
 		return removido;
 	}
 }

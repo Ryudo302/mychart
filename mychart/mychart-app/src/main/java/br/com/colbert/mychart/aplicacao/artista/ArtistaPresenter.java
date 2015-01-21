@@ -14,7 +14,6 @@ import javax.swing.event.ListSelectionEvent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mvp4j.AppController;
-import org.mvp4j.adapter.MVPBinding;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.ui.EstadoTelaCrud;
@@ -48,6 +47,7 @@ public class ArtistaPresenter implements Serializable {
 			this.limparTela = limparTelaQuandoSucesso;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void doneWithSuccess(SwingWorker<?, ?> worker) {
 			messagesView.adicionarMensagemSucesso(formatarMensagem(mensagemSucesso, worker));
@@ -103,12 +103,10 @@ public class ArtistaPresenter implements Serializable {
 	@Inject
 	private Instance<RemoverArtistaWorker> removerArtistaWorker;
 
-	private MVPBinding binding;
-
 	@PostConstruct
 	protected void doBinding() {
 		logger.trace("Definindo bindings");
-		binding = appController.bind(view, Artista.ARTISTA_NULL, this);
+		appController.bind(view, Artista.ARTISTA_NULL, this);
 	}
 
 	public void start() {

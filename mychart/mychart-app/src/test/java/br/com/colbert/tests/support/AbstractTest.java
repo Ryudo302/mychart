@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import br.com.colbert.mychart.infraestrutura.info.ApplicationProperties;
 import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapperInterceptor;
 import br.com.colbert.mychart.infraestrutura.providers.TransactionManagerProvider;
+import br.com.colbert.mychart.ui.comum.LoadingDialog;
 
 /**
  * Classe-base para todos os testes da aplicação.
@@ -17,7 +18,8 @@ import br.com.colbert.mychart.infraestrutura.providers.TransactionManagerProvide
  * @since 08/12/2014
  */
 @RunWith(CdiRunner.class)
-@AdditionalPackages({ ExceptionWrapperInterceptor.class, TransactionManagerProvider.class, ApplicationProperties.class })
+@AdditionalPackages({ ExceptionWrapperInterceptor.class, TransactionManagerProvider.class, ApplicationProperties.class,
+		LoadingDialog.class })
 @AdditionalClasses(LoggerProducer.class)
 public abstract class AbstractTest {
 

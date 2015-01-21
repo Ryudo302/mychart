@@ -65,11 +65,11 @@ public class CancaoJpaRepository implements CancaoRepository {
 
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao salvar canção: {0}")
-	public void incluirOuAlterar(Cancao cancao) throws RepositoryException {
+	public Cancao incluirOuAlterar(Cancao cancao) throws RepositoryException {
 		Objects.requireNonNull(cancao, "A canção a ser adicionada é obrigatória");
 
 		logger.debug("Salvando canção");
-		getEntityManager().merge(cancao);
+		return getEntityManager().merge(cancao);
 	}
 
 	@Override

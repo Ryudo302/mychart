@@ -41,17 +41,21 @@ public abstract class AbstractWorker<T, V> extends SwingWorker<T, V> {
 	}
 
 	/**
+	 * Notifica os ouvintes interessados de que ocorreu um erro durante a execução da tarefa.
 	 * 
 	 * @param exception
+	 *            a exceção que ocorreu
 	 */
 	protected void fireError(Exception exception) {
 		String rootCauseMessage = ExceptionUtils.getRootCauseMessage(exception);
 		errorMessage = StringUtils.isNotBlank(rootCauseMessage) ? rootCauseMessage : exception.getLocalizedMessage();
+		firePropertyChange("errorMessage", null, errorMessage);
 		firePropertyChange("doneWithSuccess", doneWithSuccess, false);
 		doneWithSuccess = false;
 	}
 
 	/**
+	 * Adiciona um {@link WorkerStateListener}.
 	 * 
 	 * @param listener
 	 */
@@ -60,6 +64,7 @@ public abstract class AbstractWorker<T, V> extends SwingWorker<T, V> {
 	}
 
 	/**
+	 * Adiciona um {@link WorkerDoneListener}.
 	 * 
 	 * @param listener
 	 */

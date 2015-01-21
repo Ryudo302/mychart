@@ -22,10 +22,11 @@ public interface RepositorioIncluivelAlteravel<E extends Entidade<ID>, ID extend
 	 * 
 	 * @param elemento
 	 *            a ser adicionado ou alterado
+	 * @return o elemento que foi incluído ou alterado
 	 * @throws NullPointerException
 	 *             caso o elemento seja <code>null</code>
 	 * @throws RepositoryException
 	 *             caso ocorra algum erro não tratado durante a operação
 	 */
-	void incluirOuAlterar(E elemento) throws RepositoryException;
+	E incluirOuAlterar(E elemento) throws RepositoryException;
 }
