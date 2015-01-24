@@ -37,7 +37,7 @@ public class ImagesProvider {
 		return toBufferedImage(loadImageAsIcon(fileName));
 	}
 
-	private Icon loadImageAsIcon(String fileName) throws IOException {
+	public Icon loadImageAsIcon(String fileName) throws IOException {
 		logger.trace("Carregando imagem: {}", fileName);
 		return new ImageIcon(FileUtils.toFile(
 				Thread.currentThread().getContextClassLoader().getResource(IMAGES_DIR + '/' + fileName)).getPath());

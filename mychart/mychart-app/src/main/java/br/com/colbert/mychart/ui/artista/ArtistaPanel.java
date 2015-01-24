@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.*;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
+import javax.inject.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionListener;
@@ -50,6 +50,9 @@ public class ArtistaPanel implements FormView<Artista>, Serializable {
 	private JTable artistasTable;
 
 	private ArtistaTableModel artistasTableModel;
+
+	@Inject
+	private ArtistaSalvoColumnTableCellRenderer artistaSalvoColumnRenderer;
 
 	@Action(name = "consultarArtistas")
 	private JButton consultarButton;
@@ -131,6 +134,7 @@ public class ArtistaPanel implements FormView<Artista>, Serializable {
 		artistasTable.setAutoCreateRowSorter(true);
 		artistasTable.setFillsViewportHeight(true);
 		artistasTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		artistasTable.getColumnModel().getColumn(2).setCellRenderer(artistaSalvoColumnRenderer);
 
 		JScrollPane tabelaScrollPane = new JScrollPane();
 		tabelaScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
