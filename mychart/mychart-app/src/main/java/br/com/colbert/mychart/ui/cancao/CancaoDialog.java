@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.concurrent.FutureTask;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.swing.*;
@@ -29,7 +28,7 @@ import br.com.colbert.mychart.ui.principal.MainWindow;
  * @author Thiago Colbert
  * @since 05/01/2015
  */
-//@ApplicationScoped
+// @ApplicationScoped
 public class CancaoDialog implements Serializable {
 
 	private static final long serialVersionUID = 8909053142047968045L;

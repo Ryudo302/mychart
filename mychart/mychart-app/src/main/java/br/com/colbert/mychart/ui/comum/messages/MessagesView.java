@@ -27,9 +27,10 @@ public class MessagesView implements Serializable {
 		SwingUtils.invokeLater(() -> JOptionPane.showMessageDialog(null, mensagem, "Alerta", JOptionPane.WARNING_MESSAGE));
 	}
 
-	public void adicionarMensagemErro(String resumo, String detalhes) {
+	public void adicionarMensagemErro(String resumo, Throwable exception) {
 		SwingUtils.invokeLater(() -> JOptionPane.showMessageDialog(null,
-				MessageFormat.format("{0}:\n\n{1}\n\n", resumo, detalhes), "Erro", JOptionPane.ERROR_MESSAGE));
+				MessageFormat.format("{0}:\n\n{1}\n\n", resumo, exception.getLocalizedMessage()), "Erro",
+				JOptionPane.ERROR_MESSAGE));
 	}
 
 	public RespostaConfirmacao exibirConfirmacao(String mensagem) {

@@ -51,7 +51,7 @@ public class MensagensWorkerListener extends WorkerDoneAdapter {
 	}
 
 	@Override
-	public void doneWithError(SwingWorker<?, ?> worker, String errorMessage) {
-		messagesView.adicionarMensagemErro(mensagemErro, errorMessage);
+	public void doneWithError(SwingWorker<?, ?> worker, Throwable error) {
+		messagesView.adicionarMensagemErro(mensagemErro, error);
 	}
 }

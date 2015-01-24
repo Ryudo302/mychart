@@ -1,7 +1,6 @@
 package br.com.colbert.mychart.aplicacao.principal;
 
 import java.io.Serializable;
-import java.lang.Thread.UncaughtExceptionHandler;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -13,6 +12,7 @@ import org.mvp4j.AppController;
 import org.slf4j.Logger;
 
 import br.com.colbert.mychart.aplicacao.artista.ArtistaPresenter;
+import br.com.colbert.mychart.aplicacao.comum.ErroPresenter;
 import br.com.colbert.mychart.infraestrutura.lastfm.LastFmWs;
 import br.com.colbert.mychart.ui.comum.messages.*;
 import br.com.colbert.mychart.ui.principal.MainWindow;
@@ -25,7 +25,7 @@ import br.com.colbert.mychart.ui.topmusical.TopMusicalConfigView;
  * @author Thiago Colbert
  * @since 18/12/2014
  */
-public class MainPresenter implements UncaughtExceptionHandler, Serializable {
+public class MainPresenter implements Serializable {
 
 	private static final long serialVersionUID = 9104572255370820023L;
 
@@ -39,6 +39,8 @@ public class MainPresenter implements UncaughtExceptionHandler, Serializable {
 	private MainWindow mainWindow;
 	@Inject
 	private MessagesView messagesView;
+	@Inject
+	private ErroPresenter erroPresenter;
 	@Inject
 	private TopMusicalConfigView topMusicalConfigView;
 	@Inject
@@ -63,7 +65,7 @@ public class MainPresenter implements UncaughtExceptionHandler, Serializable {
 	 */
 	public void iniciar(@Observes ContainerInitialized event) {
 		logger.info("Iniciando...");
-		Thread.setDefaultUncaughtExceptionHandler(this);
+		Thread.setDefaultUncaughtExceptionHandler(erroPresenter);
 
 		entityManagerFactory.toString();
 
@@ -83,6 +85,15 @@ public class MainPresenter implements UncaughtExceptionHandler, Serializable {
 			logger.info("Encerrando...");
 			mainWindow.close();
 		}
+	}
+
+	/**
+	 * Verifica se a janela principal está visível ou não.
+	 * 
+	 * @return <code>true</code>/<code>false</code>
+	 */
+	public boolean isJanelaVisivel() {
+		return mainWindow.getFrame().isVisible();
 	}
 
 	public void exibirTelaInicio() {
@@ -109,11 +120,5 @@ public class MainPresenter implements UncaughtExceptionHandler, Serializable {
 	public void exibirTelaSobre() {
 		logger.debug("Exibindo janela 'Sobre'");
 		sobreDialog.setVisible(true);
-	}
-
-	@Override
-	public void uncaughtException(Thread thread, Throwable thrown) {
-		logger.error("Erro não tratado (thread: {})", thread.getName(), thrown);
-		messagesView.adicionarMensagemErro("Ocorreu um erro não tratado", thrown.getLocalizedMessage());
 	}
 }

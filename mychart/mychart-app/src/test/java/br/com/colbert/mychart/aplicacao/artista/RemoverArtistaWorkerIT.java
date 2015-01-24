@@ -52,8 +52,9 @@ public class RemoverArtistaWorkerIT extends AbstractDbUnitTest {
 			}
 
 			@Override
-			public void doneWithError(SwingWorker<?, ?> worker, String errorMessage) {
-				fail(errorMessage);
+			public void doneWithError(SwingWorker<?, ?> worker, Throwable error) {
+				error.printStackTrace();
+				fail(error.getLocalizedMessage());
 			}
 		});
 
@@ -75,8 +76,9 @@ public class RemoverArtistaWorkerIT extends AbstractDbUnitTest {
 			}
 
 			@Override
-			public void doneWithError(SwingWorker<?, ?> worker, String errorMessage) {
-				fail(errorMessage);
+			public void doneWithError(SwingWorker<?, ?> worker, Throwable error) {
+				error.printStackTrace();
+				fail(error.getLocalizedMessage());
 			}
 		});
 

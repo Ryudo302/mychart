@@ -76,7 +76,7 @@ public class CancaoController implements Serializable {
 			view.setCancoesDisponiveis(cancoesUniqueList);
 		} catch (RepositoryException | ServiceException exception) {
 			logger.error("Erro ao consultar canções a partir de exemplo: " + exemplo, exception);
-			messagesView.adicionarMensagemErro("Erro ao consultar canções", exception.getLocalizedMessage());
+			messagesView.adicionarMensagemErro("Erro ao consultar canções", exception);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class CancaoController implements Serializable {
 			messagesView.adicionarMensagemAlerta(exception.getLocalizedMessage());
 		} catch (RepositoryException exception) {
 			logger.error("Erro ao adicionar canção: " + cancao, exception);
-			messagesView.adicionarMensagemErro("Erro ao adicionar artista", exception.getLocalizedMessage());
+			messagesView.adicionarMensagemErro("Erro ao adicionar artista", exception);
 		}
 	}
 

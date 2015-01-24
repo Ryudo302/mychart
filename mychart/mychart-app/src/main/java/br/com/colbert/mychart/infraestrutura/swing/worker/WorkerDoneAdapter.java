@@ -20,6 +20,6 @@ public abstract class WorkerDoneAdapter implements WorkerDoneListener, Serializa
 	}
 
 	@Override
-	public void doneWithError(SwingWorker<?, ?> worker, String errorMessage) {
+	public void doneWithError(SwingWorker<?, ?> worker, Throwable throwable) {
 	}
 }

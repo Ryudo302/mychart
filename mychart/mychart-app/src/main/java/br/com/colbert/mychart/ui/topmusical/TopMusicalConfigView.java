@@ -140,7 +140,7 @@ public class TopMusicalConfigView implements Serializable {
 			topMusicalConfiguration.salvar();
 		} catch (IOException exception) {
 			logger.error("Erro ao salvar configurações", exception);
-			messagesView.adicionarMensagemErro("Erro ao salvar configurações", exception.getLocalizedMessage());
+			messagesView.adicionarMensagemErro("Erro ao salvar configurações", exception);
 		}
 	}
 

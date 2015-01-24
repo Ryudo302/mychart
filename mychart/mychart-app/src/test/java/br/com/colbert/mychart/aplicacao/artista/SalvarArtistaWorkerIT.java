@@ -54,8 +54,9 @@ public class SalvarArtistaWorkerIT extends AbstractDbUnitTest {
 			}
 
 			@Override
-			public void doneWithError(SwingWorker<?, ?> worker, String errorMessage) {
-				fail(errorMessage);
+			public void doneWithError(SwingWorker<?, ?> worker, Throwable error) {
+				error.printStackTrace();
+				fail(error.getLocalizedMessage());
 			}
 		});
 
@@ -79,8 +80,9 @@ public class SalvarArtistaWorkerIT extends AbstractDbUnitTest {
 			}
 
 			@Override
-			public void doneWithError(SwingWorker<?, ?> worker, String errorMessage) {
-				fail(errorMessage);
+			public void doneWithError(SwingWorker<?, ?> worker, Throwable error) {
+				error.printStackTrace();
+				fail(error.getLocalizedMessage());
 			}
 		});
 
@@ -104,8 +106,8 @@ public class SalvarArtistaWorkerIT extends AbstractDbUnitTest {
 			}
 
 			@Override
-			public void doneWithError(SwingWorker<?, ?> worker, String errorMessage) {
-				assertThat(errorMessage, containsString("Validacao"));
+			public void doneWithError(SwingWorker<?, ?> worker, Throwable error) {
+				assertThat(error.getLocalizedMessage(), containsString("Validacao"));
 			}
 		});
 

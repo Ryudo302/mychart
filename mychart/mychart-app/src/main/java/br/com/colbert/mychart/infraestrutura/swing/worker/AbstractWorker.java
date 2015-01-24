@@ -7,9 +7,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 
 /**
@@ -30,7 +27,7 @@ public abstract class AbstractWorker<T, V> extends SwingWorker<T, V> {
 	protected MessagesView messagesView;
 
 	protected boolean doneWithSuccess = true;
-	protected String errorMessage;
+	protected Throwable lastError;
 
 	@Inject
 	private WorkerWaitListener workerWaitListener;
@@ -47,9 +44,8 @@ public abstract class AbstractWorker<T, V> extends SwingWorker<T, V> {
 	 *            a exceção que ocorreu
 	 */
 	protected void fireError(Exception exception) {
-		String rootCauseMessage = ExceptionUtils.getRootCauseMessage(exception);
-		errorMessage = StringUtils.isNotBlank(rootCauseMessage) ? rootCauseMessage : exception.getLocalizedMessage();
-		firePropertyChange("errorMessage", null, errorMessage);
+		lastError = exception;
+		firePropertyChange("errorMessage", null, lastError);
 		firePropertyChange("doneWithSuccess", doneWithSuccess, false);
 		doneWithSuccess = false;
 	}
@@ -90,7 +86,7 @@ public abstract class AbstractWorker<T, V> extends SwingWorker<T, V> {
 		return doneWithSuccess;
 	}
 
-	public String getErrorMessage() {
-		return errorMessage;
+	public Throwable getLastError() {
+		return lastError;
 	}
 }

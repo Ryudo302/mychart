@@ -17,7 +17,7 @@ public interface WorkerDoneListener extends WorkerStateListener {
 		if (newState == StateValue.DONE && worker.isDoneWithSuccess()) {
 			doneWithSuccess(worker);
 		} else if (newState == StateValue.DONE) {
-			doneWithError(worker, worker.getErrorMessage());
+			doneWithError(worker, worker.getLastError());
 		}
 	}
 
@@ -34,8 +34,8 @@ public interface WorkerDoneListener extends WorkerStateListener {
 	 * 
 	 * @param worker
 	 *            a tarefa
-	 * @param errorMessage
-	 *            a mensagem de erro a ser exibida
+	 * @param error
+	 *            o erro que ocorreu
 	 */
-	void doneWithError(SwingWorker<?, ?> worker, String errorMessage);
+	void doneWithError(SwingWorker<?, ?> worker, Throwable error);
 }

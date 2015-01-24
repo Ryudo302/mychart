@@ -55,7 +55,7 @@ public class TopMusicalController implements Serializable {
 			topAtual = repositorio.consultarAtual();
 		} catch (RepositoryException exception) {
 			logger.error("Erro ao carregar o top atual", exception);
-			messagesView.adicionarMensagemErro("Erro ao carregar o top atual", exception.getLocalizedMessage());
+			messagesView.adicionarMensagemErro("Erro ao carregar o top atual", exception);
 			return;
 		}
 
@@ -90,7 +90,7 @@ public class TopMusicalController implements Serializable {
 			messagesView.adicionarMensagemSucesso(cancaoFormatter.format(event.getCancao()) + " estreou!");
 		} catch (ElementoJaExistenteException exception) {
 			logger.error("Erro ao processar estreia: " + event, exception);
-			messagesView.adicionarMensagemErro("Erro ao processar estreia", exception.getLocalizedMessage());
+			messagesView.adicionarMensagemErro("Erro ao processar estreia", exception);
 		}
 	}
 

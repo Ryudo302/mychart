@@ -143,7 +143,7 @@ public class PrimeiroTopMusicalView implements Serializable {
 					((CancaoTableModel) cancoesTable.getModel()).addAllElements(cancaoView.getCancoesSelecionadas());
 				}
 			} catch (Exception exception) {
-				messagesView.adicionarMensagemErro("Erro na seleção de canções", exception.getLocalizedMessage());
+				messagesView.adicionarMensagemErro("Erro na seleção de canções", exception);
 			}
 		});
 		adicionarCancaoButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
