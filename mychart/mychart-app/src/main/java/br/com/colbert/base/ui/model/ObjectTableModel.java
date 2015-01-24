@@ -2,11 +2,12 @@ package br.com.colbert.base.ui.model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.table.*;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.*;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.slf4j.*;
 
@@ -127,6 +128,31 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	}
 
 	/**
+	 * Remove todos os elementos do modelo cuja propriedade informada tenha o valor informado.
+	 * 
+	 * @param propertyName
+	 *            o nome da propriedade
+	 * @param propertyValue
+	 *            o valor da propriedade
+	 * @throws NullPointerException
+	 *             caso o nome ou o valor da propriedade sejam <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             caso o nome da propriedade seja uma String vazia
+	 * @return a quantidade de elementos que foram removidos do modelo
+	 */
+	public int removeElementByProperty(String propertyName, Object propertyValue) {
+		Validate.notEmpty(propertyName, "Nome da propriedade não informado");
+		Objects.requireNonNull(propertyValue, "Valor da propriedade não informado");
+
+		LOGGER.trace("Identificando elementos que atendam ao critério: {} = {}", propertyName, propertyValue);
+		List<T> elementsToRemove = this.elements.stream()
+				.filter(element -> getValue(element, propertyName).equals(propertyValue)).collect(Collectors.toList());
+		LOGGER.trace("Elementos identificados e que serão removidos: {}", elementsToRemove);
+
+		return removeAll(elementsToRemove);
+	}
+
+	/**
 	 * Remove uma coleção de elementos do modelo.
 	 *
 	 * @param elements
@@ -134,12 +160,28 @@ public abstract class ObjectTableModel<T extends Comparable<? super T>> extends 
 	 * @return a quantidade de elementos que foram removidos do modelo
 	 */
 	public int removeAll(List<T> elements) {
+		LOGGER.trace("Removendo todos os elementos: {}", elements);
 		int quantidadeInicialElementos = getRowCount();
 		this.elements.removeAll(elements);
 		fireTableDataChanged();
 		int quantidadeFinalElementos = getRowCount();
 		assert quantidadeFinalElementos - quantidadeInicialElementos >= 0;
 		return quantidadeFinalElementos - quantidadeInicialElementos;
+	}
+
+	/**
+	 * Atualiza os valores das propriedades de um elemento no modelo.
+	 * 
+	 * @param element
+	 *            o elemento a ser atualizado
+	 * @return o elemento que foi atualizado, antes de ser atualizado
+	 */
+	public T refresh(T element) {
+		LOGGER.debug("Refresh: {}", element);
+		int index = this.elements.indexOf(element);
+		T updatedElement = this.elements.set(index, element);
+		fireTableRowsUpdated(index, index);
+		return updatedElement;
 	}
 
 	/**

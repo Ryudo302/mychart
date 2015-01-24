@@ -3,7 +3,7 @@ package br.com.colbert.mychart.ui.artista;
 import java.util.*;
 
 import br.com.colbert.base.ui.model.*;
-import br.com.colbert.mychart.dominio.artista.Artista;
+import br.com.colbert.mychart.dominio.artista.*;
 
 /**
  * Modelo de tabela de {@link Artista}.
@@ -19,7 +19,8 @@ public class ArtistaTableModel extends ObjectTableModel<Artista> {
 		List<ObjectTableModelColumn<?>> colunas = new ArrayList<>(3);
 
 		colunas.add(ObjectTableModelColumn.<String> newColumn().withName("Nome").withTheValueOf("nome").type(String.class));
-		colunas.add(ObjectTableModelColumn.<String> newColumn().withName("Tipo").withTheValueOf("tipo").type(String.class));
+		colunas.add(ObjectTableModelColumn.<TipoArtista> newColumn().withName("Tipo").withTheValueOf("tipo")
+				.type(TipoArtista.class));
 		colunas.add(ObjectTableModelColumn.<Boolean> newColumn().withName("Salvo?").withTheValueOf("persistente")
 				.type(Boolean.class));
 

@@ -29,7 +29,7 @@ import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
  */
 @Singleton
 @MVP(modelClass = Artista.class, presenterClass = ArtistaPresenter.class)
-public class ArtistaPanel implements Serializable {
+public class ArtistaPanel implements FormView<Artista>, Serializable {
 
 	private static final long serialVersionUID = -7371434021781119641L;
 
@@ -59,6 +59,9 @@ public class ArtistaPanel implements Serializable {
 
 	@Action(name = "removerArtista")
 	private JButton removerButton;
+
+	@Action(name = "limparCampos")
+	private JButton limparButton;
 
 	public static void main(String[] args) {
 		new ArtistaPanel().initPanel();
@@ -112,6 +115,9 @@ public class ArtistaPanel implements Serializable {
 		consultarButton = ButtonFactory.createJButton("Consultar",
 				"Procura por artistas que atendam aos critérios informados acima");
 		botoesPanel.add(consultarButton);
+
+		limparButton = ButtonFactory.createJButton("Limpar", "Limpa todos os campos acima");
+		botoesPanel.add(limparButton);
 
 		salvarButton = ButtonFactory.createJButton("Salvar", "Salva o artista selecionado");
 		botoesPanel.add(salvarButton);
@@ -187,8 +193,19 @@ public class ArtistaPanel implements Serializable {
 	 * @param artistas
 	 *            os artistas
 	 */
-	public void setArtistas(Collection<Artista> artistas) {
+	@Override
+	public void setConteudoTabela(Collection<Artista> artistas) {
 		SwingUtils.invokeLater(() -> artistasTableModel.setElements(artistas));
+	}
+
+	/**
+	 * Atualiza os valores das propriedades de um artista na tabela.
+	 * 
+	 * @param artista
+	 *            a ser atualizado
+	 */
+	public void atualizarArtista(Artista artista) {
+		SwingUtils.invokeLater(() -> artistasTableModel.refresh(artista));
 	}
 
 	/**
@@ -200,13 +217,11 @@ public class ArtistaPanel implements Serializable {
 	public void setEstadoAtual(EstadoTelaCrud estadoAtual) {
 		switch (estadoAtual) {
 		case CONSULTA:
-			nomeTextField.setEditable(true);
 			tipoComboBox.setEnabled(false);
 			salvarButton.setEnabled(false);
 			removerButton.setEnabled(false);
 			break;
 		case INCLUSAO_OU_ALTERACAO:
-			nomeTextField.setEditable(false);
 			tipoComboBox.setEnabled(true);
 			salvarButton.setEnabled(true);
 			removerButton.setEnabled(getArtistaSelecionado().filter(artista -> artista.getPersistente()).isPresent());
@@ -214,9 +229,7 @@ public class ArtistaPanel implements Serializable {
 		}
 	}
 
-	/**
-	 * Limpa todos os dados da tela.
-	 */
+	@Override
 	public void limparTela() {
 		SwingUtils.clearAllData(panel);
 		setEstadoAtual(EstadoTelaCrud.CONSULTA);
@@ -258,5 +271,9 @@ public class ArtistaPanel implements Serializable {
 
 	public JButton getSalvarButton() {
 		return salvarButton;
+	}
+
+	public JButton getLimparButton() {
+		return limparButton;
 	}
 }

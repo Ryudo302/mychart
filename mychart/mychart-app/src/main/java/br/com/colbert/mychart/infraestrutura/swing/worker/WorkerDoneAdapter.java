@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.swing.SwingWorker;
 
 /**
+ * Classe abstrata que implementa a interface {@link WorkerDoneListener}, permitindo que as subclasses sobrescrevam apenas aqueles
+ * métodos aos quais tem interesse.
  * 
  * @author Thiago Colbert
  * @since 20/01/2015

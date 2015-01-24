@@ -43,11 +43,11 @@ public final class SwingUtils {
 			if (componente instanceof JTextComponent) {
 				((JTextComponent) componente).setText(StringUtils.EMPTY);
 			} else if (componente instanceof JComboBox) {
-				((JComboBox<?>) componente).setSelectedIndex(-1);
+				((JComboBox<?>) componente).setSelectedIndex(0);
 			} else if (componente instanceof JToggleButton) {
 				((JToggleButton) componente).setSelected(false);
-			} else if (componente instanceof JTable) {
-				clearJTable((JTable) componente);
+			/*} else if (componente instanceof JTable) {
+				clearJTable((JTable) componente);*/
 			} else if (componente instanceof Container) {
 				_clearAllInputs((Container) componente);
 			}

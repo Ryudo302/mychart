@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.SwingWorker.StateValue;
 
 /**
- * TODO
+ * Extensão de {@link WorkerStateListener} que permite verificar se a tarefa foi finalizada com sucesso ou com erros.
  * 
  * @author Thiago Colbert
  * @since 20/01/2015
@@ -22,14 +22,20 @@ public interface WorkerDoneListener extends WorkerStateListener {
 	}
 
 	/**
+	 * A tarefa foi finalizada com sucesso.
 	 * 
 	 * @param worker
+	 *            a tarefa
 	 */
 	void doneWithSuccess(SwingWorker<?, ?> worker);
 
 	/**
+	 * A tarefa foi finalizada com erro.
 	 * 
 	 * @param worker
+	 *            a tarefa
+	 * @param errorMessage
+	 *            a mensagem de erro a ser exibida
 	 */
 	void doneWithError(SwingWorker<?, ?> worker, String errorMessage);
 }

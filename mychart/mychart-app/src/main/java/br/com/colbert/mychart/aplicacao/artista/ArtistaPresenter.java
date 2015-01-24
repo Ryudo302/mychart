@@ -2,8 +2,6 @@ package br.com.colbert.mychart.aplicacao.artista;
 
 import java.awt.event.KeyEvent;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -33,59 +31,6 @@ public class ArtistaPresenter implements Serializable {
 
 	private static final long serialVersionUID = 8111564698178618449L;
 
-	private final class ArtistaWorkerDoneListener extends WorkerDoneAdapter {
-
-		private static final long serialVersionUID = -200308075599872055L;
-
-		private String mensagemSucesso;
-		private String mensagemErro;
-		private boolean limparTela;
-
-		public ArtistaWorkerDoneListener(String mensagemSucesso, String mensagemErro, boolean limparTelaQuandoSucesso) {
-			this.mensagemSucesso = mensagemSucesso;
-			this.mensagemErro = mensagemErro;
-			this.limparTela = limparTelaQuandoSucesso;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public void doneWithSuccess(SwingWorker<?, ?> worker) {
-			messagesView.adicionarMensagemSucesso(formatarMensagem(mensagemSucesso, worker));
-			if (limparTela) {
-				view.limparTela();
-			}
-
-			Object result = ((AbstractWorker<?, ?>) worker).getResult();
-			if (result != null && result instanceof Collection) {
-				view.setArtistas((Collection<Artista>) result);
-			}
-		}
-
-		private String formatarMensagem(String mensagem, SwingWorker<?, ?> worker) {
-			if (mensagem.indexOf('{') != -1) {
-				String metodo = mensagem.substring(mensagem.indexOf('{') + 1, mensagem.indexOf('}'));
-				Object result = ((AbstractWorker<?, ?>) worker).getResult();
-				return mensagem.replace('{' + metodo + '}', invokeMethod(result, metodo));
-			} else {
-				return mensagem;
-			}
-		}
-
-		private String invokeMethod(Object result, String metodo) {
-			try {
-				return result.getClass().getMethod(metodo).invoke(result).toString();
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-					| SecurityException exception) {
-				throw new IllegalArgumentException("Erro ao invocar método " + metodo + " do objeto " + result, exception);
-			}
-		}
-
-		@Override
-		public void doneWithError(SwingWorker<?, ?> worker, String errorMessage) {
-			messagesView.adicionarMensagemErro(mensagemErro, errorMessage);
-		}
-	}
-
 	@Inject
 	private Logger logger;
 	@Inject
@@ -106,7 +51,7 @@ public class ArtistaPresenter implements Serializable {
 	@PostConstruct
 	protected void doBinding() {
 		logger.trace("Definindo bindings");
-		appController.bind(view, Artista.ARTISTA_NULL, this);
+		appController.bind(view, Artista.ARTISTA_NULL.clone(), this);
 	}
 
 	public void start() {
@@ -122,9 +67,9 @@ public class ArtistaPresenter implements Serializable {
 		} else {
 			worker.setExemplo(criarArtista(null, nomeArtista, view.getTipoArtista()));
 			worker.execute();
-
-			worker.addWorkerDoneListener(new ArtistaWorkerDoneListener("Foi(ram) encontrado(s) {size} artista(s)",
-					"Erro ao consultar artistas", false));
+			worker.addWorkerDoneListener(new DefinirConteudoTabelaWorkerListener<>(view));
+			worker.addWorkerDoneListener(new MensagensWorkerListener(messagesView, "Foi(ram) encontrado(s) {size} artista(s)",
+					"Erro ao consultar artistas"));
 		}
 	}
 
@@ -133,7 +78,20 @@ public class ArtistaPresenter implements Serializable {
 		SalvarArtistaWorker worker = salvarArtistaWorker.get();
 		worker.setArtista(criarArtista(view.getIdArtista(), view.getNomeArtista(), view.getTipoArtista()));
 		worker.execute();
-		worker.addWorkerDoneListener(new ArtistaWorkerDoneListener("Artista salvo com sucesso!", "Erro ao salvar artista", true));
+		worker.addWorkerDoneListener(new WorkerDoneAdapter() {
+
+			private static final long serialVersionUID = 8235417074768298229L;
+
+			@Override
+			@SuppressWarnings("unchecked")
+			public void doneWithSuccess(SwingWorker<?, ?> worker) {
+				view.atualizarArtista(((AbstractWorker<Artista, ?>) worker).getResult());
+			}
+		});
+
+		worker.addWorkerDoneListener(new MensagensWorkerListener(messagesView, "Artista salvo com sucesso!",
+				"Erro ao salvar artista"));
+		worker.addWorkerDoneListener(new LimparTelaWorkerListener(view));
 	}
 
 	public void removerArtista() {
@@ -142,8 +100,22 @@ public class ArtistaPresenter implements Serializable {
 			RemoverArtistaWorker worker = removerArtistaWorker.get();
 			worker.setIdArtista(view.getIdArtista());
 			worker.execute();
-			worker.addWorkerDoneListener(new ArtistaWorkerDoneListener("Artista removido com sucesso!",
-					"Erro ao remover artista", true));
+			worker.addWorkerDoneListener(new WorkerDoneAdapter() {
+
+				private static final long serialVersionUID = 8235417074768298229L;
+
+				@Override
+				public void doneWithSuccess(SwingWorker<?, ?> worker) {
+					Artista artista = Artista.ARTISTA_NULL.clone();
+					artista.setId(view.getIdArtista());
+					artista.setNome(view.getNomeArtista());
+					view.atualizarArtista(artista);
+				}
+			});
+
+			worker.addWorkerDoneListener(new MensagensWorkerListener(messagesView, "Artista removido com sucesso!",
+					"Erro ao remover artista"));
+			worker.addWorkerDoneListener(new LimparTelaWorkerListener(view));
 		}
 	}
 
@@ -161,8 +133,13 @@ public class ArtistaPresenter implements Serializable {
 		view.getArtistaSelecionado().ifPresent(artista -> {
 			logger.trace("Artista selecionado: " + artista);
 			appController.bindModel(view, artista);
+			appController.refreshView(view);
 			view.setEstadoAtual(EstadoTelaCrud.INCLUSAO_OU_ALTERACAO);
 		});
+	}
+
+	public void limparCampos() {
+		view.limparTela();
 	}
 
 	private Artista criarArtista(String id, String nome, TipoArtista tipo) {

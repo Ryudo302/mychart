@@ -20,7 +20,7 @@ import br.com.colbert.mychart.infraestrutura.validacao.Nome;
  */
 @Entity
 @Table(name = "TB_ARTISTA")
-public class Artista extends AbstractEntidade<String> {
+public class Artista extends AbstractEntidade<String> implements Cloneable {
 
 	public static final Artista ARTISTA_NULL = new Artista(null, null, TipoArtista.DESCONHECIDO);
 
@@ -151,6 +151,11 @@ public class Artista extends AbstractEntidade<String> {
 	@Transient
 	public List<TipoArtista> getTiposArtistas() {
 		return Arrays.asList(TipoArtista.values());
+	}
+
+	@Override
+	public Artista clone() {
+		return new Artista(this);
 	}
 
 	@Override
