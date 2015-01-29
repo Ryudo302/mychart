@@ -2,6 +2,8 @@ package br.com.colbert.mychart.dominio.topmusical;
 
 import java.time.*;
 
+import br.com.colbert.mychart.infraestrutura.util.EnumUtils;
+
 /**
  * Os diversos períodos de frequência que um top pode ter.
  * 
@@ -59,5 +61,10 @@ public enum Frequencia {
 	 */
 	public Period getPeriodo() {
 		return periodo;
+	}
+
+	@Override
+	public String toString() {
+		return EnumUtils.toFormattedString(this);
 	}
 }

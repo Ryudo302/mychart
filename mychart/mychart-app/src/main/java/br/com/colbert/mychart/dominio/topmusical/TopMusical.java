@@ -23,9 +23,14 @@ import br.com.colbert.mychart.infraestrutura.exception.ElementoJaExistenteExcept
 @Entity
 @Table(name = "TB_TOP_MUSICAL")
 @NamedQueries({ @NamedQuery(name = "TopMusical.findAtual", query = "SELECT tm FROM TopMusical tm JOIN FETCH tm.posicoes WHERE tm.periodo.dataInicial = (SELECT MAX(tm1.periodo.dataInicial) FROM TopMusical tm1)") })
-public class TopMusical extends AbstractEntidade<Integer> {
+public class TopMusical extends AbstractEntidade<Integer> implements Cloneable {
 
 	private static final long serialVersionUID = -2569620277984255920L;
+
+	/**
+	 * Instância de um {@link TopMusical} sem nenhuma propriedade definida.
+	 */
+	public static final TopMusical TOP_MUSICAL_NULL = new TopMusical(null, null, Optional.empty(), Optional.empty());
 
 	public static final int NUMERO_PRIMEIRA_POSICAO = 1;
 
@@ -190,6 +195,11 @@ public class TopMusical extends AbstractEntidade<Integer> {
 	 */
 	public int getQuantidadePosicoes() {
 		return posicoes.size();
+	}
+
+	@Override
+	public Object clone() {
+		return new TopMusical(numero, periodo, getAnterior(), getProximo(), posicoes);
 	}
 
 	@Override

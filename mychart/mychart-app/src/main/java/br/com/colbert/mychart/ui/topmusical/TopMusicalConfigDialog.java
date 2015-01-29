@@ -1,23 +1,24 @@
 package br.com.colbert.mychart.ui.topmusical;
 
-import java.awt.Container;
+import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
+import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import javax.inject.*;
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.Logger;
+import org.mvp4j.annotation.*;
+import org.mvp4j.annotation.Action;
 
 import com.jgoodies.forms.layout.*;
 
 import br.com.colbert.base.ui.ButtonFactory;
+import br.com.colbert.mychart.aplicacao.topmusical.TopMusicalConfigPresenter;
 import br.com.colbert.mychart.dominio.topmusical.*;
-import br.com.colbert.mychart.ui.comum.messages.MessagesView;
+import br.com.colbert.mychart.infraestrutura.providers.ImagesProvider;
 import br.com.colbert.mychart.ui.principal.MainWindow;
 
 /**
@@ -26,29 +27,34 @@ import br.com.colbert.mychart.ui.principal.MainWindow;
  * @author Thiago Colbert
  * @since 04/01/2015
  */
-@ApplicationScoped
-public class TopMusicalConfigView implements Serializable {
+@Singleton
+@MVP(modelClass = TopMusicalConfiguration.class, presenterClass = TopMusicalConfigPresenter.class)
+public class TopMusicalConfigDialog implements Serializable {
 
 	private static final long serialVersionUID = -3162266008710325966L;
 
 	@Inject
-	private Logger logger;
-
-	@Inject
-	private TopMusicalConfiguration topMusicalConfiguration;
+	private ImagesProvider images;
 
 	@Inject
 	private MainWindow mainWindow;
-	@Inject
-	private MessagesView messagesView;
-
+	@Action(name = "descartarAlteracoes", EventAction = "windowClosing", EventType = WindowListener.class)
 	private JDialog dialog;
 
+	@Model(property = "quantidadePosicoes", initProperty = "quantidadesPosicoesPermitidas")
+	@Action(name = "quantidadePosicoesSelecionada", EventAction = "stateChanged", EventType = ChangeListener.class)
 	private JSpinner quantidadePosicoesSpinner;
+	@Model(property = "frequencia", initProperty = "frequenciasPermitidas")
+	@Action(name = "frequenciaSelecionada", EventAction = "itemStateChanged", EventType = ItemListener.class)
 	private JComboBox<Frequencia> frequenciaComboBox;
 
+	@Action(name = "salvarAlteracoes")
+	private JButton salvarButton;
+	@Action(name = "descartarAlteracoes")
+	private JButton cancelarButton;
+
 	public static void main(String[] args) {
-		new TopMusicalConfigView().initDialog();
+		new TopMusicalConfigDialog().initDialog();
 	}
 
 	/**
@@ -62,13 +68,6 @@ public class TopMusicalConfigView implements Serializable {
 
 	private void initDialog() {
 		dialog = new JDialog(mainWindow.getFrame(), true);
-		dialog.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent event) {
-				descartarAlteracoes();
-				close();
-			}
-		});
 		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		Container panel = dialog.getContentPane();
@@ -84,13 +83,7 @@ public class TopMusicalConfigView implements Serializable {
 		infoPanel.add(frequenciaLabel, "2, 2, left, center");
 
 		frequenciaComboBox = new JComboBox<Frequencia>();
-		frequenciaComboBox.addItemListener(event -> {
-			if (event.getStateChange() == ItemEvent.SELECTED) {
-				topMusicalConfiguration.setFrequencia((Frequencia) frequenciaComboBox.getSelectedItem());
-			}
-		});
-		frequenciaComboBox.setModel(new DefaultComboBoxModel<Frequencia>(ArrayUtils
-				.toArray(Frequencia.DIARIO, Frequencia.SEMANAL)));
+		frequenciaComboBox.setModel(new DefaultComboBoxModel<>(TopMusicalConfiguration.FREQUENCIAS_PERMITIDAS));
 		infoPanel.add(frequenciaComboBox, "4, 2, fill, default");
 
 		JLabel quantidadePosicoesLabel = new JLabel("Quantidade de Posições:");
@@ -101,27 +94,14 @@ public class TopMusicalConfigView implements Serializable {
 		JFormattedTextField field = (JFormattedTextField) comp.getComponent(0);
 		DefaultFormatter formatter = (DefaultFormatter) field.getFormatter();
 		formatter.setCommitsOnValidEdit(true);
-
-		quantidadePosicoesSpinner.addChangeListener(event -> {
-			topMusicalConfiguration.setQuantidadePosicoes((Integer) quantidadePosicoesSpinner.getValue());
-		});
-		quantidadePosicoesSpinner.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
 		infoPanel.add(quantidadePosicoesSpinner, "4, 4");
 
 		JPanel botoesPanel = new JPanel();
 
-		JButton salvarButton = ButtonFactory.createJButton("Salvar", "Salva as configurações.");
-		salvarButton.addActionListener(event -> {
-			salvarAlteracoes();
-			close();
-		});
+		salvarButton = ButtonFactory.createJButton("Salvar", "Salva as configurações.");
 		botoesPanel.add(salvarButton);
 
-		JButton cancelarButton = ButtonFactory.createJButton("Cancelar", "Cancela as alterações feitas");
-		cancelarButton.addActionListener(event -> {
-			descartarAlteracoes();
-			close();
-		});
+		cancelarButton = ButtonFactory.createJButton("Cancelar", "Cancela as alterações feitas");
 		botoesPanel.add(cancelarButton);
 
 		panel.add(infoPanel);
@@ -131,25 +111,24 @@ public class TopMusicalConfigView implements Serializable {
 	}
 
 	private void initComponents() {
-		frequenciaComboBox.setSelectedItem(topMusicalConfiguration.getFrequencia());
-		quantidadePosicoesSpinner.setValue(topMusicalConfiguration.getQuantidadePosicoes());
+		salvarButton.setIcon(images.loadImageAsIcon("save.png"));
+		cancelarButton.setIcon(images.loadImageAsIcon("remove.png"));
 	}
 
-	private void salvarAlteracoes() {
-		try {
-			topMusicalConfiguration.salvar();
-		} catch (IOException exception) {
-			logger.error("Erro ao salvar configurações", exception);
-			messagesView.adicionarMensagemErro("Erro ao salvar configurações", exception);
-		}
+	/**
+	 * 
+	 * @return
+	 */
+	public Integer getQuantidadePosicoes() {
+		return (Integer) quantidadePosicoesSpinner.getValue();
 	}
 
-	private void descartarAlteracoes() {
-		try {
-			topMusicalConfiguration.descartarAlteracoes();
-		} catch (Exception exception) {
-			logger.warn("Erro ao desfazer alterações", exception);
-		}
+	/**
+	 * 
+	 * @return
+	 */
+	public Frequencia getFrequencia() {
+		return (Frequencia) frequenciaComboBox.getSelectedItem();
 	}
 
 	public void show() {
@@ -160,12 +139,28 @@ public class TopMusicalConfigView implements Serializable {
 		dialog.setVisible(false);
 	}
 
+	public JComboBox<Frequencia> getFrequenciaComboBox() {
+		return frequenciaComboBox;
+	}
+
+	public JSpinner getQuantidadePosicoesSpinner() {
+		return quantidadePosicoesSpinner;
+	}
+
+	public JButton getSalvarButton() {
+		return salvarButton;
+	}
+
+	public JButton getCancelarButton() {
+		return cancelarButton;
+	}
+
 	/**
-	 * Obtém o {@link Container} utilizado para representar a tela.
+	 * Obtém o {@link Dialog} utilizado para representar a tela.
 	 *
 	 * @return a instância do contêiner AWT
 	 */
-	public Container getContainer() {
+	public Dialog getDialog() {
 		return dialog;
 	}
 }

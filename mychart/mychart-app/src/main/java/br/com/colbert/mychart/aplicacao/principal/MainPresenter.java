@@ -13,11 +13,12 @@ import org.slf4j.Logger;
 
 import br.com.colbert.mychart.aplicacao.artista.ArtistaPresenter;
 import br.com.colbert.mychart.aplicacao.comum.ErroPresenter;
+import br.com.colbert.mychart.aplicacao.topmusical.TopMusicalConfigPresenter;
 import br.com.colbert.mychart.infraestrutura.lastfm.LastFmWs;
 import br.com.colbert.mychart.ui.comum.messages.*;
 import br.com.colbert.mychart.ui.principal.MainWindow;
 import br.com.colbert.mychart.ui.sobre.SobreDialog;
-import br.com.colbert.mychart.ui.topmusical.TopMusicalConfigView;
+import br.com.colbert.mychart.ui.topmusical.TopMusicalConfigDialog;
 
 /**
  * <em>Presenter</em> principal da aplicação.
@@ -42,12 +43,14 @@ public class MainPresenter implements Serializable {
 	@Inject
 	private ErroPresenter erroPresenter;
 	@Inject
-	private TopMusicalConfigView topMusicalConfigView;
+	private TopMusicalConfigDialog topMusicalConfigDialog;
 	@Inject
 	private SobreDialog sobreDialog;
 
 	@Inject
 	private ArtistaPresenter artistaPresenter;
+	@Inject
+	private TopMusicalConfigPresenter topMusicalConfigPresenter;
 
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
@@ -114,7 +117,7 @@ public class MainPresenter implements Serializable {
 
 	public void exibirTelaConfiguracoes() {
 		logger.debug("Exibindo tela de configurações");
-		topMusicalConfigView.show();
+		topMusicalConfigPresenter.start();
 	}
 
 	public void exibirTelaSobre() {

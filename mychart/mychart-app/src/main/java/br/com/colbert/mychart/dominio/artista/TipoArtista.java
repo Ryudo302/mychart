@@ -1,5 +1,7 @@
 package br.com.colbert.mychart.dominio.artista;
 
+import br.com.colbert.mychart.infraestrutura.util.EnumUtils;
+
 /**
  * Os diversos tipos de artistas existentes.
  * 
@@ -30,16 +32,6 @@ public enum TipoArtista {
 
 	@Override
 	public String toString() {
-		String[] splitNames = name().toLowerCase().split("_");
-		StringBuffer fixedName = new StringBuffer();
-
-		for (int i = 0; i < splitNames.length; i++) {
-			String firstLetter = splitNames[i].substring(0, 1).toUpperCase(), restOfWord = splitNames[i].substring(1), spacer = i == splitNames.length ? ""
-					: " ";
-
-			fixedName.append(firstLetter).append(restOfWord).append(spacer);
-		}
-
-		return fixedName.toString().trim();
+		return EnumUtils.toFormattedString(this);
 	}
 }
