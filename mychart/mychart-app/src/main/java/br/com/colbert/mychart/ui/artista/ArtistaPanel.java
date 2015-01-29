@@ -19,6 +19,7 @@ import com.jgoodies.forms.layout.*;
 import br.com.colbert.base.ui.*;
 import br.com.colbert.mychart.aplicacao.artista.ArtistaPresenter;
 import br.com.colbert.mychart.dominio.artista.*;
+import br.com.colbert.mychart.infraestrutura.providers.ImagesProvider;
 import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
 
 /**
@@ -65,6 +66,9 @@ public class ArtistaPanel implements FormView<Artista>, Serializable {
 
 	@Action(name = "limparCampos")
 	private JButton limparButton;
+
+	@Inject
+	private ImagesProvider images;
 
 	public static void main(String[] args) {
 		new ArtistaPanel().initPanel();
@@ -146,7 +150,10 @@ public class ArtistaPanel implements FormView<Artista>, Serializable {
 	}
 
 	private void initComponents() {
-
+		consultarButton.setIcon(images.loadImageAsIcon("search.png"));
+		limparButton.setIcon(images.loadImageAsIcon("clear.png"));
+		salvarButton.setIcon(images.loadImageAsIcon("save.png"));
+		removerButton.setIcon(images.loadImageAsIcon("remove.png"));
 	}
 
 	/**

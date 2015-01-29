@@ -1,13 +1,16 @@
 package br.com.colbert.mychart.infraestrutura.providers;
 
 import java.io.File;
+import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.umass.lastfm.Caller;
-import de.umass.lastfm.cache.FileSystemCache;
+import de.umass.lastfm.cache.*;
 
 import br.com.colbert.mychart.infraestrutura.info.*;
 import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao.Formato;
@@ -72,6 +75,27 @@ public class LastFmProvider {
 	}
 
 	/**
+	 * Obtém uma política de expiração de cache.
+	 * 
+	 * @return a política de expiração
+	 */
+	@Produces
+	@Singleton
+	public ExpirationPolicy expirationPolicy() {
+		return new DefaultExpirationPolicy() {
+
+			@Override
+			public long getExpirationTime(String method, Map<String, String> params) {
+				if (StringUtils.equals(method, "artist.search") || StringUtils.equals(method, "track.search")) {
+					return DefaultExpirationPolicy.ONE_WEEK;
+				} else {
+					return super.getExpirationTime(method, params);
+				}
+			}
+		};
+	}
+
+	/**
 	 * Obtém uma instância de {@link Caller} para as operações envolvendo os WebService da LastFM.
 	 * 
 	 * @param baseUrl
@@ -80,16 +104,22 @@ public class LastFmProvider {
 	 *            o nome da aplicação
 	 * @param cacheDir
 	 *            diretório utilizado para cache
+	 * @param expirationPolicy
+	 *            política a ser utilizada quanto à expiração do cache
 	 * @return a instância criada
 	 */
 	@Produces
 	@Singleton
 	public Caller caller(@WsBaseUrl String baseUrl, @TituloAplicacao(Formato.APENAS_NOME) String nomeApp,
-			@CacheDirectory File cacheDir) {
+			@CacheDirectory File cacheDir, ExpirationPolicy expirationPolicy) {
 		Caller caller = Caller.getInstance();
 		caller.setApiRootUrl(baseUrl);
 		caller.setUserAgent(nomeApp);
-		caller.setCache(new FileSystemCache(cacheDir));
+
+		FileSystemCache cache = new FileSystemCache(cacheDir);
+		cache.setExpirationPolicy(expirationPolicy);
+		caller.setCache(cache);
+
 		return caller;
 	}
 }
