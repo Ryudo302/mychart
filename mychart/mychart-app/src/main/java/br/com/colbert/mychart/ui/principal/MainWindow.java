@@ -18,7 +18,7 @@ import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao;
 import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
 import br.com.colbert.mychart.ui.artista.ArtistaPanel;
 import br.com.colbert.mychart.ui.inicio.InicioPanel;
-import br.com.colbert.mychart.ui.topmusical.TopMusicalView;
+import br.com.colbert.mychart.ui.topmusical.TopMusicalPanel;
 
 /**
  * A tela principal da aplicação implementada como um {@link JFrame}.
@@ -51,7 +51,7 @@ public class MainWindow implements Serializable {
 	@Inject
 	private ArtistaPanel artistaView;
 	@Inject
-	private TopMusicalView topMusicalView;
+	private TopMusicalPanel topMusicalView;
 
 	@Action(name = "exibirTelaInicio")
 	private JMenuItem menuItemIncio;

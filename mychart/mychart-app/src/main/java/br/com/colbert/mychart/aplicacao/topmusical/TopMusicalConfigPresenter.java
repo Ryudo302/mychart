@@ -1,7 +1,8 @@
 package br.com.colbert.mychart.aplicacao.topmusical;
 
 import java.awt.event.ItemEvent;
-import java.io.*;
+import java.io.IOException;
+import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -45,8 +46,7 @@ public class TopMusicalConfigPresenter implements Serializable {
 
 	public void start() {
 		logger.debug("Iniciando");
-		view.getFrequenciaComboBox().setSelectedItem(topMusicalConfiguration.getFrequencia());
-		view.getQuantidadePosicoesSpinner().setValue(topMusicalConfiguration.getQuantidadePosicoes());
+		appController.refreshView(view);
 		view.show();
 	}
 

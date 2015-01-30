@@ -14,11 +14,12 @@ import org.slf4j.Logger;
 import br.com.colbert.mychart.aplicacao.artista.ArtistaPresenter;
 import br.com.colbert.mychart.aplicacao.comum.ErroPresenter;
 import br.com.colbert.mychart.aplicacao.topmusical.TopMusicalConfigPresenter;
+import br.com.colbert.mychart.aplicacao.topmusical.TopMusicalPresenter;
 import br.com.colbert.mychart.infraestrutura.lastfm.LastFmWs;
-import br.com.colbert.mychart.ui.comum.messages.*;
+import br.com.colbert.mychart.ui.comum.messages.MessagesView;
+import br.com.colbert.mychart.ui.comum.messages.RespostaConfirmacao;
 import br.com.colbert.mychart.ui.principal.MainWindow;
 import br.com.colbert.mychart.ui.sobre.SobreDialog;
-import br.com.colbert.mychart.ui.topmusical.TopMusicalConfigDialog;
 
 /**
  * <em>Presenter</em> principal da aplicação.
@@ -43,14 +44,14 @@ public class MainPresenter implements Serializable {
 	@Inject
 	private ErroPresenter erroPresenter;
 	@Inject
-	private TopMusicalConfigDialog topMusicalConfigDialog;
-	@Inject
 	private SobreDialog sobreDialog;
 
 	@Inject
 	private ArtistaPresenter artistaPresenter;
 	@Inject
 	private TopMusicalConfigPresenter topMusicalConfigPresenter;
+	@Inject
+	private TopMusicalPresenter topMusicalPresenter;
 
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
@@ -113,6 +114,7 @@ public class MainPresenter implements Serializable {
 	public void exibirTelaTopPrincipal() {
 		logger.debug("Exibindo tela do top principal");
 		mainWindow.mudarTela(MainWindow.TELA_TOP_PRINCIPAL);
+		topMusicalPresenter.start();
 	}
 
 	public void exibirTelaConfiguracoes() {

@@ -15,10 +15,16 @@ import org.mvp4j.AppController;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.ui.EstadoTelaCrud;
-import br.com.colbert.mychart.dominio.artista.*;
-import br.com.colbert.mychart.infraestrutura.swing.worker.*;
+import br.com.colbert.mychart.dominio.artista.Artista;
+import br.com.colbert.mychart.dominio.artista.TipoArtista;
+import br.com.colbert.mychart.infraestrutura.swing.worker.AbstractWorker;
+import br.com.colbert.mychart.infraestrutura.swing.worker.DefinirConteudoTabelaWorkerListener;
+import br.com.colbert.mychart.infraestrutura.swing.worker.LimparTelaWorkerListener;
+import br.com.colbert.mychart.infraestrutura.swing.worker.MensagensWorkerListener;
+import br.com.colbert.mychart.infraestrutura.swing.worker.WorkerDoneAdapter;
 import br.com.colbert.mychart.ui.artista.ArtistaPanel;
-import br.com.colbert.mychart.ui.comum.messages.*;
+import br.com.colbert.mychart.ui.comum.messages.MessagesView;
+import br.com.colbert.mychart.ui.comum.messages.RespostaConfirmacao;
 
 /**
  * <em>Presenter</em> de {@link Artista}.
@@ -60,11 +66,11 @@ public class ArtistaPresenter implements Serializable {
 
 	public void consultarArtistas() {
 		logger.info("Consultando artistas");
-		ConsultaArtistasWorker worker = consultaArtistasWorker.get();
 		String nomeArtista = view.getNomeArtista();
 		if (StringUtils.isBlank(nomeArtista)) {
 			messagesView.adicionarMensagemAlerta("Informe um nome a ser consultado.");
 		} else {
+			ConsultaArtistasWorker worker = consultaArtistasWorker.get();
 			worker.setExemplo(criarArtista(null, nomeArtista, view.getTipoArtista()));
 			worker.execute();
 			worker.addWorkerDoneListener(new DefinirConteudoTabelaWorkerListener<>(view));
@@ -139,6 +145,7 @@ public class ArtistaPresenter implements Serializable {
 	}
 
 	public void limparCampos() {
+		logger.trace("Limpando campos");
 		view.limparTela();
 	}
 

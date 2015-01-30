@@ -3,11 +3,21 @@ package br.com.colbert.mychart.dominio.topmusical;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.builder.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import br.com.colbert.base.dominio.AbstractEntidade;
@@ -73,6 +83,11 @@ public class Posicao extends AbstractEntidade<PosicaoId> {
 		this.permanenciaTotal = permanenciaTotal;
 	}
 
+	private Posicao(Posicao posicao) {
+		this(posicao.numero, posicao.topMusical, posicao.cancao, posicao.melhorPosicao, posicao.permanenciaMelhorPosicao,
+				posicao.permanenciaTotal);
+	}
+
 	/**
 	 * Construtor <code>default</code> sem argumentos utilizado pelo framework ORM.
 	 */
@@ -87,6 +102,17 @@ public class Posicao extends AbstractEntidade<PosicaoId> {
 	 */
 	public static SemTopMusical nova() {
 		return new SemTopMusical();
+	}
+
+	/**
+	 * Cria uma cópia de uma posição.
+	 * 
+	 * @param posicao
+	 *            a ser copiada
+	 * @return a cópia criada
+	 */
+	public static Posicao copia(Posicao posicao) {
+		return new Posicao(posicao);
 	}
 
 	/**

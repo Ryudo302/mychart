@@ -1,55 +1,77 @@
 package br.com.colbert.mychart.ui.topmusical;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.io.Serializable;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
-import javax.swing.*;
+import javax.inject.Singleton;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
 
-import com.jgoodies.forms.layout.*;
+import org.mvp4j.annotation.Action;
+import org.mvp4j.annotation.MVP;
+import org.mvp4j.annotation.Model;
 
 import br.com.colbert.base.ui.ButtonFactory;
-import br.com.colbert.mychart.dominio.IntervaloDeDatas;
+import br.com.colbert.mychart.aplicacao.topmusical.TopMusicalPresenter;
+import br.com.colbert.mychart.dominio.topmusical.Posicao;
 import br.com.colbert.mychart.dominio.topmusical.TopMusical;
 import br.com.colbert.mychart.ui.cancao.CancaoColumnTableCellRenderer;
 
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+
 /**
- * Uma view de {@link TopMusical}.
+ * Painel de Top Musical.
  * 
  * @author Thiago Colbert
  * @since 04/01/2015
  */
-@ApplicationScoped
-public class TopMusicalView implements Serializable {
+@Singleton
+@MVP(modelClass = TopMusical.class, presenterClass = TopMusicalPresenter.class)
+public class TopMusicalPanel implements Serializable {
 
 	private static final long serialVersionUID = -6153457716329302059L;
 
-	private TopMusical topAtual;
-
 	private JPanel panel;
+
 	private JTable posicoesTable;
+	private PosicaoTableModel posicoesTableModel;
 
 	@Inject
 	private CancaoColumnTableCellRenderer cancaoColumnTableCellRenderer;
 
+	@Action(name = "topAnterior")
 	private JButton anteriorButton;
+	@Action(name = "proximoTop")
 	private JButton proximoButton;
+	@Action(name = "salvar")
+	private JButton salvarButton;
 
 	@Inject
 	@Any
-	private Event<TopMusicalView> ouvintesView;
-	private JButton salvarButton;
-	private JLabel dataInicioFimLabel;
+	private Event<TopMusicalPanel> ouvintesView;
+
+	@Model(property = "periodo.dataInicial")
+	private JLabel dataInicioLabel;
+	@Model(property = "periodo.dataFinal")
+	private JLabel dataFimLabel;
 
 	public static void main(String[] args) {
-		new TopMusicalView().initPanel();
+		new TopMusicalPanel().initPanel();
 	}
 
 	/**
@@ -65,38 +87,34 @@ public class TopMusicalView implements Serializable {
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-		panel.addComponentListener(new ComponentAdapter() {
-
-			@Override
-			public void componentShown(ComponentEvent event) {
-				ouvintesView.fire(TopMusicalView.this);
-			}
-		});
-
 		JPanel infoPanel = new JPanel();
 		infoPanel.setBorder(new TitledBorder(null, "Informa\u00E7\u00F5es", TitledBorder.LEFT, TitledBorder.TOP, null, null));
 		panel.add(infoPanel);
 		infoPanel.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.PREF_COLSPEC,
+				FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.PREF_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.PREF_COLSPEC,
 				FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.PREF_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] {
 				FormSpecs.PARAGRAPH_GAP_ROWSPEC, FormSpecs.PREF_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
 
 		JLabel periodoLabel = new JLabel("Período:");
 		infoPanel.add(periodoLabel, "2, 2, fill, top");
 
-		dataInicioFimLabel = new JLabel("-");
-		infoPanel.add(dataInicioFimLabel, "4, 2");
+		dataInicioLabel = new JLabel("-");
+		JLabel aLabel = new JLabel(" à ");
+		dataFimLabel = new JLabel("-");
+
+		infoPanel.add(dataInicioLabel, "4, 2");
+		infoPanel.add(aLabel, "6, 2");
+		infoPanel.add(dataFimLabel, "8, 2");
 
 		JPanel botoesPanel = new JPanel();
 		panel.add(botoesPanel);
 
 		anteriorButton = ButtonFactory.createJButton("Anterior", (String) null);
 		anteriorButton.setEnabled(false);
-		anteriorButton.addActionListener(event -> setTopMusical(topAtual.getAnterior()));
 		botoesPanel.add(anteriorButton);
 
 		proximoButton = ButtonFactory.createJButton("Próximo", (String) null);
 		proximoButton.setEnabled(false);
-		proximoButton.addActionListener(event -> setTopMusical(topAtual.getProximo()));
 		botoesPanel.add(proximoButton);
 
 		salvarButton = ButtonFactory.createJButton("Salvar", (String) null);
@@ -125,32 +143,26 @@ public class TopMusicalView implements Serializable {
 	}
 
 	/**
-	 * Obtém o {@link TopMusical} sendo atualmente exibido pela visão.
+	 * Obtém a posição selecionada na tabela.
 	 * 
-	 * @return o top musical sendo exibido
+	 * @return a posição
 	 */
-	public TopMusical getTopMusical() {
-		return topAtual;
+	public Optional<Posicao> getPosicaoSelecionada() {
+		int selectedRow = posicoesTable.getSelectedRow();
+		if (selectedRow >= 0) {
+			int modelIndex = posicoesTable.convertRowIndexToModel(selectedRow);
+			return modelIndex != -1 ? Optional.of(Posicao.copia(posicoesTableModel.getElement(modelIndex))) : Optional.empty();
+		} else {
+			return Optional.empty();
+		}
 	}
 
-	/**
-	 * Define o {@link TopMusical} sendo atualmente exibido pela visão.
-	 * 
-	 * @param topMusical
-	 *            o top musical a ser exibido
-	 */
-	public void setTopMusical(Optional<TopMusical> topMusical) {
-		topMusical.ifPresent(top -> {
-			topAtual = top;
+	public JButton getAnteriorButton() {
+		return anteriorButton;
+	}
 
-			IntervaloDeDatas periodo = top.getPeriodo();
-			dataInicioFimLabel.setText(periodo.getDataInicial() + " à " + periodo.getDataFinal());
-
-			salvarButton.setEnabled(true);
-			anteriorButton.setEnabled(topAtual.getAnterior().isPresent());
-			proximoButton.setEnabled(topAtual.getProximo().isPresent());
-			posicoesTable.setEnabled(true);
-		});
+	public JButton getProximoButton() {
+		return proximoButton;
 	}
 
 	/**

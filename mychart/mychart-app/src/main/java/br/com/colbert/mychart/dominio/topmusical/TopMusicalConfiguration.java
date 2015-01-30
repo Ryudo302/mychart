@@ -66,9 +66,6 @@ public class TopMusicalConfiguration implements Serializable {
 		} catch (IOException exception) {
 			throw new RuntimeException("Erro ao carregar arquivo de propriedades.", exception);
 		}
-
-		quantidadePosicoes = getQuantidadePosicoes();
-		frequencia = getFrequencia();
 	}
 
 	private void copiarArquivoPropertiesParaDiretorioBase(File arquivoProperties) throws IOException {
@@ -107,6 +104,9 @@ public class TopMusicalConfiguration implements Serializable {
 			properties.load(inputStream);
 			logger.debug("Propriedades carregadas: {}", properties);
 		}
+		
+		quantidadePosicoes = getQuantidadePosicoes();
+		frequencia = getFrequencia();
 	}
 
 	/**
@@ -130,6 +130,7 @@ public class TopMusicalConfiguration implements Serializable {
 	public void setFrequencia(Frequencia frequencia) {
 		setProperty(PROPRIEDADE_FREQUENCIA_TOP_PRINCIPAL,
 				Objects.requireNonNull(frequencia.name(), "Frequência dos tops obrigatória!"));
+		this.frequencia = frequencia;
 	}
 
 	/**
@@ -159,6 +160,7 @@ public class TopMusicalConfiguration implements Serializable {
 	public void setQuantidadePosicoes(Integer quantidadePosicoes) {
 		setProperty(PROPRIEDADE_QUANTIDADE_POSICOES_TOP_PRINCIPAL,
 				Objects.requireNonNull(quantidadePosicoes, "Quantidade de posições obrigatória!"));
+		this.quantidadePosicoes = quantidadePosicoes;
 	}
 
 	private void setProperty(String nome, Object valor) {

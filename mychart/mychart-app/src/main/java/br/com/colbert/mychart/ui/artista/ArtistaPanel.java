@@ -1,26 +1,47 @@
 package br.com.colbert.mychart.ui.artista;
 
 import java.awt.Container;
-import java.awt.event.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
-import javax.inject.*;
-import javax.swing.*;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionListener;
 
-import org.mvp4j.annotation.*;
 import org.mvp4j.annotation.Action;
+import org.mvp4j.annotation.Actions;
+import org.mvp4j.annotation.MVP;
+import org.mvp4j.annotation.Model;
 
-import com.jgoodies.forms.layout.*;
-
-import br.com.colbert.base.ui.*;
+import br.com.colbert.base.ui.ButtonFactory;
+import br.com.colbert.base.ui.EstadoTelaCrud;
+import br.com.colbert.base.ui.FormView;
 import br.com.colbert.mychart.aplicacao.artista.ArtistaPresenter;
-import br.com.colbert.mychart.dominio.artista.*;
+import br.com.colbert.mychart.dominio.artista.Artista;
+import br.com.colbert.mychart.dominio.artista.TipoArtista;
 import br.com.colbert.mychart.infraestrutura.providers.ImagesProvider;
 import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
+
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * Painel de artistas.
@@ -254,37 +275,5 @@ public class ArtistaPanel implements FormView<Artista>, Serializable {
 	 */
 	public Container getContainer() {
 		return panel;
-	}
-
-	public JTextField getIdTextField() {
-		return idTextField;
-	}
-
-	public JTextField getNomeTextField() {
-		return nomeTextField;
-	}
-
-	public JComboBox<TipoArtista> getTipoComboBox() {
-		return tipoComboBox;
-	}
-
-	public JTable getArtistasTable() {
-		return artistasTable;
-	}
-
-	public JButton getConsultarButton() {
-		return consultarButton;
-	}
-
-	public JButton getRemoverButton() {
-		return removerButton;
-	}
-
-	public JButton getSalvarButton() {
-		return salvarButton;
-	}
-
-	public JButton getLimparButton() {
-		return limparButton;
 	}
 }

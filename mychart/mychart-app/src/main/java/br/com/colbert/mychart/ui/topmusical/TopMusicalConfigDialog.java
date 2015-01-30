@@ -115,18 +115,10 @@ public class TopMusicalConfigDialog implements Serializable {
 		cancelarButton.setIcon(images.loadImageAsIcon("remove.png"));
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public Integer getQuantidadePosicoes() {
 		return (Integer) quantidadePosicoesSpinner.getValue();
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public Frequencia getFrequencia() {
 		return (Frequencia) frequenciaComboBox.getSelectedItem();
 	}
@@ -137,22 +129,6 @@ public class TopMusicalConfigDialog implements Serializable {
 
 	public void close() {
 		dialog.setVisible(false);
-	}
-
-	public JComboBox<Frequencia> getFrequenciaComboBox() {
-		return frequenciaComboBox;
-	}
-
-	public JSpinner getQuantidadePosicoesSpinner() {
-		return quantidadePosicoesSpinner;
-	}
-
-	public JButton getSalvarButton() {
-		return salvarButton;
-	}
-
-	public JButton getCancelarButton() {
-		return cancelarButton;
 	}
 
 	/**
