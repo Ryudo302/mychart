@@ -48,7 +48,7 @@ public class ArtistaPresenter implements Serializable {
 	private MessagesView messagesView;
 
 	@Inject
-	private Instance<ConsultaArtistasWorker> consultaArtistasWorker;
+	private Instance<ConsultarArtistasWorker> consultarArtistasWorker;
 	@Inject
 	private Instance<SalvarArtistaWorker> salvarArtistaWorker;
 	@Inject
@@ -70,7 +70,7 @@ public class ArtistaPresenter implements Serializable {
 		if (StringUtils.isBlank(nomeArtista)) {
 			messagesView.adicionarMensagemAlerta("Informe um nome a ser consultado.");
 		} else {
-			ConsultaArtistasWorker worker = consultaArtistasWorker.get();
+			ConsultarArtistasWorker worker = consultarArtistasWorker.get();
 			worker.setExemplo(criarArtista(null, nomeArtista, view.getTipoArtista()));
 			worker.execute();
 			worker.addWorkerDoneListener(new DefinirConteudoTabelaWorkerListener<>(view));

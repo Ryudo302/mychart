@@ -1,17 +1,36 @@
 package br.com.colbert.mychart.ui.comum.messages;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
-import javax.inject.*;
-import javax.swing.*;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.mvp4j.annotation.*;
+import org.mvp4j.annotation.Action;
+import org.mvp4j.annotation.MVP;
+import org.mvp4j.annotation.Model;
 
 import br.com.colbert.base.ui.ButtonFactory;
 import br.com.colbert.mychart.aplicacao.comum.ErroPresenter;
+import br.com.colbert.mychart.infraestrutura.providers.ImagesProvider;
 import br.com.colbert.mychart.ui.principal.MainWindow;
 
 /**
@@ -33,11 +52,16 @@ public class ErroDialog implements Serializable {
 
 	@Model(property = "mensagem")
 	private JLabel descricaoErroLabel;
-
 	@Model(property = "detalhes")
 	private JTextArea detalhesTextArea;
 
+	@Action(name = "ok")
 	private JButton okButton;
+	@Action(name = "reportar")
+	private JButton reportarButton;
+
+	@Inject
+	private ImagesProvider images;
 
 	public static void main(String[] args) {
 		new ErroDialog().initDialog();
@@ -125,14 +149,16 @@ public class ErroDialog implements Serializable {
 		contentPane.add(botoesPanel);
 
 		okButton = ButtonFactory.createJButton("OK", (String) null);
-		okButton.addActionListener(event -> dialog.setVisible(false));
 		botoesPanel.add(okButton);
+
+		reportarButton = ButtonFactory.createJButton("Reportar", "Notificar os desenvolvedores sobre o erro.");
+		botoesPanel.add(reportarButton);
 
 		dialog.pack();
 	}
 
 	private void initComponents() {
-
+		reportarButton.setIcon(images.loadImageAsIcon("report.png"));
 	}
 
 	/**
@@ -140,6 +166,13 @@ public class ErroDialog implements Serializable {
 	 */
 	public void show() {
 		dialog.setVisible(true);
+	}
+
+	/**
+	 * 
+	 */
+	public void close() {
+		dialog.setVisible(false);
 	}
 
 	public JLabel getDescricaoErroLabel() {

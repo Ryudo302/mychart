@@ -1,7 +1,7 @@
 package br.com.colbert.mychart.infraestrutura.info;
 
 import java.io.*;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -65,5 +65,16 @@ public class ApplicationProperties implements Serializable {
 	@DiretorioBase
 	public File getDiretorioBase(@TituloAplicacao(Formato.APENAS_NOME) String nomeApp) {
 		return new File(FileUtils.getUserDirectory(), '.' + nomeApp.toLowerCase());
+	}
+
+	/**
+	 * Obtém uma lista dos e-mails dos desenvolvedores da aplicação.
+	 * 
+	 * @return os endereços de e-mail
+	 */
+	@Produces
+	@EmailsDesenvolvedores
+	public List<String> getEmailsDesenvolvedores() {
+		return Arrays.asList("th.colbert@gmail.com");
 	}
 }

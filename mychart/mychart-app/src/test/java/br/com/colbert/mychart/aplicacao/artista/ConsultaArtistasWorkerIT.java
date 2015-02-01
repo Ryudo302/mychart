@@ -19,7 +19,7 @@ import br.com.colbert.mychart.infraestrutura.swing.worker.WorkerWaitListener;
 import br.com.colbert.tests.support.AbstractDbUnitTest;
 
 /**
- * Testes da classe {@link ConsultaArtistasWorker}.
+ * Testes da classe {@link ConsultarArtistasWorker}.
  *
  * @author Thiago Colbert
  * @since 08/12/2014
@@ -28,7 +28,7 @@ import br.com.colbert.tests.support.AbstractDbUnitTest;
 public class ConsultaArtistasWorkerIT extends AbstractDbUnitTest {
 
 	@Inject
-	private ConsultaArtistasWorker worker;
+	private ConsultarArtistasWorker worker;
 
 	@Produces
 	@ProducesAlternative

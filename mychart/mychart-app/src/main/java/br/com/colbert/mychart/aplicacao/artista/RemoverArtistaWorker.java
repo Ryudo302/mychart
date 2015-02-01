@@ -2,15 +2,12 @@ package br.com.colbert.mychart.aplicacao.artista;
 
 import java.util.concurrent.ExecutionException;
 
-import javax.enterprise.inject.*;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
-import br.com.colbert.base.aplicacao.validacao.Validador;
-import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepository;
 import br.com.colbert.mychart.infraestrutura.swing.worker.AbstractWorker;
 
@@ -27,10 +24,6 @@ public class RemoverArtistaWorker extends AbstractWorker<Boolean, Void> {
 
 	@Inject
 	private ArtistaRepository repositorio;
-
-	@Inject
-	@Any
-	private Instance<Validador<Artista>> validadores;
 
 	private String idArtista;
 

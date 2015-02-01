@@ -21,7 +21,7 @@ import br.com.colbert.mychart.infraestrutura.swing.worker.AbstractWorker;
 import br.com.colbert.mychart.infraestrutura.swing.worker.WorkerDoneAdapter;
 import br.com.colbert.mychart.ui.comum.CausaSaidaDeView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
-import br.com.colbert.mychart.ui.topmusical.PrimeiroTopMusicalView;
+import br.com.colbert.mychart.ui.topmusical.PrimeiroTopMusicalDialog;
 import br.com.colbert.mychart.ui.topmusical.TopMusicalPanel;
 
 /**
@@ -46,12 +46,12 @@ public class TopMusicalPresenter implements Serializable {
 				logger.debug("Nenhum top ainda salvo. Criando um novo.");
 				messagesView
 						.adicionarMensagemSucesso("É a sua primeira vez aqui, portanto é necessário informar alguns dados do seu primeiro top musical.");
-				String causaSaida = primeiroTopMusicalView.show();
+				String causaSaida = primeiroTopMusicalDialog.show();
 				if (causaSaida == CausaSaidaDeView.CONFIRMACAO) {
-					List<Cancao> cancoes = primeiroTopMusicalView.getCancoes();
+					List<Cancao> cancoes = primeiroTopMusicalDialog.getCancoes();
 					Integer quantidadePosicoes = topMusicalFactory.getConfig().getQuantidadePosicoes();
 					if (cancoes.size() == quantidadePosicoes) {
-						resultado = Optional.of(topMusicalFactory.novo(primeiroTopMusicalView.getDataInicial(), cancoes));
+						resultado = Optional.of(topMusicalFactory.novo(primeiroTopMusicalDialog.getDataInicial(), cancoes));
 					} else {
 						messagesView.adicionarMensagemAlerta("Devem ser adicionadas " + quantidadePosicoes + " canções!");
 					}
@@ -78,7 +78,7 @@ public class TopMusicalPresenter implements Serializable {
 	@Inject
 	private MessagesView messagesView;
 	@Inject
-	private PrimeiroTopMusicalView primeiroTopMusicalView;
+	private PrimeiroTopMusicalDialog primeiroTopMusicalDialog;
 
 	@Inject
 	private TopMusicalFactory topMusicalFactory;

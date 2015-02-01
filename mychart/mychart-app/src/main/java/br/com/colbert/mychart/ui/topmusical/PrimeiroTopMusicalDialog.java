@@ -33,7 +33,7 @@ import br.com.colbert.mychart.ui.principal.MainWindow;
  * @since 05/01/2015
  */
 @ApplicationScoped
-public class PrimeiroTopMusicalView implements Serializable {
+public class PrimeiroTopMusicalDialog implements Serializable {
 
 	private static final long serialVersionUID = -619331878800317148L;
 
@@ -72,7 +72,7 @@ public class PrimeiroTopMusicalView implements Serializable {
 	private ArtistaCollectionColumnTableCellRenderer artistaColumnTableCellRenderer;
 
 	public static void main(String[] args) {
-		new PrimeiroTopMusicalView().initDialog();
+		new PrimeiroTopMusicalDialog().initDialog();
 	}
 
 	/**

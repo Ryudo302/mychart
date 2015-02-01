@@ -19,7 +19,7 @@ import br.com.colbert.mychart.dominio.topmusical.TopMusical;
 import br.com.colbert.mychart.dominio.topmusical.TopMusicalConfiguration;
 import br.com.colbert.mychart.infraestrutura.jpa.TopMusicalJpaRepository;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
-import br.com.colbert.mychart.ui.topmusical.PrimeiroTopMusicalView;
+import br.com.colbert.mychart.ui.topmusical.PrimeiroTopMusicalDialog;
 import br.com.colbert.mychart.ui.topmusical.TopMusicalPanel;
 import br.com.colbert.tests.support.AbstractDbUnitTest;
 
@@ -29,7 +29,7 @@ import br.com.colbert.tests.support.AbstractDbUnitTest;
  * @author Thiago Colbert
  * @since 04/01/2015
  */
-@AdditionalClasses({ TopMusicalConfiguration.class, TopMusicalJpaRepository.class, PrimeiroTopMusicalView.class })
+@AdditionalClasses({ TopMusicalConfiguration.class, TopMusicalJpaRepository.class, PrimeiroTopMusicalDialog.class })
 public class TopMusicalPresenterIT extends AbstractDbUnitTest {
 
 	@Inject

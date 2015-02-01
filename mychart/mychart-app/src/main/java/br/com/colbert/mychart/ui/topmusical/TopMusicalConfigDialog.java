@@ -68,6 +68,7 @@ public class TopMusicalConfigDialog implements Serializable {
 
 	private void initDialog() {
 		dialog = new JDialog(mainWindow.getFrame(), true);
+		dialog.setLocationRelativeTo(mainWindow.getFrame());
 		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		Container panel = dialog.getContentPane();

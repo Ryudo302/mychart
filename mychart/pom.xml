@@ -13,6 +13,15 @@
 	<name>MyChart</name>
 	<description>Gerenciamento e manutenção de sua parada musical pessoal.</description>
 
+	<developers>
+		<developer>
+			<id>Ryudo302</id>
+			<email>th.colbert@gmail.com</email>
+			<name>Thiago Lima Colbert Miranda</name>
+			<timezone>-3</timezone>
+		</developer>
+	</developers>
+
 	<properties>
 		<aplicacao.nome>MyChart</aplicacao.nome>
 
