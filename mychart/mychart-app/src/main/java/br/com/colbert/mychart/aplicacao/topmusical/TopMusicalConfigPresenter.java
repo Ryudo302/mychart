@@ -1,16 +1,17 @@
 package br.com.colbert.mychart.aplicacao.topmusical;
 
 import java.awt.event.ItemEvent;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.swing.event.ChangeEvent;
 
 import org.mvp4j.AppController;
 import org.slf4j.Logger;
 
+import br.com.colbert.base.aplicacao.Presenter;
 import br.com.colbert.mychart.dominio.topmusical.TopMusicalConfiguration;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.mychart.ui.topmusical.TopMusicalConfigDialog;
@@ -21,7 +22,8 @@ import br.com.colbert.mychart.ui.topmusical.TopMusicalConfigDialog;
  * @author Thiago Colbert
  * @since 29/01/2015
  */
-public class TopMusicalConfigPresenter implements Serializable {
+@ApplicationScoped
+public class TopMusicalConfigPresenter implements Presenter, Serializable {
 
 	private static final long serialVersionUID = 8549455585957411436L;
 
@@ -39,11 +41,13 @@ public class TopMusicalConfigPresenter implements Serializable {
 	private MessagesView messagesView;
 
 	@PostConstruct
-	protected void doBinding() {
+	@Override
+	public void doBinding() {
 		logger.trace("Definindo bindings");
 		appController.bind(view, topMusicalConfiguration, this);
 	}
 
+	@Override
 	public void start() {
 		logger.debug("Iniciando");
 		appController.refreshView(view);

@@ -14,17 +14,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.mvp4j.AppController;
 import org.slf4j.Logger;
 
+import br.com.colbert.base.aplicacao.Presenter;
 import br.com.colbert.base.ui.EstadoTelaCrud;
-import br.com.colbert.mychart.dominio.artista.Artista;
-import br.com.colbert.mychart.dominio.artista.TipoArtista;
-import br.com.colbert.mychart.infraestrutura.swing.worker.AbstractWorker;
-import br.com.colbert.mychart.infraestrutura.swing.worker.DefinirConteudoTabelaWorkerListener;
-import br.com.colbert.mychart.infraestrutura.swing.worker.LimparTelaWorkerListener;
-import br.com.colbert.mychart.infraestrutura.swing.worker.MensagensWorkerListener;
-import br.com.colbert.mychart.infraestrutura.swing.worker.WorkerDoneAdapter;
+import br.com.colbert.mychart.dominio.artista.*;
+import br.com.colbert.mychart.infraestrutura.swing.worker.*;
 import br.com.colbert.mychart.ui.artista.ArtistaPanel;
-import br.com.colbert.mychart.ui.comum.messages.MessagesView;
-import br.com.colbert.mychart.ui.comum.messages.RespostaConfirmacao;
+import br.com.colbert.mychart.ui.comum.messages.*;
+import br.com.colbert.mychart.ui.principal.PainelTelaPrincipal;
 
 /**
  * <em>Presenter</em> de {@link Artista}.
@@ -33,7 +29,7 @@ import br.com.colbert.mychart.ui.comum.messages.RespostaConfirmacao;
  * @since 16/01/2015
  */
 @ApplicationScoped
-public class ArtistaPresenter implements Serializable {
+public class ArtistaPresenter implements Presenter, Serializable {
 
 	private static final long serialVersionUID = 8111564698178618449L;
 
@@ -43,6 +39,7 @@ public class ArtistaPresenter implements Serializable {
 	private AppController appController;
 
 	@Inject
+	@PainelTelaPrincipal
 	private ArtistaPanel view;
 	@Inject
 	private MessagesView messagesView;
@@ -55,11 +52,13 @@ public class ArtistaPresenter implements Serializable {
 	private Instance<RemoverArtistaWorker> removerArtistaWorker;
 
 	@PostConstruct
-	protected void doBinding() {
+	@Override
+	public void doBinding() {
 		logger.trace("Definindo bindings");
 		appController.bind(view, Artista.ARTISTA_NULL.clone(), this);
 	}
 
+	@Override
 	public void start() {
 		logger.debug("Iniciando");
 	}

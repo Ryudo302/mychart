@@ -1,32 +1,15 @@
 package br.com.colbert.mychart.ui.comum.messages;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
+import javax.inject.*;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import org.mvp4j.annotation.*;
 import org.mvp4j.annotation.Action;
-import org.mvp4j.annotation.MVP;
-import org.mvp4j.annotation.Model;
 
 import br.com.colbert.base.ui.ButtonFactory;
 import br.com.colbert.mychart.aplicacao.comum.ErroPresenter;
@@ -175,12 +158,13 @@ public class ErroDialog implements Serializable {
 		dialog.setVisible(false);
 	}
 
-	public JLabel getDescricaoErroLabel() {
-		return descricaoErroLabel;
-	}
-
-	public JTextArea getDetalhesTextArea() {
-		return detalhesTextArea;
+	/**
+	 * Define o status da notificação por e-mail.
+	 * 
+	 * @param habilitada
+	 */
+	public void setNotificacaoHabilitada(boolean habilitada) {
+		reportarButton.setEnabled(habilitada);
 	}
 
 	/**

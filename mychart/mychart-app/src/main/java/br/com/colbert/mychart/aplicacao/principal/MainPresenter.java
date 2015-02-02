@@ -4,22 +4,27 @@ import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.*;
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.mvp4j.AppController;
+import org.mvp4j.utils.MvpUtils;
 import org.slf4j.Logger;
 
-import br.com.colbert.mychart.aplicacao.artista.ArtistaPresenter;
+import br.com.colbert.base.aplicacao.Presenter;
+import br.com.colbert.base.ui.View;
 import br.com.colbert.mychart.aplicacao.comum.ErroPresenter;
 import br.com.colbert.mychart.aplicacao.topmusical.TopMusicalConfigPresenter;
-import br.com.colbert.mychart.aplicacao.topmusical.TopMusicalPresenter;
+import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao;
 import br.com.colbert.mychart.infraestrutura.lastfm.LastFmWs;
-import br.com.colbert.mychart.ui.comum.messages.MessagesView;
-import br.com.colbert.mychart.ui.comum.messages.RespostaConfirmacao;
-import br.com.colbert.mychart.ui.principal.MainWindow;
+import br.com.colbert.mychart.ui.artista.ArtistaPanel;
+import br.com.colbert.mychart.ui.comum.messages.*;
+import br.com.colbert.mychart.ui.inicio.InicioPanel;
+import br.com.colbert.mychart.ui.principal.*;
 import br.com.colbert.mychart.ui.sobre.SobreDialog;
+import br.com.colbert.mychart.ui.topmusical.TopMusicalPanel;
 
 /**
  * <em>Presenter</em> principal da aplicação.
@@ -27,7 +32,7 @@ import br.com.colbert.mychart.ui.sobre.SobreDialog;
  * @author Thiago Colbert
  * @since 18/12/2014
  */
-public class MainPresenter implements Serializable {
+public class MainPresenter implements Presenter, Serializable {
 
 	private static final long serialVersionUID = 9104572255370820023L;
 
@@ -42,35 +47,47 @@ public class MainPresenter implements Serializable {
 	@Inject
 	private MessagesView messagesView;
 	@Inject
-	private ErroPresenter erroPresenter;
-	@Inject
 	private SobreDialog sobreDialog;
 
 	@Inject
-	private ArtistaPresenter artistaPresenter;
+	@PainelTelaPrincipal
+	private Instance<View> paineis;
 	@Inject
-	private TopMusicalConfigPresenter topMusicalConfigPresenter;
+	@Any
+	private Instance<Presenter> presenters;
+
 	@Inject
-	private TopMusicalPresenter topMusicalPresenter;
+	@TituloAplicacao
+	private String tituloAplicacao;
+
+	@Inject
+	private ErroPresenter erroPresenter;
 
 	@Inject
 	private EntityManagerFactory entityManagerFactory;
-
 	@Inject
 	private LastFmWs lastFmWs;
 
 	@PostConstruct
-	protected void doBinding() {
+	@Override
+	public void doBinding() {
 		appController.bindPresenter(mainWindow, this);
 	}
 
 	/**
-	 * Inicia a aplicação.
+	 * Método invocado assim que o contexto CDI é inicializado.
+	 * 
+	 * @param event
+	 *            o evento
 	 */
-	public void iniciar(@Observes ContainerInitialized event) {
+	protected void contextoInicializado(@Observes ContainerInitialized event) {
+		start();
+	}
+
+	@Override
+	public void start() {
 		logger.info("Iniciando...");
 		Thread.setDefaultUncaughtExceptionHandler(erroPresenter);
-
 		entityManagerFactory.toString();
 
 		if (!lastFmWs.ping()) {
@@ -78,7 +95,20 @@ public class MainPresenter implements Serializable {
 					.adicionarMensagemAlerta("Não foi possível acessar os serviços da LastFM. Verifique sua conexão com a internet e também se o site http://www.lastfm.com.br está respondendo.");
 		}
 
+		setUpView();
+
+		logger.debug("Exibindo a janela principal");
 		mainWindow.show();
+	}
+
+	private void setUpView() {
+		paineis.forEach(painel -> {
+			logger.debug("Adicionando à tela principal painel sob o nome '{}': {}", painel.getName(), painel);
+			mainWindow.getContainer().add(painel.getContainer(), painel.getName());
+		});
+
+		logger.debug("Título da aplicação: {}", tituloAplicacao);
+		mainWindow.setTitulo(tituloAplicacao);
 	}
 
 	/**
@@ -101,29 +131,32 @@ public class MainPresenter implements Serializable {
 	}
 
 	public void exibirTelaInicio() {
-		logger.debug("Exibindo tela inicial");
-		mainWindow.mudarTela(MainWindow.TELA_INICIAL);
+		mudarConteudoTela(InicioPanel.class);
 	}
 
 	public void exibirTelaArtistas() {
-		logger.debug("Exibindo tela de artistas");
-		mainWindow.mudarTela(MainWindow.TELA_ARTISTAS);
-		artistaPresenter.start();
+		mudarConteudoTela(ArtistaPanel.class);
 	}
 
 	public void exibirTelaTopPrincipal() {
-		logger.debug("Exibindo tela do top principal");
-		mainWindow.mudarTela(MainWindow.TELA_TOP_PRINCIPAL);
-		topMusicalPresenter.start();
+		mudarConteudoTela(TopMusicalPanel.class);
 	}
 
 	public void exibirTelaConfiguracoes() {
-		logger.debug("Exibindo tela de configurações");
-		topMusicalConfigPresenter.start();
+		presenters.select(TopMusicalConfigPresenter.class).get().start();
 	}
 
 	public void exibirTelaSobre() {
-		logger.debug("Exibindo janela 'Sobre'");
-		sobreDialog.setVisible(true);
+		sobreDialog.show();
+	}
+
+	private void mudarConteudoTela(Class<? extends View> novaTela) {
+		View tela = paineis.select(novaTela, novaTela.getAnnotation(PainelTelaPrincipal.class)).get();
+		Class<Presenter> presenterClass = MvpUtils.getPresenterClass(tela.getClass());
+		Presenter presenter = presenters.select(presenterClass).get();
+
+		logger.debug("Exibindo tela: " + tela.getName());
+		mainWindow.mudarTela(tela.getName());
+		presenter.start();
 	}
 }

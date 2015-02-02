@@ -1,38 +1,26 @@
 package br.com.colbert.mychart.ui.topmusical;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
+import java.awt.*;
 import java.io.Serializable;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
+import javax.inject.*;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
+import org.mvp4j.annotation.*;
 import org.mvp4j.annotation.Action;
-import org.mvp4j.annotation.MVP;
-import org.mvp4j.annotation.Model;
 
-import br.com.colbert.base.ui.ButtonFactory;
+import com.jgoodies.forms.layout.*;
+
+import br.com.colbert.base.ui.*;
 import br.com.colbert.mychart.aplicacao.topmusical.TopMusicalPresenter;
-import br.com.colbert.mychart.dominio.topmusical.Posicao;
-import br.com.colbert.mychart.dominio.topmusical.TopMusical;
+import br.com.colbert.mychart.dominio.topmusical.*;
 import br.com.colbert.mychart.ui.cancao.CancaoColumnTableCellRenderer;
-
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+import br.com.colbert.mychart.ui.principal.PainelTelaPrincipal;
 
 /**
  * Painel de Top Musical.
@@ -42,7 +30,8 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 @Singleton
 @MVP(modelClass = TopMusical.class, presenterClass = TopMusicalPresenter.class)
-public class TopMusicalPanel implements Serializable {
+@PainelTelaPrincipal
+public class TopMusicalPanel implements WindowView, Serializable {
 
 	private static final long serialVersionUID = -6153457716329302059L;
 
@@ -170,6 +159,7 @@ public class TopMusicalPanel implements Serializable {
 	 * 
 	 * @return a instância do contêiner AWT
 	 */
+	@Override
 	public Container getContainer() {
 		return panel;
 	}

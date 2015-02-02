@@ -28,6 +28,7 @@ public class ReportarErroWorker extends AbstractWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
+		logger.debug("Reportando erro: {}", erro);
 		erroReporter.reportar(erro);
 		return null;
 	}
@@ -37,7 +38,7 @@ public class ReportarErroWorker extends AbstractWorker<Void, Void> {
 		try {
 			get();
 		} catch (InterruptedException | ExecutionException exception) {
-			logger.error("Erro ao enviar notificação de erro: " + erro, exception);
+			logger.error("Falha ao enviar notificação de erro: " + erro.getMensagem(), exception);
 			fireError(exception);
 		}
 	}

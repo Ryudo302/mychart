@@ -3,7 +3,6 @@ package br.com.colbert.mychart.aplicacao.cancao;
 import java.io.Serializable;
 import java.util.*;
 
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.*;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -16,7 +15,6 @@ import br.com.colbert.base.aplicacao.validacao.*;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.dominio.cancao.repository.CancaoRepository;
 import br.com.colbert.mychart.dominio.cancao.service.CancaoWs;
-import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
 import br.com.colbert.mychart.infraestrutura.exception.*;
 import br.com.colbert.mychart.ui.cancao.CancaoDialog;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
@@ -57,7 +55,7 @@ public class CancaoController implements Serializable {
 	@Any
 	private Instance<Validador<Cancao>> validadores;
 
-	public void consultarExistentes(@Observes @OperacaoCrud(TipoOperacaoCrud.CONSULTA) Cancao exemplo) {
+	public void consultarExistentes(Cancao exemplo) {
 		logger.info("Consultando canções com base em exemplo: {}", exemplo);
 		List<Cancao> cancoes = new ArrayList<>();
 		List<Cancao> cancoesUniqueList = SetUniqueList.setUniqueList(cancoes);
@@ -81,7 +79,7 @@ public class CancaoController implements Serializable {
 	}
 
 	@Transactional
-	public void adicionarNova(@Observes @OperacaoCrud(TipoOperacaoCrud.INSERCAO) Cancao cancao) {
+	public void adicionarNova(Cancao cancao) {
 		logger.info("Adicionando: {}", cancao);
 
 		try {

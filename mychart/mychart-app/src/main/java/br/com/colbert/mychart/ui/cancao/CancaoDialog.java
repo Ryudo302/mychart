@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.concurrent.FutureTask;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -17,7 +16,6 @@ import com.jgoodies.forms.layout.*;
 
 import br.com.colbert.base.ui.ButtonFactory;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
-import br.com.colbert.mychart.infraestrutura.eventos.crud.*;
 import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
 import br.com.colbert.mychart.ui.comum.CausaSaidaDeView;
 import br.com.colbert.mychart.ui.principal.MainWindow;
@@ -47,10 +45,6 @@ public class CancaoDialog implements Serializable {
 	private MainWindow mainWindow;
 	@Inject
 	private CancaoListCellRenderer cancaoListCellRenderer;
-
-	@Inject
-	@OperacaoCrud(TipoOperacaoCrud.CONSULTA)
-	private Event<Cancao> ouvintesConsulta;
 
 	public static void main(String[] args) {
 		new CancaoDialog().initPanel();
@@ -102,7 +96,6 @@ public class CancaoDialog implements Serializable {
 
 		consultarButton = ButtonFactory.createJButton("Consultar",
 				"Procura por artistas que atendam aos critérios informados acima");
-		consultarButton.addActionListener(event -> ouvintesConsulta.fire(getCancaoAtual().get()));
 		botoesPanel.add(consultarButton);
 
 		contentPane.add(botoesPanel);

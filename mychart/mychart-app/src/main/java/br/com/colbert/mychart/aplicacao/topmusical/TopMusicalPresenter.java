@@ -1,8 +1,7 @@
 package br.com.colbert.mychart.aplicacao.topmusical;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
@@ -13,16 +12,14 @@ import org.mvp4j.AppController;
 import org.mvp4j.adapter.MVPBinding;
 import org.slf4j.Logger;
 
+import br.com.colbert.base.aplicacao.Presenter;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
-import br.com.colbert.mychart.dominio.topmusical.Posicao;
-import br.com.colbert.mychart.dominio.topmusical.TopMusical;
-import br.com.colbert.mychart.dominio.topmusical.TopMusicalFactory;
-import br.com.colbert.mychart.infraestrutura.swing.worker.AbstractWorker;
-import br.com.colbert.mychart.infraestrutura.swing.worker.WorkerDoneAdapter;
+import br.com.colbert.mychart.dominio.topmusical.*;
+import br.com.colbert.mychart.infraestrutura.swing.worker.*;
 import br.com.colbert.mychart.ui.comum.CausaSaidaDeView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
-import br.com.colbert.mychart.ui.topmusical.PrimeiroTopMusicalDialog;
-import br.com.colbert.mychart.ui.topmusical.TopMusicalPanel;
+import br.com.colbert.mychart.ui.principal.PainelTelaPrincipal;
+import br.com.colbert.mychart.ui.topmusical.*;
 
 /**
  * <em>Presenter</em> de {@link TopMusical}.
@@ -30,7 +27,7 @@ import br.com.colbert.mychart.ui.topmusical.TopMusicalPanel;
  * @author Thiago Colbert
  * @since 29/01/2015
  */
-public class TopMusicalPresenter implements Serializable {
+public class TopMusicalPresenter implements Presenter, Serializable {
 
 	private final class TopAtualCarregadoWorkerDoneListener extends WorkerDoneAdapter {
 
@@ -74,6 +71,7 @@ public class TopMusicalPresenter implements Serializable {
 	private TopMusical topAtual;
 
 	@Inject
+	@PainelTelaPrincipal
 	private TopMusicalPanel view;
 	@Inject
 	private MessagesView messagesView;
@@ -89,11 +87,13 @@ public class TopMusicalPresenter implements Serializable {
 	private MVPBinding binding;
 
 	@PostConstruct
-	protected void doBinding() {
+	@Override
+	public void doBinding() {
 		logger.trace("Definindo bindings");
 		binding = appController.bindPresenter(view, this);
 	}
 
+	@Override
 	public void start() {
 		logger.debug("Iniciando");
 		carregarTopAtual();

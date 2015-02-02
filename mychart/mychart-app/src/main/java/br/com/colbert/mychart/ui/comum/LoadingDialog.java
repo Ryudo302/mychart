@@ -11,6 +11,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.swing.*;
 
+import br.com.colbert.base.ui.WindowView;
 import br.com.colbert.mychart.infraestrutura.providers.ImagesProvider;
 import br.com.colbert.mychart.infraestrutura.swing.worker.LoadingView;
 import br.com.colbert.mychart.ui.principal.MainWindow;
@@ -23,7 +24,7 @@ import br.com.colbert.mychart.ui.principal.MainWindow;
  */
 @ApplicationScoped
 @LoadingView
-public class LoadingDialog implements Serializable {
+public class LoadingDialog implements WindowView, Serializable {
 
 	private static final long serialVersionUID = 8248885596292025385L;
 
@@ -72,5 +73,10 @@ public class LoadingDialog implements Serializable {
 	@LoadingView
 	public Window getWindow() {
 		return dialog;
+	}
+
+	@Override
+	public Container getContainer() {
+		return getWindow();
 	}
 }

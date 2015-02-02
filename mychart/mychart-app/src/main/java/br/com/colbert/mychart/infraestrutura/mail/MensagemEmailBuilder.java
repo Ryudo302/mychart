@@ -57,7 +57,7 @@ public class MensagemEmailBuilder implements Builder<String>, Serializable {
 		try {
 			return new StringBuilder().append("mailto:").append(destinatario).append("?subject=").append(encode(assunto))
 					.append(buildCopiasString(copias)).append(E_PARAMETRO).append("body=").append(encode(conteudo))
-					+ buuldAnexoString(anexo).toString();
+					+ encode(buildAnexoString(anexo)).toString();
 		} catch (UnsupportedEncodingException exception) {
 			// nunca deveria ocorrer
 			throw new RuntimeException("Erro ao criar mensagem", exception);
@@ -78,8 +78,9 @@ public class MensagemEmailBuilder implements Builder<String>, Serializable {
 		return ccBuilder.toString();
 	}
 
-	private String buuldAnexoString(String anexo) {
-		return StringUtils.isBlank(anexo) ? StringUtils.EMPTY : E_PARAMETRO + "attachment=" + anexo;
+	private String buildAnexoString(String anexo) {
+		return StringUtils.isBlank(anexo) ? StringUtils.EMPTY : new StringBuilder().append(StringUtils.LF).append(StringUtils.LF)
+				.append(anexo).toString();
 	}
 
 	@Override

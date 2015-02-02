@@ -11,7 +11,7 @@ import java.util.Collection;
  * @param <T>
  *            o tipo de objeto representado na tela
  */
-public interface FormView<T> {
+public interface FormView<T> extends View {
 
 	/**
 	 * Limpa todos os campos da tela.

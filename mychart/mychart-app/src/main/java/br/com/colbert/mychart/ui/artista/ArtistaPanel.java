@@ -1,47 +1,27 @@
 package br.com.colbert.mychart.ui.artista;
 
 import java.awt.Container;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
+import javax.inject.*;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionListener;
 
+import org.mvp4j.annotation.*;
 import org.mvp4j.annotation.Action;
-import org.mvp4j.annotation.Actions;
-import org.mvp4j.annotation.MVP;
-import org.mvp4j.annotation.Model;
 
-import br.com.colbert.base.ui.ButtonFactory;
-import br.com.colbert.base.ui.EstadoTelaCrud;
-import br.com.colbert.base.ui.FormView;
+import com.jgoodies.forms.layout.*;
+
+import br.com.colbert.base.ui.*;
 import br.com.colbert.mychart.aplicacao.artista.ArtistaPresenter;
-import br.com.colbert.mychart.dominio.artista.Artista;
-import br.com.colbert.mychart.dominio.artista.TipoArtista;
+import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.infraestrutura.providers.ImagesProvider;
 import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
-
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import br.com.colbert.mychart.ui.principal.PainelTelaPrincipal;
 
 /**
  * Painel de artistas.
@@ -51,6 +31,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 @Singleton
 @MVP(modelClass = Artista.class, presenterClass = ArtistaPresenter.class)
+@PainelTelaPrincipal
 public class ArtistaPanel implements FormView<Artista>, Serializable {
 
 	private static final long serialVersionUID = -7371434021781119641L;
@@ -273,6 +254,7 @@ public class ArtistaPanel implements FormView<Artista>, Serializable {
 	 * 
 	 * @return a instância do contêiner AWT
 	 */
+	@Override
 	public Container getContainer() {
 		return panel;
 	}

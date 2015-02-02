@@ -5,20 +5,16 @@ import java.awt.event.WindowListener;
 import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
-import javax.inject.*;
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import org.mvp4j.annotation.*;
 import org.mvp4j.annotation.Action;
-import org.slf4j.Logger;
 
+import br.com.colbert.base.ui.WindowView;
 import br.com.colbert.mychart.aplicacao.principal.MainPresenter;
-import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao;
 import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
-import br.com.colbert.mychart.ui.artista.ArtistaPanel;
-import br.com.colbert.mychart.ui.inicio.InicioPanel;
-import br.com.colbert.mychart.ui.topmusical.TopMusicalPanel;
 
 /**
  * A tela principal da aplicação implementada como um {@link JFrame}.
@@ -28,30 +24,12 @@ import br.com.colbert.mychart.ui.topmusical.TopMusicalPanel;
  */
 @Singleton
 @MVP(modelClass = Void.class, presenterClass = MainPresenter.class)
-public class MainWindow implements Serializable {
-
-	public static final String TELA_INICIAL = "inicio";
-	public static final String TELA_ARTISTAS = "artistas";
-	public static final String TELA_TOP_PRINCIPAL = "topPrincipal";
+public class MainWindow implements WindowView, Serializable {
 
 	private static final long serialVersionUID = 581637404111512993L;
 
 	@Action(name = "sair", EventType = WindowListener.class, EventAction = "windowClosing")
 	private JFrame frame;
-
-	@Inject
-	private Logger logger;
-
-	@Inject
-	@TituloAplicacao
-	private String tituloAplicacao;
-
-	@Inject
-	private InicioPanel inicioPanel;
-	@Inject
-	private ArtistaPanel artistaView;
-	@Inject
-	private TopMusicalPanel topMusicalView;
 
 	@Action(name = "exibirTelaInicio")
 	private JMenuItem menuItemIncio;
@@ -71,14 +49,6 @@ public class MainWindow implements Serializable {
 	 */
 	@PostConstruct
 	protected void init() {
-		initFrame();
-		initComponents();
-	}
-
-	/**
-	 * Inicializa os componentes da janela que não dependem do CDI.
-	 */
-	protected void initFrame() {
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		frame.setBounds(100, 100, 600, 350);
@@ -124,29 +94,9 @@ public class MainWindow implements Serializable {
 		frame.setContentPane(contentPane);
 	}
 
-	/**
-	 * Inicializa os componentes da janela injetados pelo CDI.
-	 */
-	protected void initComponents() {
-		frame.setTitle(tituloAplicacao);
-
-		Container contentPane = frame.getContentPane();
-		contentPane.add(inicioPanel.getContainer(), TELA_INICIAL);
-		contentPane.add(artistaView.getContainer(), TELA_ARTISTAS);
-		contentPane.add(topMusicalView.getContainer(), TELA_TOP_PRINCIPAL);
-	}
-
-	/**
-	 * Torna a janela visível.
-	 */
-	public void show() {
-		SwingUtils.invokeLater(() -> frame.setVisible(true));
-	}
-
-	/**
-	 * Fecha a janela.
-	 */
+	@Override
 	public void close() {
+		// sobrescreve para chamar dispose() ao invés de setVisible(false)
 		SwingUtils.invokeLater(() -> frame.dispose());
 	}
 
@@ -157,17 +107,16 @@ public class MainWindow implements Serializable {
 	 *            a ser exibida
 	 */
 	public void mudarTela(String tela) {
-		logger.debug("Mudando tela para: '{}'", tela);
 		Container contentPane = frame.getContentPane();
 		CardLayout layout = (CardLayout) contentPane.getLayout();
 		layout.show(contentPane, tela);
 	}
 
-	/**
-	 * Obtém a instância de {@link Frame} utilizada para representar a visão.
-	 * 
-	 * @return a instância da janela AWT
-	 */
+	@Override
+	public Container getContainer() {
+		return getFrame();
+	}
+
 	public Frame getFrame() {
 		return frame;
 	}
@@ -197,6 +146,6 @@ public class MainWindow implements Serializable {
 	}
 
 	public static void main(String[] args) {
-		new MainWindow().initFrame();
+		new MainWindow().init();
 	}
 }

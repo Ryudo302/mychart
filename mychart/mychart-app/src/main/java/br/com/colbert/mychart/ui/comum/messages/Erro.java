@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
+ * Representa um erro que ocorreu na aplicação.
  * 
  * @author Thiago Colbert
  * @since 24/01/2015

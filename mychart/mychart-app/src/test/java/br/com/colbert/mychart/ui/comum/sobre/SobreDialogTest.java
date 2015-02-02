@@ -18,7 +18,7 @@ public class SobreDialogTest {
 		try {
 			CdiUtils.init();
 			SobreDialog sobreDialog = CdiUtils.getBean(SobreDialog.class);
-			sobreDialog.setVisible(true);
+			sobreDialog.show();
 		} finally {
 			CdiUtils.shutdown();
 		}

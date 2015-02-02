@@ -2,13 +2,14 @@ package br.com.colbert.mychart.ui.sobre;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
+import java.io.*;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import br.com.colbert.base.ui.WindowView;
 import br.com.colbert.mychart.infraestrutura.info.*;
 import br.com.colbert.mychart.infraestrutura.info.TituloAplicacao.Formato;
 import br.com.colbert.mychart.infraestrutura.providers.ImagesProvider;
@@ -19,12 +20,14 @@ import br.com.colbert.mychart.infraestrutura.providers.ImagesProvider;
  * @author Thiago Colbert
  * @since 17/12/2014
  */
-public class SobreDialog extends JDialog {
+public class SobreDialog implements WindowView, Serializable {
 
 	private static final long serialVersionUID = 6664156130970313272L;
 
-	private final JPanel contentPanel;
+	private JDialog dialog;
+
 	private JLabel imagemLabel;
+	private JLabel textoLabel;
 
 	@Inject
 	private ImagesProvider images;
@@ -36,27 +39,29 @@ public class SobreDialog extends JDialog {
 	@Inject
 	@TituloAplicacao(Formato.COMPLETO)
 	private String tituloAplicacaoCompleto;
-	private JLabel textoLabel;
 
 	/**
 	 * Create the dialog.
 	 */
 	public SobreDialog() {
-		addWindowListener(new WindowAdapter() {
+		dialog = new JDialog();
+		dialog.addWindowListener(new WindowAdapter() {
+
 			@Override
 			public void windowClosing(WindowEvent event) {
-				dispose();
+				dialog.dispose();
 			}
 		});
-		setBounds(100, 100, 450, 262);
-		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-		getContentPane().setLayout(new BorderLayout());
 
-		contentPanel = new JPanel();
+		dialog.setBounds(100, 100, 450, 262);
+		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		dialog.getContentPane().setLayout(new BorderLayout());
+
+		JPanel contentPanel = new JPanel();
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
+		dialog.getContentPane().add(contentPanel, BorderLayout.CENTER);
+		
+		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 		{
 			JPanel imagePanel = new JPanel();
 			FlowLayout flowLayout = (FlowLayout) imagePanel.getLayout();
@@ -77,26 +82,35 @@ public class SobreDialog extends JDialog {
 		}
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER));
+			contentPanel.add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						dispose();
+						dialog.dispose();
 					}
 				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				dialog.getRootPane().setDefaultButton(okButton);
 			}
 		}
 	}
 
+	public static void main(String[] args) {
+		new SobreDialog();
+	}
+
 	@PostConstruct
 	public void init() throws IOException {
-		setTitle("Sobre " + tituloAplicacaoSimples);
+		dialog.setTitle("Sobre " + tituloAplicacaoSimples);
 		imagemLabel.setIcon(images.chart());
 		textoLabel.setText(tituloAplicacaoCompleto);
+	}
+
+	@Override
+	public Container getContainer() {
+		return dialog;
 	}
 }

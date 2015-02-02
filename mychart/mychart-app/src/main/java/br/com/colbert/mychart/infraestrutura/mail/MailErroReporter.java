@@ -33,12 +33,14 @@ public class MailErroReporter implements ErroReporter, Serializable {
 	@EmailsDesenvolvedores
 	private List<String> emailsDesenvolvedores;
 
+	@Inject
 	@DiretorioBase
 	private File diretorioApp;
 
 	@Override
 	public void reportar(Erro erro) {
-		if (!Desktop.isDesktopSupported() || GraphicsEnvironment.isHeadless()) {
+		if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.MAIL)
+				|| GraphicsEnvironment.isHeadless()) {
 			throw new ErroReporterException("O envio de e-mails não é suportado por este ambiente");
 		}
 
@@ -48,6 +50,7 @@ public class MailErroReporter implements ErroReporter, Serializable {
 					.anexo(new File(diretorioApp, "mychart.log").getAbsolutePath()).build();
 			logger.debug("Enviando mensagem: {}", mensagem);
 			URI uri = URI.create(mensagem);
+			logger.debug("Abrindo cliente de e-mail. URI = {}", uri);
 			Desktop.getDesktop().mail(uri);
 		} catch (IOException exception) {
 			throw new ErroReporterException("Erro ao enviar e-mail", exception);
