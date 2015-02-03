@@ -136,16 +136,6 @@ public class PrimeiroTopMusicalDialog implements Serializable {
 		infoPanel.add(cancoesLabel, "2, 6, left, center");
 
 		adicionarCancaoButton = new JButton("Adicionar");
-		adicionarCancaoButton.addActionListener(event -> {
-			FutureTask<String> causaFechamento = cancaoView.show();
-			try {
-				if (causaFechamento.get() == CausaSaidaDeView.CONFIRMACAO) {
-					((CancaoTableModel) cancoesTable.getModel()).addAllElements(cancaoView.getCancoesSelecionadas());
-				}
-			} catch (Exception exception) {
-				messagesView.adicionarMensagemErro("Erro na seleção de canções", exception);
-			}
-		});
 		adicionarCancaoButton.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		adicionarCancaoButton.setToolTipText("Adiciona uma canção ao top");
 		infoPanel.add(adicionarCancaoButton, "4, 6, left, top");

@@ -22,6 +22,12 @@ public class DefinirConteudoTabelaWorkerListener<T> extends WorkerDoneAdapter {
 	private final FormView<T> view;
 	private Class<T> elementsClass;
 
+	/**
+	 * 
+	 * @param view
+	 * @throws IllegalArgumentException
+	 *             caso o objeto informado não implemente {@link FormView}.
+	 */
 	@SuppressWarnings("unchecked")
 	public DefinirConteudoTabelaWorkerListener(FormView<T> view) {
 		this.view = view;

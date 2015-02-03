@@ -1,24 +1,25 @@
 package br.com.colbert.mychart.ui.cancao;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.io.Serializable;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.FutureTask;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import javax.inject.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
+import org.mvp4j.annotation.*;
+import org.mvp4j.annotation.Action;
+
 import com.jgoodies.forms.layout.*;
 
-import br.com.colbert.base.ui.ButtonFactory;
+import br.com.colbert.base.ui.*;
+import br.com.colbert.mychart.aplicacao.cancao.CancaoPresenter;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
-import br.com.colbert.mychart.ui.comum.CausaSaidaDeView;
-import br.com.colbert.mychart.ui.principal.MainWindow;
+import br.com.colbert.mychart.ui.principal.*;
 
 /**
  * Janela de canções.
@@ -26,19 +27,25 @@ import br.com.colbert.mychart.ui.principal.MainWindow;
  * @author Thiago Colbert
  * @since 05/01/2015
  */
-// @ApplicationScoped
-public class CancaoDialog implements Serializable {
+@Singleton
+@MVP(modelClass = Cancao.class, presenterClass = CancaoPresenter.class)
+@PainelTelaPrincipal
+public class CancaoDialog implements FormView<Cancao>, WindowView, Serializable {
 
 	private static final long serialVersionUID = 8909053142047968045L;
 
 	private JDialog dialog;
-	private String causaFechamento;
-	private Cancao cancaoAtual;
 
 	private JList<Cancao> cancoesList;
 
+	@Model(property = "id")
+	private JTextField idTextField;
+	@Model(property = "titulo")
 	private JTextField tituloTextField;
+
+	@Action(name = "consultarCancoes")
 	private JButton consultarButton;
+	@Action(name = "selecionarCancoes")
 	private JButton salvarButton;
 
 	@Inject
@@ -64,14 +71,6 @@ public class CancaoDialog implements Serializable {
 		dialog.setResizable(false);
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setPreferredSize(new Dimension(400, 270));
-		dialog.addWindowListener(new WindowAdapter() {
-
-			@Override
-			public void windowClosing(WindowEvent event) {
-				causaFechamento = CausaSaidaDeView.CANCELAMENTO;
-				close();
-			}
-		});
 
 		Container contentPane = dialog.getContentPane();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -88,6 +87,9 @@ public class CancaoDialog implements Serializable {
 
 		contentPane.add(informacoesPanel);
 
+		idTextField = new JTextField();
+		idTextField.setVisible(false);
+
 		tituloTextField = new JTextField();
 		tituloTextField.addActionListener(event -> consultarButton.doClick());
 		informacoesPanel.add(tituloTextField, "4, 2, fill, default");
@@ -101,10 +103,6 @@ public class CancaoDialog implements Serializable {
 		contentPane.add(botoesPanel);
 
 		salvarButton = ButtonFactory.createJButton("Salvar", "Salva o artista selecionado");
-		salvarButton.addActionListener(event -> {
-			causaFechamento = CausaSaidaDeView.CONFIRMACAO;
-			close();
-		});
 		botoesPanel.add(salvarButton);
 
 		CancoesListModel cancoesListModel = new CancoesListModel();
@@ -120,47 +118,33 @@ public class CancaoDialog implements Serializable {
 	}
 
 	private void initComponents() {
-		cancaoAtual = Cancao.CANCAO_NULL;
-
 		cancoesList.setCellRenderer(cancaoListCellRenderer);
 	}
 
-	public FutureTask<String> show() {
-		return SwingUtils.invokeLater(() -> {
-			dialog.setVisible(true);
-			return causaFechamento;
-		});
-	}
-
-	public void close() {
-		SwingUtils.invokeLater(() -> dialog.setVisible(false));
-	}
-
 	public List<Cancao> getCancoesSelecionadas() {
-		return SwingUtils.invokeAndWait(() -> cancoesList.getSelectedValuesList());
+		return cancoesList.getSelectedValuesList();
 	}
 
-	public void setCancoesDisponiveis(Collection<Cancao> cancoes) {
+	public String getIdCancao() {
+		return idTextField.getText();
+	}
+
+	public String getTituloCancao() {
+		return tituloTextField.getText();
+	}
+
+	@Override
+	public void setConteudoTabela(Collection<Cancao> cancoes) {
 		SwingUtils.invokeLater(() -> ((CancoesListModel) cancoesList.getModel()).setElements(cancoes));
 	}
 
-	public Optional<Cancao> getCancaoAtual() {
-		return SwingUtils.invokeAndWait(() -> {
-			cancaoAtual.setTitulo(tituloTextField.getText());
-			return Optional.of(cancaoAtual);
-		});
+	@Override
+	public void limparTela() {
+		SwingUtils.clearAllData(dialog.getContentPane());
+		tituloTextField.requestFocusInWindow();
 	}
 
-	public void setCancaoAtual(Cancao cancao) {
-		this.cancaoAtual = cancao;
-		this.tituloTextField.setText(cancao.getTitulo());
-	}
-
-	/**
-	 * Obtém o {@link Container} utilizado para representar a tela.
-	 * 
-	 * @return a instância do contêiner AWT
-	 */
+	@Override
 	public Container getContainer() {
 		return dialog;
 	}

@@ -4,11 +4,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.*;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.*;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import br.com.colbert.base.dominio.*;
@@ -23,7 +25,7 @@ import br.com.colbert.mychart.infraestrutura.validacao.TituloMusical;
  */
 @Entity
 @Table(name = "TB_CANCAO")
-public class Cancao extends AbstractEntidade<String> {
+public class Cancao extends AbstractEntidade<String> implements Cloneable {
 
 	public static final Cancao CANCAO_NULL = new Cancao();
 
@@ -84,6 +86,18 @@ public class Cancao extends AbstractEntidade<String> {
 	 */
 	public Cancao(String titulo, Artista... artistas) {
 		this(titulo, artistas != null ? Arrays.asList(artistas) : Collections.emptyList());
+	}
+
+	/**
+	 * Cria uma nova canção a partir de outra.
+	 * 
+	 * @param outraCancao
+	 *            a outra canção
+	 */
+	public Cancao(Cancao outraCancao) {
+		this(outraCancao.titulo, outraCancao.getArtistas());
+		this.id = outraCancao.id;
+		this.persistente = outraCancao.persistente;
 	}
 
 	/**
@@ -164,6 +178,11 @@ public class Cancao extends AbstractEntidade<String> {
 	@Transient
 	public String getNomeArtistaPrincipal() {
 		return getArtistaPrincipal().isPresent() ? getArtistaPrincipal().get().getNome() : null;
+	}
+
+	@Override
+	public Object clone() {
+		return new Cancao(this);
 	}
 
 	@Override

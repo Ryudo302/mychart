@@ -153,10 +153,8 @@ public class MainPresenter implements Presenter, Serializable {
 	private void mudarConteudoTela(Class<? extends View> novaTela) {
 		View tela = paineis.select(novaTela, novaTela.getAnnotation(PainelTelaPrincipal.class)).get();
 		Class<Presenter> presenterClass = MvpUtils.getPresenterClass(tela.getClass());
-		Presenter presenter = presenters.select(presenterClass).get();
-
 		logger.debug("Exibindo tela: " + tela.getName());
 		mainWindow.mudarTela(tela.getName());
-		presenter.start();
+		presenters.select(presenterClass).get().start();
 	}
 }
