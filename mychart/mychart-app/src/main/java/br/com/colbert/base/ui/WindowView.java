@@ -27,6 +27,15 @@ public interface WindowView extends View {
 	}
 
 	/**
+	 * Verifica se a janela está visível.
+	 * 
+	 * @return <code>true</code>/<code>false</code>
+	 */
+	default boolean isVisible() {
+		return getContainer().isVisible();
+	}
+
+	/**
 	 * Altera o título da janela.
 	 * 
 	 * @param titulo

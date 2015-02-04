@@ -17,7 +17,6 @@ import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.swing.worker.*;
 import br.com.colbert.mychart.ui.cancao.CancaoDialog;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
-import br.com.colbert.mychart.ui.principal.PainelTelaPrincipal;
 
 /**
  * <em>Presenter</em> de {@link Cancao}.
@@ -36,7 +35,6 @@ public class CancaoPresenter implements Presenter, Serializable {
 	private transient AppController appController;
 
 	@Inject
-	@PainelTelaPrincipal
 	private CancaoDialog view;
 	@Inject
 	private MessagesView messagesView;

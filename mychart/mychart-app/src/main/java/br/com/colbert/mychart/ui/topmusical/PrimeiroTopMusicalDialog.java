@@ -6,24 +6,24 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.FutureTask;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import javax.inject.*;
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 
+import org.mvp4j.annotation.*;
+import org.mvp4j.annotation.Action;
+
 import com.jgoodies.forms.layout.*;
 
-import br.com.colbert.base.ui.ButtonFactory;
+import br.com.colbert.base.ui.*;
+import br.com.colbert.mychart.aplicacao.topmusical.PrimeiroTopMusicalPresenter;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.dominio.topmusical.TopMusicalConfiguration;
 import br.com.colbert.mychart.infraestrutura.swing.formatter.LocalDateFormatter;
 import br.com.colbert.mychart.ui.artista.ArtistaCollectionColumnTableCellRenderer;
-import br.com.colbert.mychart.ui.cancao.*;
-import br.com.colbert.mychart.ui.comum.CausaSaidaDeView;
-import br.com.colbert.mychart.ui.comum.messages.MessagesView;
+import br.com.colbert.mychart.ui.cancao.CancaoTableModel;
 import br.com.colbert.mychart.ui.principal.MainWindow;
 
 /**
@@ -32,36 +32,39 @@ import br.com.colbert.mychart.ui.principal.MainWindow;
  * @author Thiago Colbert
  * @since 05/01/2015
  */
-@ApplicationScoped
-public class PrimeiroTopMusicalDialog implements Serializable {
+@Singleton
+@MVP(modelClass = Void.class, presenterClass = PrimeiroTopMusicalPresenter.class)
+public class PrimeiroTopMusicalDialog implements WindowView, Serializable {
 
 	private static final long serialVersionUID = -619331878800317148L;
 
 	private JDialog dialog;
 
-	private String causaFechamento;
-
 	@Inject
 	private MainWindow mainWindow;
-	@Inject
-	private CancaoDialog cancaoView;
-	@Inject
-	private MessagesView messagesView;
 
 	private JPanel infoPanel;
+	private JPanel botoesPanel;
+
 	private JFormattedTextField dataInicialFormattedTextField;
 	private JLabel observacaoLabel;
 	private JLabel cancoesLabel;
 	private JLabel previewLabel;
+
+	@Action(name = "adicionarCancao")
 	private JButton adicionarCancaoButton;
+	@Action(name = "removerCancao")
 	private JButton removerCancaoButton;
+	@Action(name = "moveCancaoParaCima")
 	private JButton upButton;
+	@Action(name = "moverCancaoParaBaixo")
 	private JButton downButton;
 
 	private JTable cancoesTable;
 
-	private JPanel botoesPanel;
+	@Action(name = "salvar")
 	private JButton salvarButton;
+	@Action(name = "cancelar")
 	private JButton cancelarButton;
 
 	@Inject
@@ -86,13 +89,6 @@ public class PrimeiroTopMusicalDialog implements Serializable {
 
 	private void initDialog() {
 		dialog = new JDialog(mainWindow != null ? mainWindow.getFrame() : null, "Primeiro Top Musical", true);
-		dialog.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent event) {
-				causaFechamento = CausaSaidaDeView.CANCELAMENTO;
-				close();
-			}
-		});
 		dialog.setResizable(false);
 		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		dialog.getContentPane().setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
@@ -188,17 +184,9 @@ public class PrimeiroTopMusicalDialog implements Serializable {
 		botoesPanel = new JPanel();
 
 		salvarButton = ButtonFactory.createJButton("Salvar", "Salva o top musical");
-		salvarButton.addActionListener(event -> {
-			causaFechamento = CausaSaidaDeView.CONFIRMACAO;
-			close();
-		});
 		botoesPanel.add(salvarButton);
 
 		cancelarButton = ButtonFactory.createJButton("Cancelar", "Cancelar criação do top musical");
-		cancelarButton.addActionListener(event -> {
-			causaFechamento = CausaSaidaDeView.CANCELAMENTO;
-			close();
-		});
 		botoesPanel.add(cancelarButton);
 
 		contentPane.add(infoPanel);
@@ -222,15 +210,6 @@ public class PrimeiroTopMusicalDialog implements Serializable {
 		cancoesTable.getColumnModel().getColumn(2).setCellRenderer(artistaColumnTableCellRenderer);
 	}
 
-	public String show() {
-		dialog.setVisible(true);
-		return causaFechamento;
-	}
-
-	public void close() {
-		dialog.setVisible(false);
-	}
-
 	/**
 	 * Obtém a data inicial definida para o primeiro top musical.
 	 * 
@@ -242,5 +221,10 @@ public class PrimeiroTopMusicalDialog implements Serializable {
 
 	public List<Cancao> getCancoes() {
 		return ((CancaoTableModel) cancoesTable.getModel()).getElements();
+	}
+
+	@Override
+	public Container getContainer() {
+		return dialog;
 	}
 }

@@ -1,7 +1,7 @@
 package br.com.colbert.mychart.aplicacao.topmusical;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
@@ -13,13 +13,11 @@ import org.mvp4j.adapter.MVPBinding;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.Presenter;
-import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.dominio.topmusical.*;
 import br.com.colbert.mychart.infraestrutura.swing.worker.*;
-import br.com.colbert.mychart.ui.comum.CausaSaidaDeView;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
 import br.com.colbert.mychart.ui.principal.PainelTelaPrincipal;
-import br.com.colbert.mychart.ui.topmusical.*;
+import br.com.colbert.mychart.ui.topmusical.TopMusicalPanel;
 
 /**
  * <em>Presenter</em> de {@link TopMusical}.
@@ -43,18 +41,10 @@ public class TopMusicalPresenter implements Presenter, Serializable {
 				logger.debug("Nenhum top ainda salvo. Criando um novo.");
 				messagesView
 						.adicionarMensagemSucesso("É a sua primeira vez aqui, portanto é necessário informar alguns dados do seu primeiro top musical.");
-				String causaSaida = primeiroTopMusicalDialog.show();
-				if (causaSaida == CausaSaidaDeView.CONFIRMACAO) {
-					List<Cancao> cancoes = primeiroTopMusicalDialog.getCancoes();
-					Integer quantidadePosicoes = topMusicalFactory.getConfig().getQuantidadePosicoes();
-					if (cancoes.size() == quantidadePosicoes) {
-						resultado = Optional.of(topMusicalFactory.novo(primeiroTopMusicalDialog.getDataInicial(), cancoes));
-					} else {
-						messagesView.adicionarMensagemAlerta("Devem ser adicionadas " + quantidadePosicoes + " canções!");
-					}
-				} else {
-					resultado = Optional.empty();
-				}
+				primeiroTopMusicalPresenter.start();
+				// TODO Não esperando a janela fechar
+				resultado = primeiroTopMusicalPresenter.getTopMusical();
+				logger.debug("Top criado: {}", resultado);
 			}
 
 			setTopAtual(resultado);
@@ -76,10 +66,7 @@ public class TopMusicalPresenter implements Presenter, Serializable {
 	@Inject
 	private MessagesView messagesView;
 	@Inject
-	private PrimeiroTopMusicalDialog primeiroTopMusicalDialog;
-
-	@Inject
-	private TopMusicalFactory topMusicalFactory;
+	private PrimeiroTopMusicalPresenter primeiroTopMusicalPresenter;
 
 	@Inject
 	private Instance<CarregarTopAtualWorker> carregarTopAtualWorker;

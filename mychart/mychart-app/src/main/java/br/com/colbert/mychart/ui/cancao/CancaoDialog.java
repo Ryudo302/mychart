@@ -19,7 +19,7 @@ import br.com.colbert.base.ui.*;
 import br.com.colbert.mychart.aplicacao.cancao.CancaoPresenter;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
-import br.com.colbert.mychart.ui.principal.*;
+import br.com.colbert.mychart.ui.principal.MainWindow;
 
 /**
  * Janela de canções.
@@ -29,7 +29,6 @@ import br.com.colbert.mychart.ui.principal.*;
  */
 @Singleton
 @MVP(modelClass = Cancao.class, presenterClass = CancaoPresenter.class)
-@PainelTelaPrincipal
 public class CancaoDialog implements FormView<Cancao>, WindowView, Serializable {
 
 	private static final long serialVersionUID = 8909053142047968045L;
