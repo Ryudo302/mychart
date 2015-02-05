@@ -13,6 +13,7 @@ import org.mvp4j.AppController;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.Presenter;
+import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.swing.worker.*;
 import br.com.colbert.mychart.ui.cancao.CancaoDialog;
@@ -42,7 +43,6 @@ public class CancaoPresenter implements Presenter, Serializable {
 	@Inject
 	private Instance<ConsultarCancoesWorker> consultarCancoesWorker;
 
-	@PostConstruct
 	@Override
 	public void doBinding() {
 		logger.trace("Definindo bindings");
@@ -52,6 +52,9 @@ public class CancaoPresenter implements Presenter, Serializable {
 	@Override
 	public void start() {
 		logger.debug("Iniciando");
+		doBinding();
+		appController.refreshView(view);
+		view.show();
 	}
 
 	public List<Cancao> getCancoesSelecionadas() {
@@ -59,13 +62,14 @@ public class CancaoPresenter implements Presenter, Serializable {
 	}
 
 	public void consultarCancoes() {
-		logger.info("Consultando artistas");
+		logger.info("Consultando canções");
 		String tituloCancao = view.getTituloCancao();
-		if (StringUtils.isBlank(tituloCancao)) {
-			messagesView.adicionarMensagemAlerta("Informe um nome a ser consultado.");
+		String artistaPrincipal = view.getArtistaPrincipal();
+		if (StringUtils.isBlank(tituloCancao) && StringUtils.isBlank(artistaPrincipal)) {
+			messagesView.adicionarMensagemAlerta("Informe um título a ser utilizado na consulta.");
 		} else {
 			ConsultarCancoesWorker worker = consultarCancoesWorker.get();
-			worker.setExemplo(new Cancao(tituloCancao));
+			worker.setExemplo(new Cancao(tituloCancao, new Artista(artistaPrincipal, TipoArtista.DESCONHECIDO)));
 			worker.execute();
 			worker.addWorkerDoneListener(new DefinirConteudoTabelaWorkerListener<>(view));
 			worker.addWorkerDoneListener(new MensagensWorkerListener(messagesView, "Foi(ram) encontrada(s) {size} canção(ões)",
@@ -74,6 +78,11 @@ public class CancaoPresenter implements Presenter, Serializable {
 	}
 
 	public void selecionarCancoes() {
+		view.close();
+	}
+	
+	public void sair() {
+		view.limparTela();
 		view.close();
 	}
 }

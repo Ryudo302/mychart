@@ -1,7 +1,5 @@
 package br.com.colbert.mychart.infraestrutura.swing.worker;
 
-import java.awt.Window;
-
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.swing.*;
@@ -9,7 +7,7 @@ import javax.swing.SwingWorker.StateValue;
 
 import org.slf4j.Logger;
 
-import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
+import br.com.colbert.base.ui.WindowView;
 import br.com.colbert.mychart.ui.comum.LoadingDialog;
 
 /**
@@ -26,7 +24,7 @@ public class WorkerWaitListener implements WorkerStateListener {
 
 	@Inject
 	@LoadingView
-	private Window loadingView;
+	private WindowView loadingView;
 
 	private boolean exibindo;
 
@@ -48,7 +46,7 @@ public class WorkerWaitListener implements WorkerStateListener {
 	private void hideView() {
 		if (exibindo) {
 			logger.trace("Ocultando tela");
-			SwingUtils.invokeLater(() -> loadingView.setVisible(false));
+			loadingView.close();
 			exibindo = false;
 		}
 	}
@@ -56,7 +54,7 @@ public class WorkerWaitListener implements WorkerStateListener {
 	private void showView() {
 		if (!exibindo) {
 			logger.trace("Exibindo tela");
-			SwingUtils.invokeLater(() -> loadingView.setVisible(true));
+			loadingView.show();
 			exibindo = true;
 		}
 	}

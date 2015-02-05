@@ -5,11 +5,13 @@ import java.awt.event.*;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.*;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.*;
 import javax.swing.*;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.DefaultFormatterFactory;
 
 import org.mvp4j.annotation.*;
@@ -21,6 +23,7 @@ import br.com.colbert.base.ui.*;
 import br.com.colbert.mychart.aplicacao.topmusical.PrimeiroTopMusicalPresenter;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.dominio.topmusical.TopMusicalConfiguration;
+import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
 import br.com.colbert.mychart.infraestrutura.swing.formatter.LocalDateFormatter;
 import br.com.colbert.mychart.ui.artista.ArtistaCollectionColumnTableCellRenderer;
 import br.com.colbert.mychart.ui.cancao.CancaoTableModel;
@@ -60,6 +63,7 @@ public class PrimeiroTopMusicalDialog implements WindowView, Serializable {
 	@Action(name = "moverCancaoParaBaixo")
 	private JButton downButton;
 
+	@Action(name = "mudancaSelecaoCancao", EventAction = "valueChanged", EventType = ListSelectionListener.class)
 	private JTable cancoesTable;
 
 	@Action(name = "salvar")
@@ -168,15 +172,6 @@ public class PrimeiroTopMusicalDialog implements WindowView, Serializable {
 		cancoesTable.setModel(model);
 		cancoesTable.setFillsViewportHeight(true);
 
-		cancoesTable.getSelectionModel().addListSelectionListener(event -> {
-			if (!event.getValueIsAdjusting()) {
-				boolean algumaLinhaSelecionada = cancoesTable.getSelectedRowCount() > 0;
-				removerCancaoButton.setEnabled(algumaLinhaSelecionada);
-				upButton.setEnabled(algumaLinhaSelecionada);
-				downButton.setEnabled(algumaLinhaSelecionada);
-			}
-		});
-
 		JScrollPane cancoesTableScrollPane = new JScrollPane();
 		cancoesTableScrollPane.setViewportView(cancoesTable);
 		infoPanel.add(cancoesTableScrollPane, "4, 10, 8, 1, fill, fill");
@@ -210,6 +205,12 @@ public class PrimeiroTopMusicalDialog implements WindowView, Serializable {
 		cancoesTable.getColumnModel().getColumn(2).setCellRenderer(artistaColumnTableCellRenderer);
 	}
 
+	@Override
+	public void show() {
+		// não usa super.show() para permitir que a thread fique interrompida enquanto a janela estiver aberta
+		dialog.setVisible(true);
+	}
+
 	/**
 	 * Obtém a data inicial definida para o primeiro top musical.
 	 * 
@@ -221,6 +222,30 @@ public class PrimeiroTopMusicalDialog implements WindowView, Serializable {
 
 	public List<Cancao> getCancoes() {
 		return ((CancaoTableModel) cancoesTable.getModel()).getElements();
+	}
+
+	public Optional<Cancao> getCancaoSelecionada() {
+		return SwingUtils.getSelectedElement(cancoesTable);
+	}
+
+	public void adicionarCancoes(List<Cancao> cancoes) {
+		((CancaoTableModel) cancoesTable.getModel()).addAllElements(cancoes);
+	}
+
+	public JButton getAdicionarCancaoButton() {
+		return adicionarCancaoButton;
+	}
+
+	public JButton getRemoverCancaoButton() {
+		return removerCancaoButton;
+	}
+
+	public JButton getUpButton() {
+		return upButton;
+	}
+
+	public JButton getDownButton() {
+		return downButton;
 	}
 
 	@Override

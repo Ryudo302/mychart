@@ -1,6 +1,7 @@
 package br.com.colbert.mychart.ui.cancao;
 
 import java.awt.*;
+import java.awt.event.WindowListener;
 import java.io.Serializable;
 import java.util.*;
 import java.util.List;
@@ -33,6 +34,7 @@ public class CancaoDialog implements FormView<Cancao>, WindowView, Serializable 
 
 	private static final long serialVersionUID = 8909053142047968045L;
 
+	@Action(name = "sair", EventAction = "windowClosing", EventType = WindowListener.class)
 	private JDialog dialog;
 
 	private JList<Cancao> cancoesList;
@@ -41,11 +43,12 @@ public class CancaoDialog implements FormView<Cancao>, WindowView, Serializable 
 	private JTextField idTextField;
 	@Model(property = "titulo")
 	private JTextField tituloTextField;
+	private JTextField artistaPrincipalTextField; // TODO Auto-complete
 
 	@Action(name = "consultarCancoes")
 	private JButton consultarButton;
 	@Action(name = "selecionarCancoes")
-	private JButton salvarButton;
+	private JButton selecionarButton;
 
 	@Inject
 	private MainWindow mainWindow;
@@ -67,8 +70,8 @@ public class CancaoDialog implements FormView<Cancao>, WindowView, Serializable 
 
 	private void initPanel() {
 		dialog = new JDialog(mainWindow != null ? mainWindow.getFrame() : null, "Consulta de Canções", true);
-		dialog.setResizable(false);
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		dialog.setResizable(false);
 		dialog.setPreferredSize(new Dimension(400, 270));
 
 		Container contentPane = dialog.getContentPane();
@@ -79,10 +82,11 @@ public class CancaoDialog implements FormView<Cancao>, WindowView, Serializable 
 				null));
 		informacoesPanel.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.PREF_COLSPEC,
 				FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("3dlu:grow"), FormSpecs.RELATED_GAP_COLSPEC, }, new RowSpec[] {
-				FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("20px"), FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
+				FormSpecs.PARAGRAPH_GAP_ROWSPEC, RowSpec.decode("20px"), FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC, FormSpecs.PARAGRAPH_GAP_ROWSPEC, }));
 
 		JLabel tituloLabel = new JLabel("Título:");
-		informacoesPanel.add(tituloLabel, "2, 2, right, center");
+		informacoesPanel.add(tituloLabel, "2, 2, left, center");
 
 		contentPane.add(informacoesPanel);
 
@@ -90,19 +94,27 @@ public class CancaoDialog implements FormView<Cancao>, WindowView, Serializable 
 		idTextField.setVisible(false);
 
 		tituloTextField = new JTextField();
+		tituloTextField.setToolTipText("O título da canção");
 		tituloTextField.addActionListener(event -> consultarButton.doClick());
 		informacoesPanel.add(tituloTextField, "4, 2, fill, default");
 
+		JLabel artistaPrincipalLabel = new JLabel("Artista Principal:");
+		informacoesPanel.add(artistaPrincipalLabel, "2, 4, right, center");
+
+		artistaPrincipalTextField = new JTextField();
+		artistaPrincipalTextField.setToolTipText("O artista principal da canção.");
+		informacoesPanel.add(artistaPrincipalTextField, "4, 4, fill, default");
+		artistaPrincipalTextField.setColumns(10);
+
 		JPanel botoesPanel = new JPanel();
 
-		consultarButton = ButtonFactory.createJButton("Consultar",
-				"Procura por artistas que atendam aos critérios informados acima");
+		consultarButton = ButtonFactory.createJButton("Consultar", "Procura por canções com o título acima");
 		botoesPanel.add(consultarButton);
 
 		contentPane.add(botoesPanel);
 
-		salvarButton = ButtonFactory.createJButton("Salvar", "Salva o artista selecionado");
-		botoesPanel.add(salvarButton);
+		selecionarButton = ButtonFactory.createJButton("Selecionar", "Seleciona a canção");
+		botoesPanel.add(selecionarButton);
 
 		CancoesListModel cancoesListModel = new CancoesListModel();
 		cancoesList = new JList<>(cancoesListModel);
@@ -132,6 +144,10 @@ public class CancaoDialog implements FormView<Cancao>, WindowView, Serializable 
 		return tituloTextField.getText();
 	}
 
+	public String getArtistaPrincipal() {
+		return artistaPrincipalTextField.getText();
+	}
+
 	@Override
 	public void setConteudoTabela(Collection<Cancao> cancoes) {
 		SwingUtils.invokeLater(() -> ((CancoesListModel) cancoesList.getModel()).setElements(cancoes));
@@ -141,6 +157,12 @@ public class CancaoDialog implements FormView<Cancao>, WindowView, Serializable 
 	public void limparTela() {
 		SwingUtils.clearAllData(dialog.getContentPane());
 		tituloTextField.requestFocusInWindow();
+	}
+
+	@Override
+	public void show() {
+		// não usa super.show() para permitir que a thread fique interrompida enquanto a janela estiver aberta
+		dialog.setVisible(true);
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class TopMusicalPresenter implements Presenter, Serializable {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void doneWithSuccess(SwingWorker<?, ?> worker) {
-			Optional<TopMusical> resultado = (Optional<TopMusical>) ((AbstractWorker<?, ?>) worker).getResult();
+			Optional<TopMusical> resultado = ((AbstractWorker<Optional<TopMusical>, ?>) worker).getResult();
 			logger.debug("Top atual: {}", resultado);
 
 			if (!resultado.isPresent()) {
@@ -42,7 +42,6 @@ public class TopMusicalPresenter implements Presenter, Serializable {
 				messagesView
 						.adicionarMensagemSucesso("É a sua primeira vez aqui, portanto é necessário informar alguns dados do seu primeiro top musical.");
 				primeiroTopMusicalPresenter.start();
-				// TODO Não esperando a janela fechar
 				resultado = primeiroTopMusicalPresenter.getTopMusical();
 				logger.debug("Top criado: {}", resultado);
 			}

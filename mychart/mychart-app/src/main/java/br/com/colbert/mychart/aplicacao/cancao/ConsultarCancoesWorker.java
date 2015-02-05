@@ -36,7 +36,7 @@ public class ConsultarCancoesWorker extends AbstractWorker<Collection<Cancao>, V
 	@Inject
 	private CancaoRepository repositorio;
 	@Inject
-	private CancaoWs artistaWs;
+	private CancaoWs cancaoWs;
 
 	private Cancao exemplo;
 
@@ -52,7 +52,7 @@ public class ConsultarCancoesWorker extends AbstractWorker<Collection<Cancao>, V
 		cancoesUniqueList.addAll(repositorio.consultarPor(exemplo));
 
 		logger.debug("Consultando na web");
-		cancoesUniqueList.addAll(artistaWs.consultarPor(exemplo));
+		cancoesUniqueList.addAll(cancaoWs.consultarPor(exemplo));
 
 		logger.debug("Ordenando canções");
 		cancoes.sort(new CancoesPorTituloComparator());

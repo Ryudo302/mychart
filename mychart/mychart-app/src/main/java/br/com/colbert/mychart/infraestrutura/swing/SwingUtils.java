@@ -2,6 +2,7 @@ package br.com.colbert.mychart.infraestrutura.swing;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.concurrent.*;
 
 import javax.swing.*;
@@ -44,10 +45,13 @@ public final class SwingUtils {
 				((JTextComponent) componente).setText(StringUtils.EMPTY);
 			} else if (componente instanceof JComboBox) {
 				((JComboBox<?>) componente).setSelectedIndex(0);
+			} else if (componente instanceof JList) {
+				((JList<?>) componente).getSelectionModel().clearSelection();
 			} else if (componente instanceof JToggleButton) {
 				((JToggleButton) componente).setSelected(false);
-			/*} else if (componente instanceof JTable) {
-				clearJTable((JTable) componente);*/
+				/*
+				 * } else if (componente instanceof JTable) { clearJTable((JTable) componente);
+				 */
 			} else if (componente instanceof Container) {
 				_clearAllInputs((Container) componente);
 			}
@@ -67,6 +71,41 @@ public final class SwingUtils {
 			} catch (InstantiationException | IllegalAccessException exception) {
 				throw new ViewException("Erro ao limpar tabela", exception);
 			}
+		}
+	}
+
+	/**
+	 * Obtém um único elemento selecionado na tabela informada.
+	 * 
+	 * @param table
+	 *            a tabela
+	 * @return o elemento selecionado, {@link Optional#empty()} caso não exista nenhum
+	 * @throws NullPointerException
+	 *             caso seja informado <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             caso a tabela permita a seleção de múltiplos elementos ou caso seu modelo não permita o acesso a um elemento a
+	 *             partir de seu índice
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Optional<E> getSelectedElement(JTable table) {
+		Objects.requireNonNull(table, "Tabela nula");
+		if (table.getSelectionModel().getSelectionMode() == ListSelectionModel.MULTIPLE_INTERVAL_SELECTION) {
+			throw new IllegalArgumentException("A tabela permite a seleção de múltiplos elementos");
+		}
+
+		int selectedRow = table.getSelectedRow();
+		if (selectedRow >= 0) {
+			int modelIndex = table.convertRowIndexToModel(selectedRow);
+			TableModel model = table.getModel();
+			if (model instanceof ObjectTableModel) {
+				return modelIndex != -1 ? (Optional<E>) Optional.of(((ObjectTableModel<?>) model).getElement(modelIndex))
+						: Optional.empty();
+			} else {
+				throw new IllegalArgumentException(
+						"Não é possível obter um elemento do modelo da tabela a partir de seu índice: " + modelIndex);
+			}
+		} else {
+			return Optional.empty();
 		}
 	}
 

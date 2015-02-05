@@ -2,7 +2,7 @@ package br.com.colbert.mychart.ui.topmusical;
 
 import java.awt.*;
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -19,6 +19,7 @@ import com.jgoodies.forms.layout.*;
 import br.com.colbert.base.ui.*;
 import br.com.colbert.mychart.aplicacao.topmusical.TopMusicalPresenter;
 import br.com.colbert.mychart.dominio.topmusical.*;
+import br.com.colbert.mychart.infraestrutura.swing.SwingUtils;
 import br.com.colbert.mychart.ui.cancao.CancaoColumnTableCellRenderer;
 import br.com.colbert.mychart.ui.principal.PainelTelaPrincipal;
 
@@ -31,7 +32,7 @@ import br.com.colbert.mychart.ui.principal.PainelTelaPrincipal;
 @Singleton
 @MVP(modelClass = TopMusical.class, presenterClass = TopMusicalPresenter.class)
 @PainelTelaPrincipal
-public class TopMusicalPanel implements WindowView, Serializable {
+public class TopMusicalPanel implements FormView<Posicao>, Serializable {
 
 	private static final long serialVersionUID = -6153457716329302059L;
 
@@ -129,6 +130,16 @@ public class TopMusicalPanel implements WindowView, Serializable {
 
 	private void initComponents() {
 		posicoesTable.getColumnModel().getColumn(1).setCellRenderer(cancaoColumnTableCellRenderer);
+	}
+
+	@Override
+	public void limparTela() {
+		SwingUtils.clearAllData(panel);
+	}
+
+	@Override
+	public void setConteudoTabela(Collection<Posicao> elementos) {
+		// TODO Auto-generated method stub
 	}
 
 	/**

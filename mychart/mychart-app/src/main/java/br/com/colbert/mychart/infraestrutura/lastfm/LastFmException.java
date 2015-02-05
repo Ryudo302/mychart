@@ -41,7 +41,7 @@ public class LastFmException extends ServiceException {
 	}
 
 	private static String criarMensagem(Result result) {
-		if (!result.isSuccessful()) {
+		if (result.isSuccessful()) {
 			throw new IllegalArgumentException("Não é um resultado de erro: " + result);
 		}
 

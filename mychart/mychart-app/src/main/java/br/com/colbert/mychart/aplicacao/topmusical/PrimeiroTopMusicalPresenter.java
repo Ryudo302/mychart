@@ -11,6 +11,7 @@ import org.mvp4j.AppController;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.Presenter;
+import br.com.colbert.mychart.aplicacao.cancao.CancaoPresenter;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.dominio.topmusical.*;
 import br.com.colbert.mychart.ui.comum.messages.MessagesView;
@@ -36,6 +37,9 @@ public class PrimeiroTopMusicalPresenter implements Presenter, Serializable {
 	private TopMusicalFactory topMusicalFactory;
 
 	@Inject
+	private CancaoPresenter cancaoPresenter;
+
+	@Inject
 	private PrimeiroTopMusicalDialog view;
 	@Inject
 	private MessagesView messagesView;
@@ -59,20 +63,30 @@ public class PrimeiroTopMusicalPresenter implements Presenter, Serializable {
 		return topMusical;
 	}
 
-	public void adicionarCancao() {
+	public void mudancaSelecaoCancao() {
+		Optional<Cancao> cancaoSelecionada = view.getCancaoSelecionada();
+		view.getRemoverCancaoButton().setEnabled(cancaoSelecionada.isPresent());
+		view.getUpButton().setEnabled(cancaoSelecionada.isPresent());
+		view.getDownButton().setEnabled(cancaoSelecionada.isPresent());
+	}
 
+	public void adicionarCancao() {
+		cancaoPresenter.start();
+		List<Cancao> cancoes = cancaoPresenter.getCancoesSelecionadas();
+		logger.info("Adicionando canções: {}", cancoes);
+		view.adicionarCancoes(cancoes);
 	}
 
 	public void removerCancao() {
-
+		// TODO Ainda não implementado
 	}
 
 	public void moveCancaoParaCima() {
-
+		// TODO Ainda não implementado
 	}
 
 	public void moverCancaoParaBaixo() {
-
+		// TODO Ainda não implementado
 	}
 
 	public void salvar() {
@@ -80,11 +94,10 @@ public class PrimeiroTopMusicalPresenter implements Presenter, Serializable {
 		Integer quantidadePosicoes = topMusicalFactory.getConfig().getQuantidadePosicoes();
 		if (cancoes.size() == quantidadePosicoes) {
 			topMusical = Optional.of(topMusicalFactory.novo(view.getDataInicial(), cancoes));
+			view.close();
 		} else {
 			messagesView.adicionarMensagemAlerta("Devem ser adicionadas " + quantidadePosicoes + " canções!");
 		}
-
-		view.close();
 	}
 
 	public void cancelar() {
