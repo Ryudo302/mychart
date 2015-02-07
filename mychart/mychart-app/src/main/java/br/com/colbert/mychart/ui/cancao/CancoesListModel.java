@@ -1,7 +1,7 @@
 package br.com.colbert.mychart.ui.cancao;
 
-import br.com.colbert.base.ui.model.ObjectListModel;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
+import br.com.colbert.mychart.infraestrutura.swing.model.ObjectListModel;
 
 /**
  * Modelo de lista de canções.

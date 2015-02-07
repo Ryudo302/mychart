@@ -2,9 +2,9 @@ package br.com.colbert.mychart.ui.topmusical;
 
 import java.util.*;
 
-import br.com.colbert.base.ui.model.*;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.dominio.topmusical.Posicao;
+import br.com.colbert.mychart.infraestrutura.swing.model.*;
 
 /**
  * Modelo de tabela de {@link Posicao}.

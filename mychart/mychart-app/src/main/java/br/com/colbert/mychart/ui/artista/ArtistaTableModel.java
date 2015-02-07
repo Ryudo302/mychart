@@ -2,8 +2,8 @@ package br.com.colbert.mychart.ui.artista;
 
 import java.util.*;
 
-import br.com.colbert.base.ui.model.*;
 import br.com.colbert.mychart.dominio.artista.*;
+import br.com.colbert.mychart.infraestrutura.swing.model.*;
 
 /**
  * Modelo de tabela de {@link Artista}.

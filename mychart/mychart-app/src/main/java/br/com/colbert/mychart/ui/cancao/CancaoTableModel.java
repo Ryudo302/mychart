@@ -2,8 +2,8 @@ package br.com.colbert.mychart.ui.cancao;
 
 import java.util.*;
 
-import br.com.colbert.base.ui.model.*;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
+import br.com.colbert.mychart.infraestrutura.swing.model.*;
 
 /**
  * Modelo de tabela de canções.

@@ -11,8 +11,8 @@ import javax.swing.text.JTextComponent;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.com.colbert.base.ui.model.ObjectTableModel;
 import br.com.colbert.mychart.infraestrutura.exception.ViewException;
+import br.com.colbert.mychart.infraestrutura.swing.model.ObjectTableModel;
 
 /**
  * Classe utilitária para operações na camada de visão com Swing.

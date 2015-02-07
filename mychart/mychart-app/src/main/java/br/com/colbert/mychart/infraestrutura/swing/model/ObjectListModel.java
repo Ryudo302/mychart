@@ -1,4 +1,4 @@
-package br.com.colbert.base.ui.model;
+package br.com.colbert.mychart.infraestrutura.swing.model;
 
 import java.util.*;
 

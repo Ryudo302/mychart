@@ -14,6 +14,8 @@ import javax.swing.event.TableModelEvent;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.junit.*;
 
+import br.com.colbert.mychart.infraestrutura.swing.model.*;
+
 /**
  * Testes de integração da {@link ObjectTableModelIT}.
  * 
