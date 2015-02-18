@@ -69,7 +69,7 @@ public class CancaoPresenter implements Presenter, Serializable {
 			messagesView.adicionarMensagemAlerta("Informe um título a ser utilizado na consulta.");
 		} else {
 			ConsultarCancoesWorker worker = consultarCancoesWorker.get();
-			worker.setExemplo(new Cancao(tituloCancao, new Artista(artistaPrincipal, TipoArtista.DESCONHECIDO)));
+			worker.setExemplo(new Cancao(tituloCancao, new Artista(artistaPrincipal)));
 			worker.execute();
 			worker.addWorkerDoneListener(new DefinirConteudoTabelaWorkerListener<>(view));
 			worker.addWorkerDoneListener(new MensagensWorkerListener(messagesView, "Foi(ram) encontrada(s) {size} canção(ões)",
@@ -80,7 +80,7 @@ public class CancaoPresenter implements Presenter, Serializable {
 	public void selecionarCancoes() {
 		view.close();
 	}
-	
+
 	public void sair() {
 		view.limparTela();
 		view.close();

@@ -76,6 +76,16 @@ public class Artista extends AbstractEntidade<String> implements Cloneable {
 	}
 
 	/**
+	 * Cria um novo artista com o nome informado e o tipo {@link TipoArtista#DESCONHECIDO}.
+	 * 
+	 * @param nome
+	 *            do artista
+	 */
+	public Artista(String nome) {
+		this(nome, TipoArtista.DESCONHECIDO);
+	}
+
+	/**
 	 * Cria um novo artista a partir das informações de outro.
 	 * 
 	 * @param artista

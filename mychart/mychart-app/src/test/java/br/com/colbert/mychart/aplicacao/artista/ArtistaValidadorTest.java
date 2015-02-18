@@ -49,7 +49,7 @@ public class ArtistaValidadorTest extends AbstractTest {
 
 	@Test
 	public void testValidarNomeVazio() {
-		Artista artista = new Artista(StringUtils.EMPTY, TipoArtista.DESCONHECIDO);
+		Artista artista = new Artista(StringUtils.EMPTY);
 
 		try {
 			validador.validar(artista);
@@ -61,7 +61,7 @@ public class ArtistaValidadorTest extends AbstractTest {
 
 	@Test
 	public void testValidarNomeMuitoGrande() {
-		Artista artista = new Artista(StringUtils.repeat('x', TAMANHO_MAXIMO_NOME + 1), TipoArtista.DESCONHECIDO);
+		Artista artista = new Artista(StringUtils.repeat('x', TAMANHO_MAXIMO_NOME + 1));
 
 		try {
 			validador.validar(artista);

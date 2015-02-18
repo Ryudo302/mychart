@@ -6,8 +6,10 @@ import org.junit.*;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
+import br.com.colbert.mychart.dominio.topmusical.TopMusicalConfiguration;
 import br.com.colbert.mychart.infraestrutura.info.ApplicationProperties;
 import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapperInterceptor;
+import br.com.colbert.mychart.infraestrutura.io.parser.ArquivoParadaParser;
 import br.com.colbert.mychart.infraestrutura.providers.TransactionManagerProvider;
 import br.com.colbert.mychart.ui.comum.LoadingDialog;
 
@@ -19,7 +21,7 @@ import br.com.colbert.mychart.ui.comum.LoadingDialog;
  */
 @RunWith(CdiRunner.class)
 @AdditionalPackages({ ExceptionWrapperInterceptor.class, TransactionManagerProvider.class, ApplicationProperties.class,
-		LoadingDialog.class })
+		LoadingDialog.class, TopMusicalConfiguration.class, ArquivoParadaParser.class })
 @AdditionalClasses(LoggerProducer.class)
 public abstract class AbstractTest {
 
