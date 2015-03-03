@@ -2,7 +2,7 @@ package br.com.colbert.mychart.dominio.topmusical.repository;
 
 import java.util.Optional;
 
-import br.com.colbert.base.dominio.Repository;
+import br.com.colbert.base.dominio.*;
 import br.com.colbert.mychart.dominio.topmusical.TopMusical;
 import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
 
@@ -12,7 +12,8 @@ import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
  * @author Thiago Colbert
  * @since 04/01/2015
  */
-public interface TopMusicalRepository extends Repository<TopMusical, Integer> {
+public interface TopMusicalRepository extends RepositorioIncluivelAlteravel<TopMusical, Integer>,
+		RepositorioRemovivel<TopMusical, Integer>, RepositorioConsultavel<TopMusical, Integer> {
 
 	/**
 	 * Consulta o {@link TopMusical} mais atual, que é aquele cuja data seja a mais atual.

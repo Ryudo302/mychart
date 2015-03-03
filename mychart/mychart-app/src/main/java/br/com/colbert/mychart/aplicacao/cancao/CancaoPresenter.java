@@ -3,7 +3,6 @@ package br.com.colbert.mychart.aplicacao.cancao;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -13,7 +12,7 @@ import org.mvp4j.AppController;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.Presenter;
-import br.com.colbert.mychart.dominio.artista.*;
+import br.com.colbert.mychart.dominio.artista.Artista;
 import br.com.colbert.mychart.dominio.cancao.Cancao;
 import br.com.colbert.mychart.infraestrutura.swing.worker.*;
 import br.com.colbert.mychart.ui.cancao.CancaoDialog;

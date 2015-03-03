@@ -103,9 +103,9 @@ public class CancaoDialog implements FormView<Cancao>, WindowView, Serializable 
 
 		artistaPrincipalTextField = new JTextField();
 		artistaPrincipalTextField.setToolTipText("O artista principal da canção.");
-		informacoesPanel.add(artistaPrincipalTextField, "4, 4, fill, default");
 		artistaPrincipalTextField.setColumns(10);
-
+		informacoesPanel.add(artistaPrincipalTextField, "4, 4, fill, default");
+		
 		JPanel botoesPanel = new JPanel();
 
 		consultarButton = ButtonFactory.createJButton("Consultar", "Procura por canções com o título acima");

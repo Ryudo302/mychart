@@ -18,7 +18,7 @@ import br.com.colbert.mychart.infraestrutura.swing.worker.*;
 import br.com.colbert.tests.support.AbstractDbUnitTest;
 
 /**
- * Testes de integração da {@link SalvarArtistaWorker}.
+ * Testes de integração da {@link SalvarTopMusicalWorker}.
  * 
  * @author Thiago Colbert
  * @since 21/01/2015

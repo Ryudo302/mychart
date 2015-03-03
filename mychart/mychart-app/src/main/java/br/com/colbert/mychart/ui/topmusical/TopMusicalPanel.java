@@ -108,7 +108,6 @@ public class TopMusicalPanel implements FormView<Posicao>, Serializable {
 		botoesPanel.add(proximoButton);
 
 		salvarButton = ButtonFactory.createJButton("Salvar", (String) null);
-		salvarButton.setEnabled(false);
 		botoesPanel.add(salvarButton);
 
 		JPanel posicoesPanel = new JPanel();

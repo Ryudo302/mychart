@@ -73,9 +73,7 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	}
 
 	@Override
-	@ExceptionWrapper(de = PersistenceException.class,
-			para = RepositoryException.class,
-			mensagem = "Erro ao remover artista pelo ID: {0}")
+	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao remover artista pelo ID: {0}")
 	public boolean remover(String id) throws RepositoryException {
 		Validate.notEmpty(id, "O ID do artista a ser removido é obrigatório");
 

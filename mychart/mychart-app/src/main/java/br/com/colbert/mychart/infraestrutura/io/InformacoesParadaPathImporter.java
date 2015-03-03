@@ -5,6 +5,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.*;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import org.slf4j.Logger;
 import br.com.colbert.mychart.dominio.IntervaloDeDatas;
 import br.com.colbert.mychart.dominio.importing.*;
 import br.com.colbert.mychart.dominio.topmusical.*;
-import br.com.colbert.mychart.infraestrutura.io.parser.*;
+import br.com.colbert.mychart.infraestrutura.io.parser.ArquivoParadaParser;
 
 /**
  * Implementação de {@link InformacoesParadaImporter} que utiliza como fonte de dados um caminho no sistema de arquivos.
@@ -30,7 +31,8 @@ public class InformacoesParadaPathImporter implements InformacoesParadaImporter<
 	private TopMusicalFactory topMusicalFactory;
 
 	@Inject
-	private PeriodoParser periodoParser;
+	@Any
+	private Instance<ArquivoParadaParser<?>> parsers;
 
 	/**
 	 * @throws NullPointerException
@@ -50,19 +52,13 @@ public class InformacoesParadaPathImporter implements InformacoesParadaImporter<
 		List<TopMusical> tops = new ArrayList<>();
 
 		try (Stream<Path> subPaths = Files.list(fonte)) {
-			subPaths.filter(path -> Files.isRegularFile(path)).forEach(path -> {
-				logger.debug("Arquivo atual: {}", path);
-				IntervaloDeDatas periodo;
+			subPaths.filter(path -> Files.isRegularFile(path)).forEach(arquivo -> {
+				logger.debug("Arquivo atual: {}", arquivo);
 
-				// TODO
-				
-				try {
-					periodo = periodoParser.parse(path);
-				} catch (ParserException exception) {
-					throw new RuntimeException("Erro ao ler arquivo: " + path, exception);
+				for (ArquivoParadaParser<?> parser : parsers) {
+					Object objeto = parser.parse(arquivo);
+					System.out.println(parser.getTipoGerado().getSimpleName() + " = " + objeto);
 				}
-
-				topMusicalFactory.novo(periodo.getDataInicial(), Arrays.asList(null));
 			});
 		} catch (IOException exception) {
 			throw new RuntimeException("Erro ao listar arquivos do caminho informado: " + fonte, exception);

@@ -1,13 +1,15 @@
 package br.com.colbert.mychart.infraestrutura.io.parser;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 
-import br.com.colbert.mychart.dominio.topmusical.Posicao;
+import br.com.colbert.mychart.dominio.artista.Artista;
+import br.com.colbert.mychart.dominio.cancao.Cancao;
+import br.com.colbert.mychart.dominio.topmusical.*;
 
 /**
  * Permite a identificação de posições de um top musical a partir de um arquivo textual.
@@ -43,7 +45,14 @@ public class PosicaoParser extends AbstractArquivoParadaParser<List<Posicao>> {
 
 	@Override
 	protected List<Posicao> parse(Stream<String> linhas, String arquivo) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Posicao> posicoes = new ArrayList<>();
+
+		linhas.forEach(linha -> {
+			Integer posicao = numeroPosicaoParser.parse(linha);
+			List<Artista> artistas = artistaParser.parse(linha);
+			posicoes.add(Posicao.nova().noTop(new TopMusical()).comNumero(posicao).daCancao(new Cancao("", artistas)));
+		});
+
+		return posicoes;
 	}
 }

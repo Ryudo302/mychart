@@ -16,16 +16,19 @@ import br.com.colbert.mychart.infraestrutura.exception.ElementoJaExistenteExcept
 
 /**
  * Uma lista ordenada por classificação das canções dentro de um determinado período de tempo.
- * 
+ *
  * @author Thiago Colbert
  * @since 07/12/2014
  */
 @Entity
 @Table(name = "TB_TOP_MUSICAL")
-@NamedQueries({ @NamedQuery(name = "TopMusical.findAtual", query = "SELECT tm FROM TopMusical tm JOIN FETCH tm.posicoes WHERE tm.periodo.dataInicial = (SELECT MAX(tm1.periodo.dataInicial) FROM TopMusical tm1)") })
+@NamedQueries({ @NamedQuery(name = TopMusical.QUERY_FIND_ATUAL,
+		query = "SELECT tm FROM TopMusical tm JOIN FETCH tm.posicoes WHERE tm.periodo.dataInicial = (SELECT MAX(tm1.periodo.dataInicial) FROM TopMusical tm1)") })
 public class TopMusical extends AbstractEntidade<Integer> implements Cloneable {
 
 	private static final long serialVersionUID = -2569620277984255920L;
+
+	public static final String QUERY_FIND_ATUAL = "TopMusical.findAtual";
 
 	/**
 	 * Instância de um {@link TopMusical} sem nenhuma propriedade definida.
@@ -38,29 +41,27 @@ public class TopMusical extends AbstractEntidade<Integer> implements Cloneable {
 	@Min(1)
 	@Id
 	@Column(name = "NUM_TOP_MUSICAL", unique = true, nullable = false)
-	private Integer numero;
+	private final Integer numero;
 
 	@NotNull
 	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "dataInicial", column = @Column(name = "DTA_INICIAL", unique = false, nullable = false)),
+	@AttributeOverrides({ @AttributeOverride(name = "dataInicial", column = @Column(name = "DTA_INICIAL", unique = false, nullable = false)),
 			@AttributeOverride(name = "dataFinal", column = @Column(name = "DTA_FINAL", unique = false, nullable = true)) })
-	private IntervaloDeDatas periodo;
+	private final IntervaloDeDatas periodo;
 
-	@OneToOne(cascade = {}, fetch = FetchType.LAZY, mappedBy = "proximo", optional = true, targetEntity = TopMusical.class)
-	private TopMusical anterior;
+	@OneToOne(cascade = {}, fetch = FetchType.LAZY, mappedBy = "proximo", optional = true)
+	private final TopMusical anterior;
 
-	@OneToOne(cascade = {}, fetch = FetchType.LAZY, optional = true, targetEntity = TopMusical.class)
+	@OneToOne(cascade = {}, fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "NUM_PROXIMO_TOP_MUSICAL", unique = false, nullable = true)
-	private TopMusical proximo;
+	private final TopMusical proximo;
 
 	@NotNull
 	@Valid
 	@ElementCollection(fetch = FetchType.LAZY)
 	private Map<Integer, Posicao> posicoes = new HashMap<>();
 
-	TopMusical(Integer numero, IntervaloDeDatas periodo, Optional<TopMusical> anterior, Optional<TopMusical> proximo,
-			Map<Integer, Posicao> posicoes) {
+	TopMusical(Integer numero, IntervaloDeDatas periodo, Optional<TopMusical> anterior, Optional<TopMusical> proximo, Map<Integer, Posicao> posicoes) {
 		this.numero = numero;
 		this.periodo = periodo;
 		this.anterior = anterior.orElse(null);
@@ -75,13 +76,13 @@ public class TopMusical extends AbstractEntidade<Integer> implements Cloneable {
 	/**
 	 * Construtor <code>default</code> sem argumentos utilizado pelo framework ORM.
 	 */
-	TopMusical() {
+	public TopMusical() {
 		this(null, null, Optional.empty(), Optional.empty());
 	}
 
 	/**
 	 * Entrada de uma canção dentro do top musical.
-	 * 
+	 *
 	 * @param numeroPosicao
 	 *            número da posição em que a canção entrou
 	 * @param cancao
@@ -106,7 +107,7 @@ public class TopMusical extends AbstractEntidade<Integer> implements Cloneable {
 
 	/**
 	 * Saída de uma canção dentro do top. A tentativa de remover uma posição que já está vazia é uma <code>no-op</code>.
-	 * 
+	 *
 	 * @param numeroPosicao
 	 *            número da posição ocupado pela canção que saiu
 	 * @return a posição que ocupava o número informado ou <code>null</code> caso já não estava ocupada
@@ -124,8 +125,7 @@ public class TopMusical extends AbstractEntidade<Integer> implements Cloneable {
 	private void validarNumeroPosicao(Integer numeroPosicao) {
 		Objects.requireNonNull(numeroPosicao, "O número da posição é obrigatório");
 		if (numeroPosicao < NUMERO_PRIMEIRA_POSICAO || numeroPosicao > getQuantidadePosicoes()) {
-			throw new IllegalArgumentException("O número da posição deve estar entre " + NUMERO_PRIMEIRA_POSICAO + " e "
-					+ getQuantidadePosicoes());
+			throw new IllegalArgumentException("O número da posição deve estar entre " + NUMERO_PRIMEIRA_POSICAO + " e " + getQuantidadePosicoes());
 		}
 	}
 
@@ -164,7 +164,7 @@ public class TopMusical extends AbstractEntidade<Integer> implements Cloneable {
 
 	/**
 	 * Obtém apenas os objetos {@link Posicao}, ao invés do mapa retornado por {@link #getPosicoes()}.
-	 * 
+	 *
 	 * @return as posições
 	 */
 	public List<Posicao> getPosicoesOnly() {
@@ -173,7 +173,7 @@ public class TopMusical extends AbstractEntidade<Integer> implements Cloneable {
 
 	/**
 	 * Obtém uma posição do top pelo seu número.
-	 * 
+	 *
 	 * @param numero
 	 *            número da posição desejada
 	 * @return a posição
@@ -190,7 +190,7 @@ public class TopMusical extends AbstractEntidade<Integer> implements Cloneable {
 
 	/**
 	 * Obtém a quantidade de posições no top.
-	 * 
+	 *
 	 * @return a quantidade de posições
 	 */
 	public int getQuantidadePosicoes() {
@@ -204,7 +204,6 @@ public class TopMusical extends AbstractEntidade<Integer> implements Cloneable {
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).appendSuper(super.toString()).append("periodo", periodo).append("posicoes", posicoes)
-				.toString();
+		return new ToStringBuilder(this).appendSuper(super.toString()).append("periodo", periodo).append("posicoes", posicoes).toString();
 	}
 }

@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.swing.SwingWorker;
 
 import org.mvp4j.AppController;
-import org.mvp4j.adapter.MVPBinding;
 import org.slf4j.Logger;
 
 import br.com.colbert.base.aplicacao.Presenter;
@@ -69,14 +68,14 @@ public class TopMusicalPresenter implements Presenter, Serializable {
 
 	@Inject
 	private Instance<CarregarTopAtualWorker> carregarTopAtualWorker;
-
-	private MVPBinding binding;
+	@Inject
+	private Instance<SalvarTopMusicalWorker> salvarTopMusicalWorker;
 
 	@PostConstruct
 	@Override
 	public void doBinding() {
 		logger.trace("Definindo bindings");
-		binding = appController.bindPresenter(view, this);
+		appController.bindPresenter(view, this);
 	}
 
 	@Override
@@ -104,8 +103,7 @@ public class TopMusicalPresenter implements Presenter, Serializable {
 	private void setTopAtual(Optional<TopMusical> optionalTop) {
 		optionalTop.ifPresent(top -> {
 			this.topAtual = top;
-			binding.setModel(top);
-			appController.refreshView(view);
+			appController.bindModel(view, top);
 			view.getAnteriorButton().setEnabled(top.getAnterior().isPresent());
 			view.getProximoButton().setEnabled(top.getProximo().isPresent());
 		});
@@ -131,5 +129,23 @@ public class TopMusicalPresenter implements Presenter, Serializable {
 
 	public void salvar() {
 		logger.info("Salvando o top atual");
+
+		SalvarTopMusicalWorker worker = salvarTopMusicalWorker.get();
+		worker.setTopMusical(topAtual);
+		worker.execute();
+		worker.addWorkerDoneListener(new WorkerDoneAdapter() {
+
+			private static final long serialVersionUID = -2453040686995578166L;
+
+			@Override
+			public void doneWithSuccess(SwingWorker<?, ?> worker) {
+				messagesView.adicionarMensagemSucesso("Salvo com sucesso!");
+			}
+			
+			@Override
+			public void doneWithError(SwingWorker<?, ?> worker, Throwable throwable) {
+				messagesView.adicionarMensagemErro("Erro ao salvar top", throwable);
+			}
+		});
 	}
 }
