@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.junit.Test;
+import org.junit.*;
 
 import br.com.colbert.mychart.dominio.importing.ParadaMusical;
 import br.com.colbert.mychart.dominio.topmusical.TopMusical;
@@ -17,10 +17,11 @@ import br.com.colbert.tests.support.AbstractTest;
 
 /**
  * Testes unitários da classe {@link InformacoesParadaPathImporter}.
- * 
+ *
  * @author Thiago Colbert
  * @since 17/02/2015
  */
+@Ignore
 public class InformacoesParadaPathImporterTest extends AbstractTest {
 
 	@Inject

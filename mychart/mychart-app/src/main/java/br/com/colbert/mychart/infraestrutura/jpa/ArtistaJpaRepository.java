@@ -1,22 +1,19 @@
 package br.com.colbert.mychart.infraestrutura.jpa;
 
-import java.util.*;
+import java.io.Serializable;
+import java.util.Collection;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.*;
-import javax.persistence.criteria.*;
-import javax.persistence.criteria.CriteriaQuery;
 
-import org.apache.commons.lang3.Validate;
-import org.hibernate.Session;
-import org.hibernate.criterion.*;
 import org.slf4j.Logger;
 
 import br.com.colbert.mychart.dominio.artista.*;
 import br.com.colbert.mychart.dominio.artista.repository.ArtistaRepository;
 import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
 import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapper;
+import br.com.colbert.mychart.infraestrutura.jpa.helper.*;
 
 /**
  * Uma implementação de {@link ArtistaRepository} que utiliza o JPA.
@@ -25,6 +22,23 @@ import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapper;
  * @since 15/12/2014
  */
 public class ArtistaJpaRepository implements ArtistaRepository {
+
+	private final class RegraExclusaoArtista implements RegraValidacao<Artista>, Serializable {
+
+		private static final long serialVersionUID = -2241245076310066965L;
+
+		private static final String MENSAGEM = "O artista não pode ser removido pois existem canções que o referenciam";
+
+		@Override
+		public String getMensagemErro() {
+			return MENSAGEM;
+		}
+
+		@Override
+		public boolean isValido(Artista objeto) {
+			return !objeto.getPossuiCancoes();
+		}
+	}
 
 	@Inject
 	private Logger logger;
@@ -37,64 +51,27 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	}
 
 	@Override
-	@ExceptionWrapper(de = PersistenceException.class,
-			para = RepositoryException.class,
-			mensagem = "Erro ao consultar artistas pelo nome: '{0}'")
+	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao consultar artistas pelo nome: '{0}'")
 	public Collection<Artista> consultarPorNomeExato(String nome) throws RepositoryException {
-		Validate.notBlank(nome, "O nome é obrigatório");
-		EntityManager entityManager = getEntityManager();
-
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Artista> query = criteriaBuilder.createQuery(Artista.class);
-		Root<Artista> root = query.from(Artista.class);
-		query.where(criteriaBuilder.equal(criteriaBuilder.lower(root.get(Artista_.nome)), nome.toLowerCase()));
-
-		return entityManager.createQuery(query).getResultList();
+		return JpaCrudHelper.findByProperty(Artista_.nome, nome, Artista.class, getEntityManager());
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao consultar artistas")
 	public Collection<Artista> consultarPor(Artista exemplo) throws RepositoryException {
-		return getEntityManager()
-				.unwrap(Session.class)
-				.createCriteria(Artista.class)
-				.add(Example.create(Objects.requireNonNull(exemplo, "O exemplo é obrigatório")).enableLike(MatchMode.ANYWHERE)
-						.excludeZeroes().ignoreCase().excludeProperty("tipo")).list();
+		return JpaCrudHelper.findByExample(exemplo, getEntityManager());
 	}
 
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao salvar artista: {0}")
 	public Artista incluirOuAlterar(Artista artista) throws RepositoryException {
-		Objects.requireNonNull(artista, "O artista a ser adicionado é obrigatório");
-
 		logger.debug("Persistindo artista");
-		return getEntityManager().merge(artista);
+		return JpaCrudHelper.saveOrUpdate(artista, getEntityManager());
 	}
 
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao remover artista pelo ID: {0}")
 	public boolean remover(String id) throws RepositoryException {
-		Validate.notEmpty(id, "O ID do artista a ser removido é obrigatório");
-
-		boolean removido = false;
-		EntityManager entityManager = getEntityManager();
-
-		logger.debug("Verificando se existe um artista no repositório com o ID: {}", id);
-		Artista artista = entityManager.find(Artista.class, id);
-
-		if (artista != null) {
-			logger.debug("Verificando se o artista possui canções salvas");
-			if (artista.getPossuiCancoes()) {
-				throw new RepositoryException("O artista não pode ser removido pois existem canções que o referenciam");
-			} else {
-				logger.debug("Removendo artista");
-				entityManager.remove(artista);
-				removido = true;
-			}
-		}
-
-		logger.debug("Algum artista foi removido? {}", removido);
-		return removido;
+		return JpaCrudHelper.remove(id, Artista.class, getEntityManager(), new RegraExclusaoArtista());
 	}
 }

@@ -13,6 +13,7 @@ import br.com.colbert.mychart.dominio.topmusical.TopMusical;
 import br.com.colbert.mychart.dominio.topmusical.repository.TopMusicalRepository;
 import br.com.colbert.mychart.infraestrutura.exception.RepositoryException;
 import br.com.colbert.mychart.infraestrutura.interceptors.ExceptionWrapper;
+import br.com.colbert.mychart.infraestrutura.jpa.helper.JpaCrudHelper;
 
 /**
  * Uma implementação de {@link TopMusicalRepository} que utiliza o JPA.
@@ -31,28 +32,14 @@ public class TopMusicalJpaRepository implements TopMusicalRepository {
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao salvar top musical: {0}")
 	public TopMusical incluirOuAlterar(TopMusical topMusical) throws RepositoryException {
-		Objects.requireNonNull(topMusical, "Top Musical");
-		logger.debug("Salvando ou atualizando: {}", topMusical);
-		return getEntityManager().merge(topMusical);
+		logger.debug("Salvando top: {}", topMusical);
+		return JpaCrudHelper.saveOrUpdate(topMusical, getEntityManager());
 	}
 
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao remover top musical pelo ID: {0}")
 	public boolean remover(Integer id) throws RepositoryException {
-		EntityManager entityManager = getEntityManager();
-		TopMusical topMusical = entityManager.find(TopMusical.class, id);
-		if (topMusical != null) {
-			entityManager.remove(topMusical);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public Collection<TopMusical> consultarPor(TopMusical exemplo) throws RepositoryException {
-		// TODO Auto-generated method stub
-		return null;
+		return JpaCrudHelper.remove(id, TopMusical.class, getEntityManager());
 	}
 
 	@Override
