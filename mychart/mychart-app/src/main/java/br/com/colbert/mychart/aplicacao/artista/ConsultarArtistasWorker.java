@@ -49,7 +49,9 @@ public class ConsultarArtistasWorker extends AbstractWorker<Collection<Artista>,
 		List<Artista> artistasUniqueList = SetUniqueList.setUniqueList(artistas);
 
 		logger.debug("Consultando no repositório local");
-		artistasUniqueList.addAll(repositorio.consultarPor(exemplo));
+		Collection<Artista> artistasLocais = repositorio.consultarPor(exemplo);
+		artistasLocais.forEach(artista -> artista.setPersistente(true));
+		artistasUniqueList.addAll(artistasLocais);
 
 		logger.debug("Consultando na web");
 		artistasUniqueList.addAll(artistaWs.consultarPor(exemplo));

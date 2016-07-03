@@ -142,6 +142,10 @@ public class Artista extends AbstractEntidade<String> implements Cloneable {
 	protected void persistente() {
 		persistente = true;
 	}
+	
+	public void setPersistente(boolean persistente) {
+		this.persistente = persistente;
+	}
 
 	@PostRemove
 	protected void transiente() {

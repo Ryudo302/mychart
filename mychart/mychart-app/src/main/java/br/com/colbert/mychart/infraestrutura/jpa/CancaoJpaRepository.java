@@ -53,7 +53,7 @@ public class CancaoJpaRepository implements CancaoRepository {
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao consultar canções")
 	public Collection<Cancao> consultarPor(Cancao exemplo) throws RepositoryException {
-		return JpaCrudHelper.findByExample(exemplo, getEntityManager());
+		return JpaCrudHelper.findByExample(exemplo, Cancao.class, getEntityManager());
 	}
 
 	@Override

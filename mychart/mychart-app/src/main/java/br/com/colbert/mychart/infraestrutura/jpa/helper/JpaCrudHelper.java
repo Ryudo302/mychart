@@ -13,7 +13,6 @@ import org.hibernate.*;
 import org.hibernate.criterion.*;
 
 import br.com.colbert.base.dominio.Entidade;
-import br.com.colbert.mychart.dominio.cancao.Cancao;
 
 /**
  * Classe auxiliar para operações de CRUD sobre entidades JPA.
@@ -100,6 +99,8 @@ public class JpaCrudHelper implements Serializable {
 	 *
 	 * @param exemplo
 	 *            a ser utilizado na consulta
+	 * @param classe
+	 *            a classe do exemplo
 	 * @param entityManager
 	 * @return os elementos encontrados (pode estar vazia, mas nunca será <code>null</code>)
 	 * @throws NullPointerException
@@ -108,9 +109,9 @@ public class JpaCrudHelper implements Serializable {
 	 *             caso ocorra algum erro ao realizar a consulta
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Entidade<?>> Collection<T> findByExample(T exemplo, EntityManager entityManager) {
+	public static <T extends Entidade<?>> Collection<T> findByExample(T exemplo, Class<T> classe, EntityManager entityManager) {
 		try {
-			return notNull(entityManager).unwrap(Session.class).createCriteria(Cancao.class)
+			return notNull(entityManager).unwrap(Session.class).createCriteria(classe)
 					.add(Example.create(Objects.requireNonNull(exemplo, "Exemplo")).enableLike(MatchMode.ANYWHERE).excludeZeroes().ignoreCase())
 					.list();
 		} catch (HibernateException exception) {

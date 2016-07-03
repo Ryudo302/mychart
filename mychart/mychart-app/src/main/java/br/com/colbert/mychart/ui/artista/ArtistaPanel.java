@@ -197,7 +197,7 @@ public class ArtistaPanel implements FormView<Artista>, Serializable {
 	 * @return o tipo de artista
 	 */
 	public TipoArtista getTipoArtista() {
-		return (TipoArtista) tipoComboBox.getSelectedItem();
+		return tipoComboBox.isEnabled() ? (TipoArtista) tipoComboBox.getSelectedItem() : null;
 	}
 
 	/**

@@ -59,7 +59,7 @@ public class ArtistaJpaRepository implements ArtistaRepository {
 	@Override
 	@ExceptionWrapper(de = PersistenceException.class, para = RepositoryException.class, mensagem = "Erro ao consultar artistas")
 	public Collection<Artista> consultarPor(Artista exemplo) throws RepositoryException {
-		return JpaCrudHelper.findByExample(exemplo, getEntityManager());
+		return JpaCrudHelper.findByExample(exemplo, Artista.class, getEntityManager());
 	}
 
 	@Override
